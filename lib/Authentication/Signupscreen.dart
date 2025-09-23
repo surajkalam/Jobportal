@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobapp/Feature/JobSeeker/jobseekerInfo.dart';
-import 'package:jobapp/Feature/Recuiter/RecuiterInfo.dart';
+import 'package:jobapp/Feature/Recuiter/screens/recuiter_info.dart';
 // import 'package:jobapp/core/material_theme.dart';
 
 class SignupScreen extends StatefulWidget {
