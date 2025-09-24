@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+
+import '../provider/provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -15,6 +19,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // final jobStats = ref.watch(jobStatisticsProvider);
     // final recentActivities = ref.watch(recentActivitiesProvider);
 
+    int getTotalJobs(WidgetRef ref) {
+  final totalJobsAsync = ref.watch(totalJobsCountProvider);
+  return totalJobsAsync.maybeWhen(
+    data: (value) => value,
+    orElse: () => 0, // Return 0 while loading or on error
+  );
+} 
+ 
+int getActiveJobsCount(WidgetRef ref) {
+  final activeJobsAsync = ref.watch(activeJobsCountProvider);
+  return activeJobsAsync.maybeWhen(
+    data: (jobsList) => jobsList,
+    orElse: () => 0, 
+  );
+}
+final int count =getActiveJobsCount(ref);
+log("Active Jobs:$count");
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Recruiter Dashboard'),
@@ -28,17 +50,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             // Statistics Cards
             Row(
               children: [
-                _buildStatCard('Total Jobs', '12', Iconsax.briefcase, Colors.blue),
+                _buildStatCard('Total Jobs', getTotalJobs(ref), Iconsax.briefcase, Colors.blue),
                 SizedBox(width: 10),
-                _buildStatCard('Applications', '45', Iconsax.document, Colors.green),
+                _buildStatCard('Applications', getActiveJobsCount(ref), Iconsax.document, Colors.green),
               ],
             ),
             SizedBox(height: 10),
             Row(
               children: [
-                _buildStatCard('Active Jobs', '8', Iconsax.activity, Colors.orange),
+                _buildStatCard('Active Jobs', getActiveJobsCount(ref), Iconsax.activity, Colors.orange),
                 SizedBox(width: 10),
-                _buildStatCard('Shortlisted', '15', Iconsax.profile_2user, Colors.purple),
+                _buildStatCard('Shortlisted', getTotalJobs(ref), Iconsax.profile_2user, Colors.purple),
               ],
             ),
             
@@ -60,7 +82,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(String title, int value, IconData icon, Color color) {
     return Expanded(
       child: Card(
         child: Padding(
@@ -69,7 +91,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               Icon(icon, color: color, size: 30),
               SizedBox(height: 5),
-              Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text('$value', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               Text(title, style: TextStyle(fontSize: 12)),
             ],
           ),

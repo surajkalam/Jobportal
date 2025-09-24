@@ -1,7 +1,6 @@
 // routes/app_router.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jobapp/Authentication/checkloginsignup.dart';
 
 import '../screens/screens.dart';
 import 'Widget.dart';
@@ -9,12 +8,23 @@ import 'Widget.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     routes:[
+      //  GoRoute(
+      //   path: '/',
+      //   name: 'info',
+      //   builder: (context, state) => RecuiterInfo(),
+      // ),
       GoRoute(
         path: '/',
         name: 'home',
         builder: (context, state) => RecruiterNavbar(),
       ),
-      // GoRoute(path: '/',
+      // GoRoute(
+      //   path: '/',
+      //   name: 'job_details',
+      //   builder: (context, state) => JobdetailScreen(),
+      // ),
+
+      // GoRoute(path: '/recuiter-info',
       // name: 'info',
       // builder: (context, state) => RecuiterInfo() ,
       // ),
@@ -23,11 +33,11 @@ class AppRouter {
       //   name: 'info',
       //   builder: (context, state) => RecuiterInfo(),
       // ),
-      GoRoute(
-        path: '/auth',
-        name: 'auth',
-        builder: (context, state) => CheckLoginSignupScreen(),
-      ),
+      // GoRoute(
+      //   path: '/auth',
+      //   name: 'auth',
+      //   builder: (context, state) => CheckLoginSignupScreen(),
+      // ),
       GoRoute(
         path: '/job-details',
         name: 'job_details',

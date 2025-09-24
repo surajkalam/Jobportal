@@ -55,6 +55,7 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen> {
   Widget _buildAppStatCard(String title, String value, Color color) {
     return Expanded(
       child: Card(
+        // ignore: deprecated_member_use
         color: color.withOpacity(0.1),
         child: Padding(
           padding: EdgeInsets.all(8),

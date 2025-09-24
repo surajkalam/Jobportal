@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/legacy.dart';
 
 import '../recuiter_firebase/requiterinfo_firebase.dart';
 import '../recuiter_model/recuiter_model.dart';
-final currentUserEmailProvider = StateProvider<String>((ref) => '');
+final currentUserEmailProvider = StateProvider<String>((ref) => 'prtk@gmail.com');
 // Firebase Service Provider
 final firebaseRecruiterServiceProvider = Provider<FirebaseRecruiterService>((ref) {
   return FirebaseRecruiterService();

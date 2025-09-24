@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:jobapp/Feature/JobSeeker/homescreen.dart';
-import 'package:jobapp/Feature/JobSeeker/profilescreen.dart';
-import 'package:jobapp/Feature/JobSeeker/searchscreen.dart';
+import 'package:iconsax/iconsax.dart';
 
+import '../jobseekers_screens/jobseeker_screen.dart';
 class JobseekerNavbar extends StatefulWidget {
   const JobseekerNavbar({super.key});
 
   @override
-  State<JobseekerNavbar> createState() => _MainNavbarState();
+  State<JobseekerNavbar> createState() => _JobseekerNavbarState();
 }
 
-class _MainNavbarState extends State<JobseekerNavbar> {
+class _JobseekerNavbarState extends State<JobseekerNavbar> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = const [
-    HomeScreen(),
+  final List<Widget> _pages = [
+    JobSeekerHomeScreen(),
+    JobseekerInfo(),
     searchscreen(),
     ProfileScreen(),
   ];
@@ -28,23 +28,28 @@ class _MainNavbarState extends State<JobseekerNavbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex], // show selected screen
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.green,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Iconsax.home),
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: "Search",
+            icon: Icon(Iconsax.add_square),
+            label: "Upload Jobs",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Iconsax.document_text),
+            label: "Applications",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Iconsax.user),
             label: "Profile",
           ),
         ],

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:jobapp/core/Widget/jobseekernavbar.dart';
+
 
 class JobseekerInfo extends StatefulWidget {
   const JobseekerInfo({super.key});
@@ -132,12 +132,12 @@ class _JobseekerInfoState extends State<JobseekerInfo> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => JobseekerNavbar(),
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => JobseekerNavbar(),
+                    //   ),
+                    // );
                     _submitForm();
                   },
                   child: const Text("Submit"),

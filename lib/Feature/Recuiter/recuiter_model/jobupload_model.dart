@@ -1,4 +1,4 @@
-// recuiter_model/jobupload_model.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 class JobModel {
   final String id;
   final String companyName;
@@ -11,6 +11,8 @@ class JobModel {
   final String category;
   final bool isActive;
   final DateTime createdAt;
+  final DateTime? updatedAt;
+  final String recruiterEmail;
 
   JobModel({
     this.id = '',
@@ -24,11 +26,12 @@ class JobModel {
     required this.category,
     this.isActive = true,
     required this.createdAt,
+    this.updatedAt,
+    required this.recruiterEmail, 
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'companyName': companyName,
       'designation': designation,
       'ctc': ctc,
@@ -37,8 +40,9 @@ class JobModel {
       'application': application,
       'imageUrl': imageUrl,
       'category': category,
-      'isActive': isActive, // Added this line
-      'createdAt': createdAt.millisecondsSinceEpoch,
+      'isActive': isActive,
+      'recruiterEmail': recruiterEmail,
+      'createdAt': FieldValue.serverTimestamp(),
     };
   }
 
@@ -53,10 +57,14 @@ class JobModel {
       application: map['application'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
       category: map['category'] ?? '',
-      isActive: map['isActive'] ?? true, // Added this line
+      isActive: map['isActive'] ?? true,
+      recruiterEmail: map['recruiterEmail'] ?? '', 
       createdAt: map['createdAt'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int)
+          ? (map['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
+      updatedAt: map['updatedAt'] != null 
+          ? (map['updatedAt'] as Timestamp).toDate()
+          : null,
     );
   }
 
@@ -72,6 +80,8 @@ class JobModel {
     String? category,
     bool? isActive,
     DateTime? createdAt,
+    DateTime? updatedAt,
+    String? recruiterEmail, 
   }) {
     return JobModel(
       id: id ?? this.id,
@@ -85,6 +95,8 @@ class JobModel {
       category: category ?? this.category,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      recruiterEmail: recruiterEmail ?? this.recruiterEmail, 
     );
   }
 }

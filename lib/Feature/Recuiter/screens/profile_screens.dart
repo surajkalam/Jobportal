@@ -121,17 +121,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
           
           const SizedBox(height: 20),
-          
-          // Edit Profile Button
-          ElevatedButton.icon(
-            onPressed: () => _showEditBottomSheet(recruiter),
-            icon: const Icon(Iconsax.edit),
-            label: const Text('Edit Profile'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              foregroundColor: Colors.white,
-            ),
-          ),
         ],
       ),
     );

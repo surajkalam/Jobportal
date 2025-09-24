@@ -7,6 +7,8 @@ import 'package:jobapp/Feature/Recuiter/recuiter_model/jobupload_model.dart';
 import 'package:jobapp/core/util.dart/image_pickerutil.dart';
 import 'dart:io';
 
+import '../provider/provider.dart';
+
 class JobdetailScreen extends ConsumerStatefulWidget {
   const JobdetailScreen({super.key});
 
@@ -301,7 +303,7 @@ class _JobdetailScreenState extends ConsumerState<JobdetailScreen> {
       // Upload image
       final jobNotifier = ref.read(jobNotifierProvider.notifier);
       String imageUrl = await jobNotifier.uploadImage(_selectedImage!);
-
+        final recruiterEmail = ref.read(currentUserEmailProvider);
       // Create job model
       JobModel jobData = JobModel(
         companyName: _companyNameController.text,
@@ -313,6 +315,7 @@ class _JobdetailScreenState extends ConsumerState<JobdetailScreen> {
         imageUrl: imageUrl,
         category: category,
         createdAt: DateTime.now(),
+        recruiterEmail: recruiterEmail,
       );
 
       // Save job
@@ -410,7 +413,7 @@ class CustomScaffold extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        title: Text('Recruiter Home Screen'),
+        title: Text('Job Posting'),
         leading: Icon(Iconsax.menu, color: colorScheme.onPrimary),
         actions: [
           Icon(Iconsax.notification, color: colorScheme.onPrimary),

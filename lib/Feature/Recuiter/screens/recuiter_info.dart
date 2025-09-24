@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jobapp/Feature/Recuiter/provider/requiterinfo_provider.dart';
 import '../provider/provider.dart';
 import '../recuiter_model/recuiter_model.dart';
 
@@ -246,41 +247,47 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    try {
-      final XFile? image = await _picker.pickImage(
-        source: source,
-        maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 85,
-      );
+  try {
+    final XFile? image = await _picker.pickImage(
+      source: source,
+      maxWidth: 800,
+      maxHeight: 800,
+      imageQuality: 85,
+    );
+    
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path);
+      });
       
-      if (image != null) {
-        setState(() {
-          _selectedImage = File(image.path);
-        });
-        photoController.text = image.path;
-        
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Photo selected successfully'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
-    } catch (e) {
-      log('Error picking image: $e');
-      // ignore: use_build_context_synchronously
+      // Set the photo controller text with the image path
+      photoController.text = image.path;
+      
+      // Debug: Check if file exists
+      bool fileExists = await _selectedImage!.exists();
+      log('File exists: $fileExists');
+      log('File path: ${_selectedImage!.path}');
+      log('File size: ${await _selectedImage!.length()} bytes');
+      
+      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error picking image: $e'),
-          backgroundColor: Colors.red,
+          content: Text('Photo selected successfully'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
         ),
       );
     }
+  } catch (e) {
+    log('Error picking image: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error picking image: $e'),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
-
+}
   Future<void> _showImageSourceDialog( ) async {
     await showDialog(
       context: context,
@@ -312,27 +319,33 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
   }
 
   void _clearImage() {
-    setState(() {
-      _selectedImage = null;
-    });
-    photoController.clear();
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Photo cleared'),
-        backgroundColor: Colors.orange,
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
+  setState(() {
+    _selectedImage = null;
+  });
+  photoController.clear();
+  
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Photo cleared'),
+      backgroundColor: Colors.orange,
+      duration: Duration(seconds: 2),
+    ),
+  );
+}
 
   void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      _saveRecruiterInfo();
-    } else {
-      _showErrorSnackBar('Please fill all required fields correctly.');
-    }
+  // Check if image is required but not selected
+  if (_selectedImage == null) {
+    _showErrorSnackBar('Please select a recruiter photo.');
+    return;
   }
+  
+  if (_formKey.currentState!.validate()) {
+    _saveRecruiterInfo();
+  } else {
+    _showErrorSnackBar('Please fill all required fields correctly.');
+  }
+}
 
   void _saveRecruiterInfo() async {
     ref.read(loadingStateProvider.notifier).state = true;
@@ -361,10 +374,12 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
       await ref.read(recruiterDataProvider.notifier).saveRecruiter(recruiter);
       ref.read(currentUserEmailProvider.notifier).state = emailController.text;
       _showSuccessSnackBar('Recruiter information submitted successfully!');
+      // ignore: use_build_context_synchronously
+        context.go('/navbar');
       // _navigateToDashboard();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-       context.go('/navbar');
-      });
+      // WidgetsBinding.instance.addPostFrameCallback((_) {
+      //  context.go('/navbar');
+      // });
     
     } catch (e) {
       _showErrorSnackBar('Error saving recruiter information: $e');
@@ -375,15 +390,21 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
   }
 
   Future<String> _uploadImageToStorage() async {
-    if (_selectedImage == null) return '';
+  if (_selectedImage == null) return '';
 
-    try {
-      final firebaseService = ref.read(firebaseRecruiterServiceProvider);
-      return await firebaseService.uploadImage(_selectedImage!, emailController.text);
-    } catch (e) {
-      throw Exception('Image upload failed: $e');
+  try {
+    // Double-check that the file exists before uploading
+    bool fileExists = await _selectedImage!.exists();
+    if (!fileExists) {
+      throw Exception('Selected image file does not exist. Please select the image again.');
     }
+    
+    final firebaseService = ref.read(firebaseRecruiterServiceProvider);
+    return await firebaseService.uploadImage(_selectedImage!, emailController.text);
+  } catch (e) {
+    throw Exception('Image upload failed: $e');
   }
+}
 
   // void _navigateToDashboard() {
   //   WidgetsBinding.instance.addPostFrameCallback((_) {
