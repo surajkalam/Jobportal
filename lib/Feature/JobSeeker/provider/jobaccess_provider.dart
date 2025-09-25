@@ -2,7 +2,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:jobapp/Feature/JobSeeker/firebase_crud/jobaccess_repository.dart';
 import 'package:jobapp/Feature/Recuiter/recuiter_model/jobupload_model.dart';
-
+final List<String> staticCategories = [
+  'Trainer',
+  'Wedding planner',
+  'Casino manager',
+  'Travel agent',
+  'Airline cabin crew',
+  'Event tour coordinator',
+  'Waiter / Waitress',
+  'Receptionist',
+  'Hotel manager',
+  'Reservation agent',
+  'Java',
+  'Flutter'
+];
 
 // Repository provider
 final jobRepositoryProvider = Provider<JobRepository>((ref) {

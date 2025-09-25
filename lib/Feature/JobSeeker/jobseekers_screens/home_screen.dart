@@ -155,6 +155,7 @@ class _JobSeekerHomeScreenState extends ConsumerState<JobSeekerHomeScreen>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.grey.withOpacity(0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
