@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:jobapp/Feature/JobSeeker/firebase_crud/jobaccess_repository.dart';
 import 'package:jobapp/Feature/Recuiter/recuiter_model/jobupload_model.dart';
+
 final List<String> staticCategories = [
   'Trainer',
   'Wedding planner',
@@ -37,7 +38,7 @@ final filteredJobsProvider = StreamProvider.family<List<JobModel>, String>((ref,
   return repository.getJobsByCategory(category);
 });
 
-// Provider for available categories
+// Provider for available categories (keep existing, don't remove)
 final categoriesProvider = StreamProvider<List<String>>((ref) {
   final repository = ref.watch(jobRepositoryProvider);
   return repository.getAvailableCategories();
@@ -45,3 +46,11 @@ final categoriesProvider = StreamProvider<List<String>>((ref) {
 
 // Provider for selected category
 final selectedCategoryProvider = StateProvider<String>((ref) => 'All');
+
+
+
+final staticCategoriesProvider = Provider<List<String>>((ref) {
+  return staticCategories;
+});
+// Provider for selected job (to pass data between screens)
+final selectedJobProvider = StateProvider<JobModel?>((ref) => null);
