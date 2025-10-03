@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:jobapp/Feature/Recuiter/recuiter_model/jobupload_model.dart';
 import 'package:jobapp/core/util.dart/appcolors.dart';
-import '../provider/provider.dart';
-
 final selectedTabProvider = StateProvider<String>((ref) => 'description');
 
 class JobDetailsScreen extends ConsumerWidget {
