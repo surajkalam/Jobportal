@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:jobapp/core/util.dart/appcolors.dart';
 
 // ignore: camel_case_types
 class JobApplicationscreen extends StatefulWidget {
@@ -18,65 +19,118 @@ class _JobApplicationscreenState extends State<JobApplicationscreen> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.only(top: 40),
-        child: Column(
-          children: [
-            SizedBox(height: 50),
-            Padding(
-              padding: EdgeInsets.only(
-                left: width * 0.02,
-                right: width * 0.025,
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'search a job ..',
-                  hintStyle: textTheme.bodySmall?.copyWith(
-                    color: colorScheme.secondary,
-                  ),
-                  prefixIcon: Icon(Iconsax.search_normal),
-                  labelText: 'search',
-                  labelStyle: textTheme.bodySmall?.copyWith(
-                    color: colorScheme.secondary,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: colorScheme.surface,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: colorScheme.secondary),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: colorScheme.onSecondary,
-                      width: 2.0,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColors.faintbackblue, AppColors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0.04, 0.3],
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.only(top: 40),
+          child: Column(
+            children: [
+              SizedBox(height: 50),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: width * 0.02,
+                  right: width * 0.025,
+                ),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'search a job ..',
+                    hintStyle: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.secondary,
                     ),
+                    prefixIcon: Icon(Iconsax.search_normal),
+                    labelText: 'search',
+                    labelStyle: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.secondary,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: colorScheme.surface,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: colorScheme.secondary),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: colorScheme.onSecondary,
+                        width: 2.0,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide(color: Colors.red),
+                    ),
+                    contentPadding: EdgeInsets.zero,
                   ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide(color: Colors.red),
-                  ),
-                  contentPadding: EdgeInsets.zero,
                 ),
               ),
-            ),
-            SizedBox(height: 20),
-            Padding(
-              padding: EdgeInsets.only(
-                left: width * 0.02,
-                right: width * 0.025,
+              SizedBox(height: 20),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: width * 0.02,
+                  right: width * 0.025,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [Text('My status')],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Text('My status')],
+              detailsContainer(height, width),
+              SizedBox(height: height*0.01,),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    // ignore: deprecated_member_use
+                    color: AppColors.faintbackblue.withOpacity(0.1),
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: width * 0.02,
+                      right: width * 0.02,
+                      top: height * 0.02,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('My applications'),
+                        SizedBox(height: height * 0.005),
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              applicationContainer(height, width),
+                              SizedBox(height: height * 0.02),
+                              applicationContainer(height, width),
+                              SizedBox(height: height * 0.02),
+                              applicationContainer(height, width),
+                              SizedBox(height: height * 0.02),
+                              applicationContainer(height, width),
+                              SizedBox(height: height * 0.02),
+                              applicationContainer(height, width),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-            detailsContainer(height, width),
-            applicationContainer(height, width),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -211,112 +265,165 @@ class _JobApplicationscreenState extends State<JobApplicationscreen> {
   }
 
   Widget applicationContainer(double height, double width) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: height * 0.02),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
-          height: height * 0.6,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-              // ignore: deprecated_member_use
-              color: Colors.black,
-            ),
-            borderRadius: BorderRadius.only(
-              topRight: Radius.circular(10),
-              topLeft: Radius.circular(10),
-            ),
+    return Container(
+      height: height * 0.2,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black38,
+            offset: Offset(0, 4),
+            blurRadius: 5,
+            spreadRadius: 2,
           ),
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: width * 0.02,
-              right: width * 0.02,
-              top: height * 0.02,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(15.0),
+        child: Column(
+          children: [
+            Row(
               children: [
-                Text('My applications'),
-                SizedBox(height: height * 0.01),
-                Container(
-                  height: height * 0.2,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.amber,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                Text(
+                  'Software Engineer',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                // ignore: deprecated_member_use
+                Text(
+                  'Congnizant | Banglore',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    // ignore: deprecated_member_use
+                    color: Colors.black.withOpacity(0.5),
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Software Engineer',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            // ignore: deprecated_member_use
-                            Text(
-                              'Congnizant | Banglore',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black.withOpacity(0.5),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: height * 0.02),
-                        Row(
-                          children: [
-                            // ignore: deprecated_member_use
-                            Icon(
-                              Icons.location_pin,
-                              size: 15,
-                              color: Colors.black,
-                            ),
-                            Text(
-                              'Banglore',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black.withOpacity(0.5),
-                              ),
-                            ),
-                            SizedBox(width: width * 0.02),
-                            Icon(Icons.wallet, size: 15, color: Colors.black),
-                            Text(
-                              '5 -7 LPA',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                // ignore: deprecated_member_use
-                                color: Colors.black.withOpacity(0.5),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            
-                          ],
-                        )
-                      ],
-                    ),
+                ),
+                Spacer(),
+                Container(
+                  height: height * 0.02,
+                  width: width * 0.04,
+                  decoration: BoxDecoration(
+                    color: AppColors.faintbackblue,
+                    borderRadius: BorderRadius.circular(50),
                   ),
                 ),
               ],
             ),
-          ),
+            SizedBox(height: height * 0.02),
+            Row(
+              children: [
+                // ignore: deprecated_member_use
+                Icon(Icons.location_pin, size: 15, color: Colors.black),
+                Text(
+                  'Banglore',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                ),
+                SizedBox(width: width * 0.02),
+                Icon(Icons.wallet, size: 15, color: Colors.black),
+                Text(
+                  '5 -7 LPA',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    // ignore: deprecated_member_use
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: height * 0.02),
+            Row(
+              children: [
+                Icon(Icons.calendar_today, size: 15, color: Colors.black),
+                SizedBox(width: width * 0.02),
+                Text('0 -2 years(s)', style: TextStyle(fontSize: 12)),
+              ],
+            ),
+            SizedBox(height: height * 0.02),
+            Padding(
+              padding: EdgeInsets.only(left: width * 0.15),
+              child: Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      // ignore: deprecated_member_use
+                      color: Colors.greenAccent.withOpacity(0.2),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.02,
+                        vertical: height * 0.002,
+                      ),
+                      child: Center(
+                        child: Row(
+                          children: [
+                            Icon(Icons.alarm, size: 12, color: Colors.green),
+                            SizedBox(width: width * 0.01),
+                            Text(
+                              'posted 1 day ago',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                // ignore: deprecated_member_use
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: width * 0.04),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      // ignore: deprecated_member_use
+                      color: AppColors.white,
+                      border: BoxBorder.all(color: AppColors.black),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.02,
+                        vertical: height * 0.002,
+                      ),
+                      child: Center(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.alarm,
+                              size: 12,
+                              color: AppColors.darkblue,
+                            ),
+                            SizedBox(width: width * 0.01),
+                            Text(
+                              'posted 1 day ago',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                // ignore: deprecated_member_use
+                                color: AppColors.darkblue,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

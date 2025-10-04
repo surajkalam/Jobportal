@@ -24,14 +24,14 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final materialTheme = MaterialTheme(textTheme);
-    
-    return ProviderScope( 
+    return ProviderScope(
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         theme: materialTheme.light(),
         darkTheme: materialTheme.dark(),
         themeMode: ThemeMode.system,
-        routerConfig: JobseekeerAppRouter.router,
+        // routerConfig: JobseekeerAppRouter.router,
+        routerConfig: AppRouter.router,
       ),
     );
   }
