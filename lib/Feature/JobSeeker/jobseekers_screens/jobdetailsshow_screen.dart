@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:jobapp/Feature/Recuiter/recuiter_model/jobupload_model.dart';
 import 'package:jobapp/core/util.dart/appcolors.dart';
+
 final selectedTabProvider = StateProvider<String>((ref) => 'description');
 
 class JobDetailsScreen extends ConsumerWidget {
@@ -23,10 +24,10 @@ class JobDetailsScreen extends ConsumerWidget {
         leading: Padding(
           padding: EdgeInsets.only(left: width * 0.01),
           child: Container(
-            height: height * 0.008,
-            width: width * 0.01,
+            height: height * 0.05,
+            width: width * 0.11,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(70),
+              borderRadius: BorderRadius.circular(50),
               border: Border.all(
                 color: AppColors.darkGrey.withOpacity(0.2),
                 width: 1.5,
@@ -37,7 +38,7 @@ class JobDetailsScreen extends ConsumerWidget {
                 icon: Icon(
                   Iconsax.arrow_left_2,
                   color: AppColors.black,
-                  size: 22,
+                  size: 18,
                 ),
                 onPressed: () => Navigator.pop(context),
               ),
@@ -46,12 +47,12 @@ class JobDetailsScreen extends ConsumerWidget {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: width * 0.01),
+            padding: EdgeInsets.only(right: width * 0.02),
             child: Container(
-              height: height * 0.12,
-              width: width * 0.13,
+              height: height * 0.05,
+              width: width * 0.11,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(60),
+                borderRadius: BorderRadius.circular(50),
                 border: Border.all(
                   color: AppColors.darkGrey.withOpacity(0.2),
                   width: 1.5,
@@ -62,7 +63,7 @@ class JobDetailsScreen extends ConsumerWidget {
                   icon: Icon(
                     Icons.share_outlined,
                     color: AppColors.black,
-                    size: 22,
+                    size: 18,
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -91,24 +92,25 @@ class JobDetailsScreen extends ConsumerWidget {
             Row(
               children: [
                 jdcontainer('FullTime', width, height),
-                jdcontainer('Remote', width, height),
+                jdcontainer('Delhi', width, height),
                 jdcontainer('3-4 YoE', width, height),
-                jdcontainer('Finance', width, height),
+                jdcontainer(' 18–27 years', width, height),
               ],
             ),
+            SizedBox(height: height * 0.02),
             selectinfocontainer(context, width, height, ref),
             SizedBox(height: height * 0.01),
 
             // Job Details Section
-            _buildJobDetails(job),
-            SizedBox(height: 20),
+            // _buildJobDetails(job),
+            SizedBox(height: height * 0.02),
 
             // Job Description
-            _buildDescriptionSection(job),
+            _buildDescriptionSection(job, height, width),
             SizedBox(height: 20),
 
             // Requirements
-            _buildRequirementsSection(job),
+            _buildRequirementsSection(job, height, width),
             SizedBox(height: 20),
 
             // Benefits
@@ -125,7 +127,7 @@ class JobDetailsScreen extends ConsumerWidget {
 
   Widget _buildCompanyHeader(double height, double width, JobModel job) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(width * 0.018),
       decoration: BoxDecoration(
         // color: AppColors.lightGrey,
         borderRadius: BorderRadius.circular(12),
@@ -140,7 +142,7 @@ class JobDetailsScreen extends ConsumerWidget {
               border: Border.all(color: AppColors.grey),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(3.0),
+              padding: EdgeInsets.all(width * 0.006),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: Image.network(
@@ -152,7 +154,7 @@ class JobDetailsScreen extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: width * 0.02),
           Expanded(
             child: Row(
               children: [
@@ -161,17 +163,17 @@ class JobDetailsScreen extends ConsumerWidget {
                   children: [
                     Text(
                       job.designation,
-                      style: const TextStyle(
-                        fontSize: 20,
+                      style: TextStyle(
+                        fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Row(
                       children: [
                         Text(
                           job.companyName,
-                          style: TextStyle(fontSize: 16, color: AppColors.grey),
+                          style: TextStyle(fontSize: 12, color: AppColors.grey),
                         ),
                         SizedBox(width: width * 0.01),
                         Icon(
@@ -182,7 +184,7 @@ class JobDetailsScreen extends ConsumerWidget {
                         SizedBox(width: width * 0.005),
                         Text(
                           job.location,
-                          style: TextStyle(color: AppColors.grey),
+                          style: TextStyle(color: AppColors.grey, fontSize: 12),
                         ),
                       ],
                     ),
@@ -202,7 +204,7 @@ class JobDetailsScreen extends ConsumerWidget {
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: height * 0.01,
-        horizontal: width * 0.014,
+        horizontal: width * 0.012,
       ),
       child: Container(
         padding: EdgeInsets.all(width * 0.016),
@@ -211,12 +213,12 @@ class JobDetailsScreen extends ConsumerWidget {
           color: AppColors.lightblue.withOpacity(0.3),
           // ignore: deprecated_member_use
           border: Border.all(color: AppColors.grey.withOpacity(0.3)),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
           text,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 08,
             color: AppColors.black,
             fontWeight: FontWeight.w400,
           ),
@@ -225,28 +227,28 @@ class JobDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildJobDetails(JobModel job) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.grey.withOpacity(0.3)),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          _buildDetailRow('Salary', '${job.ctc}'),
-          const SizedBox(height: 12),
-          // _buildDetailRow('Employment Type', job.employmentType ?? 'Full-time'),
-          _buildDetailRow('Employee time', 'Full-time'),
-          const SizedBox(height: 12),
-          // _buildDetailRow('Experience', job.experienceRequired ?? 'Not specified'),
-          _buildDetailRow('Experience', 'Not specified'),
-          const SizedBox(height: 12),
-          _buildDetailRow('Posted', _calculateTimeAgo(job.createdAt)),
-        ],
-      ),
-    );
-  }
+  // Widget _buildJobDetails(JobModel job) {
+  //   return Container(
+  //     padding: const EdgeInsets.all(16),
+  //     decoration: BoxDecoration(
+  //       border: Border.all(color: AppColors.grey.withOpacity(0.3)),
+  //       borderRadius: BorderRadius.circular(12),
+  //     ),
+  //     child: Column(
+  //       children: [
+  //         _buildDetailRow('Salary', '${job.ctc}'),
+  //         const SizedBox(height: 12),
+  //         // _buildDetailRow('Employment Type', job.employmentType ?? 'Full-time'),
+  //         _buildDetailRow('Employee time', 'Full-time'),
+  //         const SizedBox(height: 12),
+  //         // _buildDetailRow('Experience', job.experienceRequired ?? 'Not specified'),
+  //         _buildDetailRow('Experience', 'Not specified'),
+  //         const SizedBox(height: 12),
+  //         _buildDetailRow('Posted', _calculateTimeAgo(job.createdAt)),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget selectinfocontainer(
     BuildContext context,
@@ -286,7 +288,7 @@ class JobDetailsScreen extends ConsumerWidget {
           ref.read(selectedTabProvider.notifier).state = text;
         },
         child: Container(
-          height: height * 0.05,
+          height: height * 0.04,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25),
             // ignore: deprecated_member_use
@@ -298,7 +300,7 @@ class JobDetailsScreen extends ConsumerWidget {
             child: Text(
               text,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 09,
                 color: isSelected ? AppColors.white : AppColors.black,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
@@ -310,77 +312,68 @@ class JobDetailsScreen extends ConsumerWidget {
   }
 }
 
-Widget _buildDetailRow(String title, String value) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text(
-        title,
-        style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.grey),
-      ),
-      Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
-    ],
-  );
-}
+// Widget _buildDetailRow(String title, String value) {
+//   return Row(
+//     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//     children: [
+//       Text(
+//         title,
+//         style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.grey),
+//       ),
+//       Text(value, style: TextStyle(fontWeight: FontWeight.bold)),
+//     ],
+//   );
+// }
 
-Widget _buildDescriptionSection(JobModel job) {
-  // return Column(
-  //   crossAxisAlignment: CrossAxisAlignment.start,
-  //   children: [
-  //     Text(
-  //       'Job Description',
-  //       style: TextStyle(
-  //         fontSize: 18,
-  //         fontWeight: FontWeight.bold,
-  //       ),
-  //     ),
-  //     const SizedBox(height: 8),
-  //     Text(
-  //       // job.jobDescription ?? 'No description available',
-  //       'this is a placeholder for job description',
-  //       style: TextStyle(
-  //         fontSize: 14,
-  //         color: AppColors.grey,
-  //         height: 1.5,
-  //       ),
-  //     ),
-  //   ],
-  // );
+Widget _buildDescriptionSection(JobModel job, double height, double width) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
         'Job Description',
         style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
           color: AppColors.black,
         ),
       ),
-      const SizedBox(height: 8),
-
-      // Text(
-      //   job.jobDescription?? 'No description available',
-      //   style: TextStyle(
-      //     fontSize: 14,
-      //     color: AppColors.grey,
-      //     height: 1.5,
-      //   ),
-      // ),
+      SizedBox(height: height * 0.01),
+      Text(
+        '''
+A job description (JD) is a brief written description of the role and responsibilities, educational qualifications, and tasks that are required for a particular position. A job description is the first point of contact between a company and a candidate. A good JD always helps the organization find a good, qualified candidate for the job role. A JD tells about the designation, salary range, role, responsibilities, skills required for the job, job location, and environmental pressures that apply to the position. Below is the list of all Job Descriptions formatted and structured on the basis of Job Profile.
+''',
+        style: TextStyle(
+          fontSize: 08,
+          fontWeight: FontWeight.w500,
+          // ignore: deprecated_member_use
+          color: AppColors.black.withOpacity(0.7),
+        ),
+      ),
     ],
   );
 }
 
-Widget _buildRequirementsSection(JobModel job) {
+Widget _buildRequirementsSection(JobModel job, double height, double width) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
         'Requirements',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
       ),
-      const SizedBox(height: 8),
-      ..._buildBulletPoints(job.designation ?? 'No requirements specified'),
+      SizedBox(height: height * 0.01),
+      ..._buildBulletPoints(
+        '10+2 (Higher Secondary) or equivalent (some airlines prefer graduates)',
+      ),
+      ..._buildBulletPoints(
+        'Fluent in English (and sometimes Hindi or local language)',
+      ),
+      ..._buildBulletPoints('Usually 18–26 years '),
+      ..._buildBulletPoints(
+        'Generally minimum 155–170 cm (varies by airline); proportionate weight',
+      ),
+      ..._buildBulletPoints('Normal or corrected vision (usually 6/6)'),
+      ..._buildBulletPoints('Medically fit; no visible tattoos/scars '),
     ],
   );
 }
@@ -391,11 +384,23 @@ Widget _buildBenefitsSection(JobModel job) {
     children: [
       Text(
         'Benefits',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
       ),
       const SizedBox(height: 8),
-      // ..._buildBulletPoints(job.benefits ?? 'No benefits specified'),
-      ..._buildBulletPoints('No benefits specified'),
+      // ..._buildBulletPoints(job.benefits ?? 'No benefits specified')
+      ..._buildBulletPoints(
+        'You can travel domestically and internationally, depending on the airline.',
+      ),
+      ..._buildBulletPoints(
+        'Some even allow standby travel on partner airlines.',
+      ),
+      ..._buildBulletPoints('Night shift, layover, and meal allowances.'),
+      ..._buildBulletPoints(
+        'Ground staff and engineers get structured salary increments and benefits over time.',
+      ),
+      ..._buildBulletPoints(
+        'Meals or daily allowances are also provided when flying or on duty.',
+      ),
     ],
   );
 }
@@ -408,7 +413,6 @@ List<Widget> _buildBulletPoints(String text) {
       Text('No information available', style: TextStyle(color: AppColors.grey)),
     ];
   }
-
   return points
       .map(
         (point) => Padding(
@@ -416,11 +420,18 @@ List<Widget> _buildBulletPoints(String text) {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('• ', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                '• ',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 10),
+              ),
               Expanded(
                 child: Text(
                   point.trim(),
-                  style: TextStyle(color: AppColors.grey),
+                  style: TextStyle(
+                    color: AppColors.grey,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 09,
+                  ),
                 ),
               ),
             ],
@@ -439,14 +450,14 @@ Widget _buildApplyButton(BuildContext context, JobModel job) {
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.lightBlue,
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: const Text(
         'Apply Now',
         style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
           color: Colors.white,
         ),
       ),
@@ -458,14 +469,33 @@ void _showApplyDialog(BuildContext context, JobModel job) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text('Apply for ${job.designation}'),
+      title: Text(
+        'Apply for ${job.designation}',
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+          color: Colors.black,
+        ),
+      ),
       content: Text(
         'Are you sure you want to apply for this position at ${job.companyName}?',
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w400,
+          color: Colors.black,
+        ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('Cancel'),
+          child: Text(
+            'Cancel',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w400,
+              color: Colors.black,
+            ),
+          ),
         ),
         ElevatedButton(
           onPressed: () {
@@ -474,7 +504,14 @@ void _showApplyDialog(BuildContext context, JobModel job) {
               SnackBar(content: Text('Application submitted successfully!')),
             );
           },
-          child: Text('Apply'),
+          child: Text(
+            'Apply',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w400,
+              color: Colors.black,
+            ),
+          ),
         ),
       ],
     ),

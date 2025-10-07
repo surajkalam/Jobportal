@@ -29,7 +29,7 @@ class _JobApplicationscreenState extends State<JobApplicationscreen> {
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.only(top: 40),
+          padding: EdgeInsets.only(top:height*0.02),
           child: Column(
             children: [
               SizedBox(height: 50),
@@ -102,13 +102,13 @@ class _JobApplicationscreenState extends State<JobApplicationscreen> {
                     padding: EdgeInsets.only(
                       left: width * 0.02,
                       right: width * 0.02,
-                      top: height * 0.02,
+                      top: height * 0.01,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('My applications'),
-                        SizedBox(height: height * 0.005),
+                        SizedBox(height: height * 0.002),
                         Expanded(
                           child: ListView(
                             children: [
@@ -288,7 +288,7 @@ class _JobApplicationscreenState extends State<JobApplicationscreen> {
               children: [
                 Text(
                   'Software Engineer',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -298,8 +298,8 @@ class _JobApplicationscreenState extends State<JobApplicationscreen> {
                 Text(
                   'Congnizant | Banglore',
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w400,
                     // ignore: deprecated_member_use
                     color: Colors.black.withOpacity(0.5),
                   ),
@@ -315,7 +315,7 @@ class _JobApplicationscreenState extends State<JobApplicationscreen> {
                 ),
               ],
             ),
-            SizedBox(height: height * 0.02),
+            SizedBox(height: height * 0.01),
             Row(
               children: [
                 // ignore: deprecated_member_use
@@ -323,35 +323,35 @@ class _JobApplicationscreenState extends State<JobApplicationscreen> {
                 Text(
                   'Banglore',
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
                     color: Colors.black.withOpacity(0.5),
                   ),
                 ),
-                SizedBox(width: width * 0.02),
+                SizedBox(width: width * 0.01),
                 Icon(Icons.wallet, size: 15, color: Colors.black),
                 Text(
                   '5 -7 LPA',
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
                     // ignore: deprecated_member_use
                     color: Colors.black.withOpacity(0.5),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: height * 0.02),
+            SizedBox(height: height * 0.01),
             Row(
               children: [
                 Icon(Icons.calendar_today, size: 15, color: Colors.black),
                 SizedBox(width: width * 0.02),
-                Text('0 -2 years(s)', style: TextStyle(fontSize: 12)),
+                Text('0 -2 years', style: TextStyle(fontSize: 12)),
               ],
             ),
-            SizedBox(height: height * 0.02),
+            SizedBox(height: height * 0.01),
             Padding(
-              padding: EdgeInsets.only(left: width * 0.15),
+              padding: EdgeInsets.only(left: width * 0.05),
               child: Row(
                 children: [
                   Container(
@@ -373,7 +373,7 @@ class _JobApplicationscreenState extends State<JobApplicationscreen> {
                             Text(
                               'posted 1 day ago',
                               style: TextStyle(
-                                fontSize: 10,
+                                fontSize: 08,
                                 fontWeight: FontWeight.w400,
                                 // ignore: deprecated_member_use
                                 color: Colors.green,
@@ -409,7 +409,7 @@ class _JobApplicationscreenState extends State<JobApplicationscreen> {
                             Text(
                               'posted 1 day ago',
                               style: TextStyle(
-                                fontSize: 10,
+                                fontSize: 08,
                                 fontWeight: FontWeight.w400,
                                 // ignore: deprecated_member_use
                                 color: AppColors.darkblue,

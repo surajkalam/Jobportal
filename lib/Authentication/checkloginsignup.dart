@@ -1,55 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:jobapp/Authentication/Signupscreen.dart';
-import 'package:jobapp/Authentication/loginscreen.dart';
-// import 'package:jobapp/core/material_theme.dart';
+import 'package:jobapp/Authentication/provider.dart';
 
-class CheckLoginSignupScreen extends StatefulWidget {
+class CheckLoginSignupScreen extends ConsumerStatefulWidget {
   const CheckLoginSignupScreen({super.key});
 
   @override
-  State<CheckLoginSignupScreen> createState() => _MyWidgetState();
+  ConsumerState<CheckLoginSignupScreen> createState() => _CheckLoginSignupScreenState();
 }
 
-class _MyWidgetState extends State<CheckLoginSignupScreen> {
+class _CheckLoginSignupScreenState extends ConsumerState<CheckLoginSignupScreen> {
   int _selectedIndex = 0;
-  String selectedoption='jobseeker';
+
+  void _navigateToLogin() {
+    final userType = ref.read(selectionProvider);
+    final option = userType == UserType.jobseeker ? 'jobseeker' : 'recruiter';
+    
+    context.goNamed('login', extra: option);
+  }
+
+  void _navigateToSignup() {
+    final userType = ref.read(selectionProvider);
+    final option = userType == UserType.jobseeker ? 'jobseeker' : 'recruiter';
+    
+    context.goNamed('signup', extra: option);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final userType = ref.watch(selectionProvider);
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+
+    // Light blue color for selection
+    const Color lightBlue = Color(0xFFE3F2FD);
+    const Color selectedBlue = Color(0xFF2196F3);
+    const Color whiteColor = Colors.white;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(
-        // mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Container(
-          //   height: height * 0.1,
-          //   width: width,
-          //   decoration: BoxDecoration(
-          //     color: colorScheme.primary,
-          //     borderRadius: BorderRadius.only(
-          //       bottomLeft: Radius.circular(width * 0.1),
-          //       bottomRight: Radius.circular(width * 0.1),
-          //     ),
-          //   ),
-          //   child: Center(
-          //     child: Text(
-          //       "Welcome to JobApp",
-          //       style: GoogleFonts.poppins(
-          //         fontSize: width * 0.06,
-          //         color: colorScheme.onPrimary,
-          //         fontWeight: FontWeight.w700,
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          Padding(padding:EdgeInsets.only(top: 90)),
+          Padding(padding: EdgeInsets.only(top: height * 0.1)),
           SizedBox(height: height * 0.05),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -58,32 +55,31 @@ class _MyWidgetState extends State<CheckLoginSignupScreen> {
                 height: height * 0.045,
                 width: width * 0.8,
                 decoration: BoxDecoration(
-                  color: colorScheme.onPrimary,
+                  color: whiteColor,
                   borderRadius: BorderRadius.circular(width * 0.05),
                   boxShadow: [
                     BoxShadow(
-                      // ignore: deprecated_member_use
-                      color: colorScheme.shadow.withAlpha(200),// shadow color
-                      spreadRadius: 2, // how wide the shadow spreads
-                      blurRadius: 6, // softness of the shadow
-                      offset: const Offset(2, 3), // x,y position of shadow
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 4,
+                      offset: const Offset(1, 2),
                     ),
                   ], 
                 ),
                 child: Row(
                   children: [
+                    // Jobseeker Option
                     GestureDetector(
                       onTap: () {
                         setState(() {
                           _selectedIndex = 0;
                         });
+                        ref.read(selectionProvider.notifier).state = UserType.jobseeker;
                       },
                       child: Container(
                         width: width * 0.4,
                         decoration: BoxDecoration(
-                          color: _selectedIndex == 0
-                              ? colorScheme.primaryFixed
-                              : colorScheme.primary,
+                          color: _selectedIndex == 0 ? selectedBlue : lightBlue,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(width * 0.05),
                             bottomLeft: Radius.circular(width * 0.05),
@@ -92,38 +88,27 @@ class _MyWidgetState extends State<CheckLoginSignupScreen> {
                         child: Center(
                           child: Text(
                             "Jobseeker",
-                            // style: GoogleFonts.poppins(
-                            //   fontSize: width * 0.04,
-                            //   color: _selectedIndex == 0
-                            //       ? Colors.black
-                            //       : Apptheme.whitecolor,
-                            //   fontWeight: FontWeight.w700,
-                            // ),
-                            style: textTheme.titleLarge?.copyWith(
+                            style: GoogleFonts.poppins(
                               fontSize: width * 0.04,
-                              color: _selectedIndex == 0
-                                  ? colorScheme.primary
-                                  : colorScheme.onPrimary,
+                              color: _selectedIndex == 0 ? whiteColor : selectedBlue,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
                       ),
                     ),
+                    // Recruiter Option
                     GestureDetector(
                       onTap: () {
                         setState(() {
                           _selectedIndex = 1;
-                          selectedoption='recruiter';
-
                         });
+                        ref.read(selectionProvider.notifier).state = UserType.recruiter;
                       },
                       child: Container(
                         width: width * 0.4,
                         decoration: BoxDecoration(
-                          color: _selectedIndex == 1
-                              ? colorScheme.primaryFixed
-                              : colorScheme.primary,
+                          color: _selectedIndex == 1 ? selectedBlue : lightBlue,
                           borderRadius: BorderRadius.only(
                             topRight: Radius.circular(width * 0.05),
                             bottomRight: Radius.circular(width * 0.05),
@@ -134,9 +119,7 @@ class _MyWidgetState extends State<CheckLoginSignupScreen> {
                             "Recruiter",
                             style: GoogleFonts.poppins(
                               fontSize: width * 0.04,
-                              color: _selectedIndex == 1
-                                  ? Colors.black
-                                  : colorScheme.onPrimary,
+                              color: _selectedIndex == 1 ? whiteColor : selectedBlue,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -155,26 +138,21 @@ class _MyWidgetState extends State<CheckLoginSignupScreen> {
             ),
             child: Column(
               children: [
+                // Login Button
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen(option: selectedoption,)),
-                    );
-                  },
+                  onTap: _navigateToLogin,
                   child: Container(
                     height: height * 0.06,
                     width: width * 0.5,
                     decoration: BoxDecoration(
-                      color: colorScheme.onPrimary,
+                      color: selectedBlue,
                       borderRadius: BorderRadius.circular(width * 0.02),
                       boxShadow: [
                         BoxShadow(
-                          // ignore: deprecated_member_use
-                          color: Colors.black.withOpacity(0.2), // shadow color
-                          spreadRadius: 2, // how wide the shadow spreads
-                          blurRadius: 6, // softness of the shadow
-                          offset: const Offset(2, 3), // x,y position of shadow
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 6,
+                          offset: const Offset(2, 3),
                         ),
                       ],
                     ),
@@ -183,7 +161,7 @@ class _MyWidgetState extends State<CheckLoginSignupScreen> {
                         "Login",
                         style: GoogleFonts.poppins(
                           fontSize: width * 0.04,
-                          color: colorScheme.primary,
+                          color: whiteColor,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -191,26 +169,22 @@ class _MyWidgetState extends State<CheckLoginSignupScreen> {
                   ),
                 ),
                 SizedBox(height: height * 0.04),
+                // SignUp Button
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignupScreen(option: selectedoption,)),
-                    );
-                  },
+                  onTap: _navigateToSignup,
                   child: Container(
                     height: height * 0.06,
                     width: width * 0.5,
                     decoration: BoxDecoration(
-                      color: colorScheme.onPrimary,
+                      color: whiteColor,
+                      border: Border.all(color: selectedBlue, width: 2),
                       borderRadius: BorderRadius.circular(width * 0.02),
                       boxShadow: [
                         BoxShadow(
-                          // ignore: deprecated_member_use
-                          color: Colors.black.withOpacity(0.2), // shadow color
-                          spreadRadius: 2, // how wide the shadow spreads
-                          blurRadius: 6, // softness of the shadow
-                          offset: const Offset(2, 3), // x,y position of shadow
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 1,
+                          blurRadius: 4,
+                          offset: const Offset(1, 2),
                         ),
                       ],
                     ),
@@ -219,7 +193,7 @@ class _MyWidgetState extends State<CheckLoginSignupScreen> {
                         "SignUp",
                         style: GoogleFonts.poppins(
                           fontSize: width * 0.04,
-                          color: colorScheme.primary,
+                          color: selectedBlue,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -231,7 +205,7 @@ class _MyWidgetState extends State<CheckLoginSignupScreen> {
                   "your journey starts today.",
                   style: GoogleFonts.lora(
                     fontSize: width * 0.042,
-                    color: colorScheme.primary,
+                    color: selectedBlue,
                     fontWeight: FontWeight.w700,
                   ),
                   softWrap: true,
@@ -240,7 +214,7 @@ class _MyWidgetState extends State<CheckLoginSignupScreen> {
                   "Fresh beginnings,Bright opportunities.",
                   style: GoogleFonts.lora(
                     fontSize: width * 0.042,
-                    color: colorScheme.primary,
+                    color: selectedBlue,
                     fontWeight: FontWeight.w700,
                   ),
                   softWrap: true,

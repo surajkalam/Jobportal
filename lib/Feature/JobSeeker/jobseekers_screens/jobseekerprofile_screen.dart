@@ -94,41 +94,45 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                   ),
                 ),
               ),
-              Column(
-                children: [
-                  Padding(padding: EdgeInsetsGeometry.only(top: height * 0.01)),
-                  Text(
-                    'Kalamkar Suraj Pandurang ',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.white,
+              Expanded(
+                child: Column(
+                  children: [
+                    Padding(padding: EdgeInsetsGeometry.only(top: height * 0.01)),
+                    Text(
+                      'Kalamkar Suraj Pandurang ',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.white,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Designer Manager',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.white,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Designer Manager',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.white,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: width * 0.04),
-                      // Icon(Iconsax.more_circle),
-                      Text(
-                        'Walmart',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.white,
+                        SizedBox(width: width * 0.04),
+                        // Icon(Iconsax.more_circle),
+                        Text(
+                          'Walmart',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.white,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -154,7 +158,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
 
   Widget buildemailheadercontainer(double height, double width, String text) {
     return Padding(
-      padding: EdgeInsets.only(top: height * 0.02, left: width * 0.05),
+      padding: EdgeInsets.only(top: height * 0.02, left: width * 0.02),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -172,6 +176,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                 fontWeight: FontWeight.w400,
                 color: AppColors.white,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
@@ -203,67 +208,65 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               ),
             ),
             SizedBox(height: height * 0.01),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Colors.transparent,
-                  border: Border.all(color: AppColors.grey),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Column(
-                    children: [
-                      // Row 1: Profile Information
-                      _buildAccountRow(
-                        icon: Icons.person_outline,
-                        title: 'Profile Information',
-                        subtitle: '',
-                        hasArrow: true,
-                        width: width,
-                      ),
-                      // ignore: deprecated_member_use
-                      Divider(color: AppColors.grey.withOpacity(0.3)),
-                      // Row 2: Email
-                      _buildAccountRow(
-                        icon: Icons.email_outlined,
-                        title: 'Email',
-                        subtitle: 'verify',
-                        hasArrow: true,
-                        width: width,
-                      ),
-                      // ignore: deprecated_member_use
-                      Divider(color: AppColors.grey.withOpacity(0.3)),
-
-                      _buildAccountRow(
-                        icon: Iconsax.heart,
-                        title: 'Age',
-                        subtitle: '25 years',
-                        hasArrow: true,
-                        width: width,
-                      ),
-                      // ignore: deprecated_member_use
-                      Divider(color: AppColors.grey.withOpacity(0.3)),
-                      _buildAccountRow(
-                        icon: Icons.work_outline,
-                        title: 'Profession',
-                        subtitle: 'Marketing Manager',
-                        hasArrow: true,
-                        width: width,
-                      ),
-                      // ignore: deprecated_member_use
-                      Divider(color: AppColors.grey.withOpacity(0.3)),
-                      // Row 5: Logout
-                      _buildAccountRow(
-                        icon: Iconsax.logout_14,
-                        title: 'Logout',
-                        subtitle: '',
-                        hasArrow: true, // No arrow for logout
-                        textColor: Colors.red,
-                        width: width,
-                      ),
-                    ],
-                  ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.transparent,
+                border: Border.all(color: AppColors.grey),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Column(
+                  children: [
+                    // Row 1: Profile Information
+                    _buildAccountRow(
+                      icon: Icons.person_outline,
+                      title: 'Profile Information',
+                      subtitle: '',
+                      hasArrow: true,
+                      width: width,
+                    ),
+                    // ignore: deprecated_member_use
+                    Divider(color: AppColors.grey.withOpacity(0.3)),
+                    // Row 2: Email
+                    _buildAccountRow(
+                      icon: Icons.email_outlined,
+                      title: 'Email',
+                      subtitle: 'verify',
+                      hasArrow: true,
+                      width: width,
+                    ),
+                    // ignore: deprecated_member_use
+                    Divider(color: AppColors.grey.withOpacity(0.3)),
+            
+                    _buildAccountRow(
+                      icon: Iconsax.heart,
+                      title: 'Age',
+                      subtitle: '25 years',
+                      hasArrow: true,
+                      width: width,
+                    ),
+                    // ignore: deprecated_member_use
+                    Divider(color: AppColors.grey.withOpacity(0.3)),
+                    _buildAccountRow(
+                      icon: Icons.work_outline,
+                      title: 'Profession',
+                      subtitle: 'Marketing Manager',
+                      hasArrow: true,
+                      width: width,
+                    ),
+                    // ignore: deprecated_member_use
+                    Divider(color: AppColors.grey.withOpacity(0.3)),
+                    // Row 5: Logout
+                    _buildAccountRow(
+                      icon: Iconsax.logout_14,
+                      title: 'Logout',
+                      subtitle: '',
+                      hasArrow: true, // No arrow for logout
+                      textColor: Colors.red,
+                      width: width,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -287,7 +290,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
         // Add onTap functionality for each row
       },
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding:EdgeInsets.all(10),
         child: Row(
           children: [
             // Icon
@@ -299,7 +302,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               ),
               child: Icon(icon, size: 25, color: textColor),
             ),
-            SizedBox(width: 12),
+            SizedBox(width: 10),
             Expanded(
               child: Row(
                 children: [
@@ -318,10 +321,12 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       subtitle,
                       style: TextStyle(
                         fontFamily: 'italic',
-                        fontSize: 12,
+                        fontSize: 10,
                         color: AppColors.grey,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
+
                 ],
               ),
             ),
@@ -343,8 +348,8 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
           Text(
             'Profile',
             style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
               // color: AppColors.black
             ),
           ),

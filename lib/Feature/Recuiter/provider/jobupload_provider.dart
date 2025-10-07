@@ -67,6 +67,18 @@ class JobNotifier extends StateNotifier<JobState> {
     rethrow;
   }
   }
+    Future<void> updateJob(JobModel jobData) async {
+    state = state.copyWith(isLoading: true, error: null, success: false);
+    try {
+      // Update existing job with recruiterEmail
+      final jobWithEmail = jobData.copyWith(recruiterEmail: _recruiterEmail);
+      await _firebaseService.updateJobData(jobWithEmail, _recruiterEmail);
+      state = state.copyWith(isLoading: false, success: true);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: 'Failed to update job: $e');
+      rethrow;
+    }
+  }
 
   Future<void> toggleJobStatus(String jobId, bool currentStatus) async {
     try {

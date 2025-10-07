@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jobapp/Feature/Recuiter/Widget/go_route.dart';
 import 'package:jobapp/core/material_theme.dart';
 import 'package:jobapp/core/typography.dart';
@@ -30,8 +30,8 @@ class MainApp extends StatelessWidget {
         theme: materialTheme.light(),
         darkTheme: materialTheme.dark(),
         themeMode: ThemeMode.system,
-        // routerConfig: JobseekeerAppRouter.router,
-        routerConfig: AppRouter.router,
+        routerConfig: JobseekeerAppRouter.router,
+        // routerConfig: AppRouter.router,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 class JobModel {
   final String id;
   final String companyName;
@@ -13,6 +14,9 @@ class JobModel {
   final DateTime createdAt;
   final DateTime? updatedAt;
   final String recruiterEmail;
+  final String benefits;
+  final String qualifications;
+  final String skills;
 
   JobModel({
     this.id = '',
@@ -27,7 +31,10 @@ class JobModel {
     this.isActive = true,
     required this.createdAt,
     this.updatedAt,
-    required this.recruiterEmail, 
+    required this.recruiterEmail,
+    this.benefits = '',
+    this.qualifications = '',
+    this.skills = '',
   });
 
   Map<String, dynamic> toMap() {
@@ -42,6 +49,9 @@ class JobModel {
       'category': category,
       'isActive': isActive,
       'recruiterEmail': recruiterEmail,
+      'benefits': benefits,
+      'qualifications': qualifications,
+      'skills': skills,
       'createdAt': FieldValue.serverTimestamp(),
     };
   }
@@ -58,7 +68,10 @@ class JobModel {
       imageUrl: map['imageUrl'] ?? '',
       category: map['category'] ?? '',
       isActive: map['isActive'] ?? true,
-      recruiterEmail: map['recruiterEmail'] ?? '', 
+      recruiterEmail: map['recruiterEmail'] ?? '',
+      benefits: map['benefits'] ?? '',
+      qualifications: map['qualifications'] ?? '',
+      skills: map['skills'] ?? '',
       createdAt: map['createdAt'] != null 
           ? (map['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
@@ -81,7 +94,10 @@ class JobModel {
     bool? isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
-    String? recruiterEmail, 
+    String? recruiterEmail,
+    String? benefits,
+    String? qualifications,
+    String? skills,
   }) {
     return JobModel(
       id: id ?? this.id,
@@ -96,7 +112,10 @@ class JobModel {
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      recruiterEmail: recruiterEmail ?? this.recruiterEmail, 
+      recruiterEmail: recruiterEmail ?? this.recruiterEmail,
+      benefits: benefits ?? this.benefits,
+      qualifications: qualifications ?? this.qualifications,
+      skills: skills ?? this.skills,
     );
   }
 }

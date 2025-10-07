@@ -47,6 +47,8 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     final totalJobsCount = ref.watch(totalJobsCountProvider);
     final activeJobsCount = ref.watch(activeJobsCountProvider);
     final hasRecentJobs = ref.watch(hasRecentJobsProvider);
+    var height=MediaQuery.of(context).size.height;
+     var width=MediaQuery.of(context).size.width;
     log('=== DEBUG INFO ===');
   log('Recruiter Email: $recruiterEmail');
   log('Recent Jobs State: ${recentJobsAsync.value}');
@@ -62,7 +64,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
   log('==================');
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Upload Jobs'),
+        title:  Text('Upload Jobs'),
         backgroundColor: Colors.blueAccent,
         actions: [
           IconButton(
@@ -72,40 +74,37 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Statistics Cards - Fixed height
-              SizedBox(
-                height: 100, // Fixed height to prevent overflow
-                child: _buildStatisticsCards(totalJobsCount, activeJobsCount),
+      body: Padding(
+        padding:EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Statistics Cards - Fixed height
+            SizedBox(
+              height: 100, // Fixed height to prevent overflow
+              child: _buildStatisticsCards(totalJobsCount, activeJobsCount),
+            ),
+             SizedBox(height: height*0.016),
+            // Guidelines Card - Limited height with scroll if needed
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 200),
+              child: SingleChildScrollView(
+                child: _buildGuidelinesCard(height,width),
               ),
-              const SizedBox(height: 16),
-
-              // Guidelines Card - Limited height with scroll if needed
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 200),
-                child: SingleChildScrollView(
-                  child: _buildGuidelinesCard(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: 160, 
-                child: _buildUploadSection(),
-              ),
-              const SizedBox(height: 16),
-              // Recent Jobs Header
-              _buildRecentJobsHeader(hasRecentJobs, recentJobsAsync),
-              const SizedBox(height: 8),
-              Expanded(
-                child: _buildRecentJobsList(recentJobsAsync, recruiterEmail),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 160, 
+              child: _buildUploadSection(height,width),
+            ),
+            const SizedBox(height: 16),
+            // Recent Jobs Header
+            _buildRecentJobsHeader(hasRecentJobs, recentJobsAsync),
+            const SizedBox(height: 8),
+            Expanded(
+              child: _buildRecentJobsList(recentJobsAsync, recruiterEmail),
+            ),
+          ],
         ),
       ),
     );
@@ -118,25 +117,25 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
           child: Card(
             color: Colors.blue[50],
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding:  EdgeInsets.all(6),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Iconsax.briefcase, color: Colors.blue, size: 20),
-                  const SizedBox(height: 4),
+                Icon(Iconsax.briefcase, color: Colors.blue, size: 16),
+                  SizedBox(height: 2),
                   totalJobsCount.when(
                     data: (count) => Text(
                       count.toString(),
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
                     ),
-                    loading: () => const SizedBox(
+                    loading: () => SizedBox(
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     ),
-                    error: (error, stack) => const Text('0', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    error: (error, stack) =>  Text('0', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
-                  const Text('Total Jobs', style: TextStyle(fontSize: 10, color: Colors.blue)),
+                   Text('Total Jobs', style: TextStyle(fontSize: 10, color: Colors.blue)),
                 ],
               ),
             ),
@@ -147,18 +146,18 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
           child: Card(
             color: Colors.green[50],
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(6),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Iconsax.tick_circle, color: Colors.green, size: 20),
+                  const Icon(Iconsax.tick_circle, color: Colors.green, size: 16),
                   const SizedBox(height: 4),
                   activeJobsCount.when(
                     data: (count) => Text(
                       count.toString(),
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
                     ),
-                    loading: () => const SizedBox(
+                    loading: () =>  SizedBox(
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
@@ -175,21 +174,21 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     );
   }
 
-  Widget _buildGuidelinesCard() {
+  Widget _buildGuidelinesCard(double height,double width) {
     return Card(
       elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(width*0.016),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Row(
+             Row(
               children: [
                 Icon(Iconsax.info_circle, color: Colors.blue, size: 18),
                 SizedBox(width: 6),
                 Text('Job Upload Guidelines', 
-                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
               ],
             ),
             const SizedBox(height: 8),
@@ -205,16 +204,16 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
 
   Widget _buildGuidelineItem(String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(Icons.check_circle, color: Colors.green[600], size: 14),
-          const SizedBox(width: 6),
+           SizedBox(width: 6),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(fontSize: 12),
+              style:  TextStyle(fontSize: 09),
               softWrap: true,
             ),
           ),
@@ -223,7 +222,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     );
   }
 
-  Widget _buildUploadSection() {
+  Widget _buildUploadSection(double height,double width) {
     return Card(
       elevation: 4,
       child: Padding(
@@ -232,18 +231,25 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-             Text('Upload New Job', 
-                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-             SizedBox(height: 4),
-            Text('Create a new job posting to attract qualified candidates.',
-                   style: TextStyle(fontSize: 11, color: Colors.grey)),
+            Text(
+              'Upload New Job',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height:height*0.003),
+            Text(
+              'Create a new job posting to attract qualified candidates.',
+              style: TextStyle(fontSize: 10, color: Colors.grey),
+            ),
             SizedBox(height: 10),
             ElevatedButton.icon(
               onPressed: () {
-                context.push('/job-details');
+               context.push('/job-details');
               },
               icon: const Icon(Iconsax.add, size: 16),
-              label: const Text('Upload New Job', style: TextStyle(fontSize: 12)),
+              label: const Text(
+                'Upload New Job',
+                style: TextStyle(fontSize: 12),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blueAccent,
                 foregroundColor: Colors.white,
@@ -255,7 +261,6 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
       ),
     );
   }
-
   Widget _buildRecentJobsHeader(bool hasRecentJobs, AsyncValue<List<JobModel>> recentJobsAsync) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -343,7 +348,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
   return Card(
     elevation: 1,
     child: ListTile(
-      contentPadding: const EdgeInsets.all(8),
+      contentPadding: EdgeInsets.all(8),
       leading: Container(
         width: 40,
         height: 40,

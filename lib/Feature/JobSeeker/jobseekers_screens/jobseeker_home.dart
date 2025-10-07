@@ -34,9 +34,9 @@ class JobSeekerDashboard extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildWelcomeSection(height,width),
+                _buildWelcomeSection(height, width),
                 SizedBox(height: height * 0.02),
-                _buildSearchBar(),
+                _buildSearchBar(height, width),
                 SizedBox(height: height * 0.02),
                 Container(
                   decoration: BoxDecoration(
@@ -58,7 +58,7 @@ class JobSeekerDashboard extends ConsumerWidget {
                     padding: const EdgeInsets.all(15.0),
                     child: Column(
                       children: [
-                        _buildCategorySection(ref),
+                        _buildCategorySection(ref, height, width),
                         // SizedBox(height:height*0.02),
                         _buildJobMatchHeader(),
                         _buildJobsList(jobsAsync, selectedCategory),
@@ -74,47 +74,52 @@ class JobSeekerDashboard extends ConsumerWidget {
     );
   }
 
-  Widget _buildWelcomeSection(double height,double width) {
+  Widget _buildWelcomeSection(double height, double width) {
     return Padding(
-      padding:  EdgeInsets.only(left: width*0.05,right: width*0.02,top: height*0.04),
+      padding: EdgeInsets.only(
+        left: width * 0.05,
+        right: width * 0.02,
+        top: height * 0.04,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Welcome back',
-            style: TextStyle(fontSize: 16, color:AppColors.white),
+            style: TextStyle(
+              fontSize: 15,
+              color: AppColors.black,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-         
+
           const Text(
             'David Robert Wilson',
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
               color: AppColors.black,
             ),
           ),
-          
+
           Text(
             'Let\'s get you hired for the job you deserve!',
-            style: TextStyle(fontSize: 10, color: AppColors.white),
+            style: TextStyle(fontSize: 10, color: AppColors.black),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(double height, double width) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: EdgeInsets.symmetric(horizontal: 10),
       child: TextField(
         decoration: InputDecoration(
           hintText: 'Search',
-          hintStyle: TextStyle(color: Colors.grey[500]),
+          hintStyle: TextStyle(color: Colors.grey, fontSize: 12),
           prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 15,
-          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           filled: true,
           fillColor: Colors.grey[100],
           border: OutlineInputBorder(
@@ -137,20 +142,20 @@ class JobSeekerDashboard extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategorySection(WidgetRef ref) {
+  Widget _buildCategorySection(WidgetRef ref, double height, double width) {
     final staticCats = ref.watch(staticCategoriesProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Category',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: height * 0.012),
         SizedBox(
-          height: 40,
+          height: height * 0.04,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: staticCats.length + 1, // +1 for "All" category
@@ -158,9 +163,12 @@ class JobSeekerDashboard extends ConsumerWidget {
               final category = index == 0 ? 'All' : staticCats[index - 1];
               final isSelected = selectedCategory == category;
               return Padding(
-                padding: const EdgeInsets.only(right: 8.0),
+                padding: EdgeInsets.only(right: width * 0.02),
                 child: FilterChip(
-                  label: Text(category),
+                  label: Text(
+                    category,
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
+                  ),
                   selected: isSelected,
                   onSelected: (selected) {
                     ref.read(selectedCategoryProvider.notifier).state =
@@ -170,10 +178,12 @@ class JobSeekerDashboard extends ConsumerWidget {
                     // ignore: deprecated_member_use
                     side: BorderSide(color: AppColors.grey.withOpacity(0.5)),
                   ),
-                  backgroundColor: isSelected ? AppColors.white : AppColors.black,
+                  backgroundColor: isSelected
+                      ? AppColors.white
+                      : AppColors.black,
                   selectedColor: AppColors.lightGrey,
                   labelStyle: TextStyle(
-                  color: isSelected ? AppColors.black : AppColors.grey,
+                    color: isSelected ? AppColors.black : AppColors.grey,
                   ),
                 ),
               );
@@ -190,13 +200,17 @@ class JobSeekerDashboard extends ConsumerWidget {
       children: [
         const Text(
           'Job match with you',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
         ),
         TextButton(
           onPressed: () {},
-          child: const Text(
+          child: Text(
             'See All',
-            style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.blue,
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
       ],
@@ -234,21 +248,21 @@ class JobSeekerDashboard extends ConsumerWidget {
           itemCount: jobs.length,
           itemBuilder: (context, index) {
             final job = jobs[index];
-            return _buildJobCard(context,job);
+            return _buildJobCard(context, job);
           },
         );
       },
     );
   }
 
-  Widget _buildJobCard(BuildContext context ,JobModel job,) {
+  Widget _buildJobCard(BuildContext context, JobModel job) {
     return InkWell(
-      onTap: (){
-          context.push('/job-details', extra: job);
+      onTap: () {
+        context.push('/job-details', extra: job);
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(4),
+        margin: EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.all(4),
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(12),
@@ -331,8 +345,8 @@ class JobSeekerDashboard extends ConsumerWidget {
                               children: [
                                 Text(
                                   job.designation,
-                                  style: const TextStyle(
-                                    fontSize: 18,
+                                  style: TextStyle(
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -341,7 +355,7 @@ class JobSeekerDashboard extends ConsumerWidget {
                                 Text(
                                   '${job.ctc} ',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 11,
                                     color: Colors.grey[600],
                                   ),
                                 ),
@@ -354,21 +368,21 @@ class JobSeekerDashboard extends ConsumerWidget {
                                 Text(
                                   '${job.companyName} ',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 11,
                                     color: Colors.grey[600],
                                   ),
                                 ),
                                 SizedBox(width: 4),
                                 Icon(
                                   Icons.location_pin,
-                                  size: 18,
+                                  size: 15,
                                   // ignore: deprecated_member_use
                                   color: AppColors.grey.withOpacity(0.8),
                                 ),
                                 Text(
                                   ' ${job.location}',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 11,
                                     color: Colors.grey[600],
                                   ),
                                 ),
@@ -384,7 +398,6 @@ class JobSeekerDashboard extends ConsumerWidget {
                         _buildJobTag('Remote'),
                         const SizedBox(width: 8),
                         _buildJobTag('Full-time'),
-      
                         // _buildJobTag('${job.ctc}/month'),
                       ],
                     ),
@@ -401,25 +414,27 @@ class JobSeekerDashboard extends ConsumerWidget {
                   SizedBox(width: 5),
                   Text(
                     '${_calculateTimeAgo(job.createdAt)} ago',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                    style: TextStyle(fontSize: 10, color: Colors.grey[500]),
                   ),
                   SizedBox(width: 20),
-                  Icon(Icons.person_2_outlined, color: AppColors.grey, size: 15),
+                  Icon(
+                    Icons.person_2_outlined,
+                    color: AppColors.grey,
+                    size: 15,
+                  ),
                   SizedBox(width: 4),
                   Text(
                     '8 application',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.grey,
-                      fontSize: 12,
+                      fontSize: 8,
+
                       fontWeight: FontWeight.w400,
                     ),
                   ),
                   Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: Colors.red[50],
                       borderRadius: BorderRadius.circular(4),
@@ -427,16 +442,16 @@ class JobSeekerDashboard extends ConsumerWidget {
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.05),
                           blurRadius: 2,
-                          offset: const Offset(0, 1),
+                          offset: Offset(0, 1),
                         ),
                       ],
                     ),
-                    child: const Text(
+                    child: Text(
                       'URGENT',
                       style: TextStyle(
                         color: Colors.red,
                         fontSize: 10,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
@@ -459,7 +474,7 @@ class JobSeekerDashboard extends ConsumerWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+        style: TextStyle(fontSize: 10, color: Colors.grey[700]),
       ),
     );
   }
