@@ -29,6 +29,7 @@ class JobDetailsScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
               border: Border.all(
+                // ignore: deprecated_member_use
                 color: AppColors.darkGrey.withOpacity(0.2),
                 width: 1.5,
               ),
@@ -54,6 +55,7 @@ class JobDetailsScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
                 border: Border.all(
+                  // ignore: deprecated_member_use
                   color: AppColors.darkGrey.withOpacity(0.2),
                   width: 1.5,
                 ),
@@ -164,34 +166,35 @@ class JobDetailsScreen extends ConsumerWidget {
                     Text(
                       job.designation,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 4),
                     Row(
                       children: [
                         Text(
                           job.companyName,
-                          style: TextStyle(fontSize: 12, color: AppColors.grey),
+                          style: TextStyle(fontSize: 10, color: AppColors.grey),
                         ),
                         SizedBox(width: width * 0.01),
                         Icon(
                           Icons.location_on_outlined,
                           size: 16,
-                          color: AppColors.grey,
+                          color: AppColors.black,
                         ),
                         SizedBox(width: width * 0.005),
                         Text(
                           job.location,
-                          style: TextStyle(color: AppColors.grey, fontSize: 12),
+                          style: TextStyle(color: AppColors.grey, fontSize: 10),
                         ),
                       ],
                     ),
                   ],
                 ),
-                Spacer(),
-                Icon(Iconsax.archive_add, size: 20, color: AppColors.black),
+                // Icon(Iconsax.archive_add, size: 20, color: AppColors.black),
               ],
             ),
           ),
@@ -294,6 +297,7 @@ class JobDetailsScreen extends ConsumerWidget {
             // ignore: deprecated_member_use
             color: isSelected
                 ? AppColors.black
+                // ignore: deprecated_member_use
                 : AppColors.verylightblue.withOpacity(0.1),
           ),
           child: Center(
@@ -352,7 +356,6 @@ A job description (JD) is a brief written description of the role and responsibi
     ],
   );
 }
-
 Widget _buildRequirementsSection(JobModel job, double height, double width) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -453,7 +456,7 @@ Widget _buildApplyButton(BuildContext context, JobModel job) {
         padding: EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      child: const Text(
+      child:Text(
         'Apply Now',
         style: TextStyle(
           fontSize: 12,
@@ -501,7 +504,7 @@ void _showApplyDialog(BuildContext context, JobModel job) {
           onPressed: () {
             Navigator.pop(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Application submitted successfully!')),
+              SnackBar(content: Text('Application submitted successfully!'),),
             );
           },
           child: Text(

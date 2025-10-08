@@ -41,15 +41,16 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final recruiterEmail = ref.watch(currentUserEmailProvider);
-    final recentJobsAsync = ref.watch(recentJobsProvider);
-    final totalJobsCount = ref.watch(totalJobsCountProvider);
-    final activeJobsCount = ref.watch(activeJobsCountProvider);
-    final hasRecentJobs = ref.watch(hasRecentJobsProvider);
-    var height=MediaQuery.of(context).size.height;
-     var width=MediaQuery.of(context).size.width;
-    log('=== DEBUG INFO ===');
+Widget build(BuildContext context) {
+  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  final recentJobsAsync = ref.watch(recentJobsProvider);
+  final totalJobsCount = ref.watch(totalJobsCountProvider);
+  final activeJobsCount = ref.watch(activeJobsCountProvider);
+  final hasRecentJobs = ref.watch(hasRecentJobsProvider);
+  var height=MediaQuery.of(context).size.height;
+   var width=MediaQuery.of(context).size.width;
+  
+  log('=== DEBUG INFO ===');
   log('Recruiter Email: $recruiterEmail');
   log('Recent Jobs State: ${recentJobsAsync.value}');
   log('Total Jobs Count: ${totalJobsCount.value}');
@@ -62,20 +63,26 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     log('Recent Jobs Stack: ${recentJobsAsync.stackTrace}');
   }
   log('==================');
-    return Scaffold(
-      appBar: AppBar(
-        title:  Text('Upload Jobs'),
-        backgroundColor: Colors.blueAccent,
-        actions: [
-          IconButton(
-            icon: const Icon(Iconsax.refresh),
-            onPressed: _refreshRecentJobs,
-            tooltip: 'Refresh Jobs',
-          ),
-        ],
-      ),
-      body: Padding(
-        padding:EdgeInsets.all(16),
+  
+  return Scaffold(
+    appBar: AppBar(
+      title:  Text('Upload Jobs'),
+      backgroundColor: Colors.blueAccent,
+      actions: [
+        IconButton(
+          icon: const Icon(Iconsax.refresh),
+          onPressed: _refreshRecentJobs,
+          tooltip: 'Refresh Jobs',
+        ),
+      ],
+    ),
+    body: RefreshIndicator(
+      onRefresh: () async {
+        _refreshRecentJobs();
+      },
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -84,7 +91,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
               height: 100, // Fixed height to prevent overflow
               child: _buildStatisticsCards(totalJobsCount, activeJobsCount),
             ),
-             SizedBox(height: height*0.016),
+            SizedBox(height: height*0.016),
             // Guidelines Card - Limited height with scroll if needed
             ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 200),
@@ -101,15 +108,14 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
             // Recent Jobs Header
             _buildRecentJobsHeader(hasRecentJobs, recentJobsAsync),
             const SizedBox(height: 8),
-            Expanded(
-              child: _buildRecentJobsList(recentJobsAsync, recruiterEmail),
-            ),
+            // Recent Jobs List - Now part of the main scroll
+            _buildRecentJobsList(recentJobsAsync, recruiterEmail),
           ],
         ),
       ),
-    );
-  }
-
+    ),
+  );
+}
   Widget _buildStatisticsCards(AsyncValue<int> totalJobsCount, AsyncValue<int> activeJobsCount) {
     return Row(
       children: [
@@ -135,7 +141,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                     ),
                     error: (error, stack) =>  Text('0', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
-                   Text('Total Jobs', style: TextStyle(fontSize: 10, color: Colors.blue)),
+                  Text('Total Jobs', style: TextStyle(fontSize: 10, color: Colors.blue)),
                 ],
               ),
             ),
@@ -289,177 +295,226 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
   }
 
   Widget _buildRecentJobsList(AsyncValue<List<JobModel>> recentJobsAsync, String recruiterEmail) {
-    return recentJobsAsync.when(
-      data: (jobs) {
-        if (jobs.isEmpty) {
-          return _buildEmptyState();
-        }
-        return RefreshIndicator(
-          onRefresh: () async {
-            _refreshRecentJobs();
-          },
-          child: ListView.builder(
-            controller: _scrollController,
-            itemCount: jobs.length,
-            itemBuilder: (context, index) {
-              final job = jobs[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: _buildJobItem(job, recruiterEmail),
-              );
-            },
-          ),
-        );
-      },
-      loading: () => const Center(
+  return recentJobsAsync.when(
+    data: (jobs) {
+      if (jobs.isEmpty) {
+        return _buildEmptyState();
+      }
+      return Column(
+        children: [
+          ...jobs.map((job) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: _buildJobItem(job, recruiterEmail),
+          )).toList(),
+        ],
+      );
+    },
+    loading: () => const Padding(
+      padding: EdgeInsets.all(16),
+      child: Center(
         child: CircularProgressIndicator(),
       ),
-      error: (error, stack) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Iconsax.warning_2, color: Colors.red, size: 40),
-              const SizedBox(height: 12),
-              Text(
-                'Error loading jobs',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: _refreshRecentJobs,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                ),
-                child: const Text('Retry', style: TextStyle(fontSize: 12)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildJobItem(JobModel job, String recruiterEmail) {
-  final jobStatusAsync = ref.watch(jobStatusProvider(job.id));
-  
-  return Card(
-    elevation: 1,
-    child: ListTile(
-      contentPadding: EdgeInsets.all(8),
-      leading: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: Colors.blue[100],
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: job.imageUrl.isNotEmpty
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: Image.network(
-                  job.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(Iconsax.building, color: Colors.blue[600], size: 20);
-                  },
-                ),
-              )
-            : Icon(Iconsax.building, color: Colors.blue[600], size: 20),
-      ),
-      title: Text(
-        job.designation,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 2),
-          Text(
-            job.companyName,
-            style: const TextStyle(fontSize: 11),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 2),
-          Row(
-            children: [
-              Icon(Iconsax.location, size: 10, color: Colors.grey[600]),
-              const SizedBox(width: 2),
-              Text(
-                job.location,
-                style: TextStyle(fontSize: 10, color: Colors.grey[600]),
-              ),
-              const SizedBox(width: 6),
-              Icon(Iconsax.category, size: 10, color: Colors.grey[600]),
-              const SizedBox(width: 2),
-              Text(
-                job.category,
-                style: TextStyle(fontSize: 10, color: Colors.grey[600]),
-              ),
-            ],
-          ),
-        ],
-      ),
-      trailing: SizedBox(
-        width: 70,
+    ),
+    error: (error, stack) => Padding(
+      padding: const EdgeInsets.all(16),
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            jobStatusAsync.when(
-              data: (isActive) => GestureDetector(
-                onTap: () => _toggleJobStatus(job.id, isActive, recruiterEmail),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: isActive ? Colors.green : Colors.grey,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    isActive ? 'Active' : 'Inactive',
-                    style: const TextStyle(color: Colors.white, fontSize: 9),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              loading: () => const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-              error: (error, stack) => GestureDetector(
-                onTap: () => _refreshJobStatus(job.id),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    'Error',
-                    style: TextStyle(color: Colors.white, fontSize: 9),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 2),
+            const Icon(Iconsax.warning_2, color: Colors.red, size: 40),
+            const SizedBox(height: 12),
             Text(
-              _formatTimeAgo(job.createdAt),
-              style: TextStyle(fontSize: 9, color: Colors.grey[600]),
+              'Error loading jobs',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: _refreshRecentJobs,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              ),
+              child: const Text('Retry', style: TextStyle(fontSize: 12)),
             ),
           ],
         ),
       ),
-      onTap: () {
-        context.push('/job-details', extra: job);
-      },
     ),
   );
 }
+
+  Widget _buildJobItem(JobModel job, String recruiterEmail) {
+  final jobStatusAsync = ref.watch(jobStatusProvider(job.id));
+  
+  return InkWell(
+    onLongPress: (){
+        _showDeleteDialog(job);
+    },
+    child: Card(
+      elevation: 1,
+      child: ListTile(
+        contentPadding: EdgeInsets.all(8),
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.blue[100],
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: job.imageUrl.isNotEmpty
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.network(
+                    job.imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Iconsax.building, color: Colors.blue[600], size: 20);
+                    },
+                  ),
+                )
+              : Icon(Iconsax.building, color: Colors.blue[600], size: 20),
+        ),
+        title: Text(
+          job.designation,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 2),
+            Text(
+              job.companyName,
+              style: const TextStyle(fontSize: 11),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 2),
+            Row(
+              children: [
+                Icon(Iconsax.location, size: 10, color: Colors.grey[600]),
+                const SizedBox(width: 2),
+                Text(
+                  job.location,
+                  style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                ),
+                const SizedBox(width: 6),
+                Icon(Iconsax.category, size: 10, color: Colors.grey[600]),
+                const SizedBox(width: 2),
+                Text(
+                  job.category,
+                  style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ],
+        ),
+        trailing: SizedBox(
+          width: 70,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              jobStatusAsync.when(
+                data: (isActive) => GestureDetector(
+                  onTap: () => _toggleJobStatus(job.id, isActive, recruiterEmail),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: isActive ? Colors.green : Colors.grey,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      isActive ? 'Active' : 'Inactive',
+                      style: const TextStyle(color: Colors.white, fontSize: 9),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                loading: () => const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                error: (error, stack) => GestureDetector(
+                  onTap: () => _refreshJobStatus(job.id),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      'Error',
+                      style: TextStyle(color: Colors.white, fontSize: 9),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                _formatTimeAgo(job.createdAt),
+                style: TextStyle(fontSize: 9, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ),
+        onTap: () {
+          context.push('/job-details', extra: job);
+        },
+      ),
+    ),
+  );
+}
+void _showDeleteDialog(JobModel job) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Delete Job'),
+      content: Text('Are you sure you want to delete "${job.designation}" at ${job.companyName}?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () async {
+            Navigator.of(context).pop();
+            await _deleteJob(job.id);
+          },
+          child: Text(
+            'Delete',
+            style: TextStyle(color: Colors.red),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Future<void> _deleteJob(String jobId) async {
+  try {
+    final jobNotifier = ref.read(jobNotifierProvider.notifier);
+    await jobNotifier.deleteJob(jobId);
+    
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Job deleted successfully!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  } catch (e) {
+    // Show error message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Failed to delete job: $e'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
+
 //refresh recent jobs
 void _refreshJobStatus(String jobId) {
   final recruiterEmail = ref.read(currentUserEmailProvider);

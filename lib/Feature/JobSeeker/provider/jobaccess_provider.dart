@@ -17,6 +17,12 @@ final List<String> staticCategories = [
   'Java',
   'Flutter'
 ];
+final searchQueryProvider = StateProvider<String>((ref) => '');
+// Provider for selected job (to pass data between screens)
+final selectedJobProvider = StateProvider<JobModel?>((ref) => null);
+
+// Provider for selected category
+final selectedCategoryProvider = StateProvider<String>((ref) => 'All');
 
 // Repository provider
 final jobRepositoryProvider = Provider<JobRepository>((ref) {
@@ -44,13 +50,31 @@ final categoriesProvider = StreamProvider<List<String>>((ref) {
   return repository.getAvailableCategories();
 });
 
-// Provider for selected category
-final selectedCategoryProvider = StateProvider<String>((ref) => 'All');
-
-
-
 final staticCategoriesProvider = Provider<List<String>>((ref) {
   return staticCategories;
 });
-// Provider for selected job (to pass data between screens)
-final selectedJobProvider = StateProvider<JobModel?>((ref) => null);
+
+final searchResultsProvider = StreamProvider<List<JobModel>>((ref) {
+  final searchQuery = ref.watch(searchQueryProvider);
+  final jobRepository = ref.watch(jobRepositoryProvider);
+  
+  if (searchQuery.isEmpty) {
+    // Return all active jobs when search is empty
+    return jobRepository.getActiveJobs();
+  }
+  
+  // Use the search method from repository
+  return jobRepository.searchJobs(query: searchQuery);
+});
+// only search textfield
+final searchOnlyProvider = StreamProvider<List<JobModel>>((ref) {
+  final searchQuery = ref.watch(searchQueryProvider);
+  final jobRepository = ref.watch(jobRepositoryProvider);
+  
+  // Only return results when there's a search query
+  if (searchQuery.isEmpty) {
+    return  Stream.value([]); // Empty when not searching
+  }
+  
+  return jobRepository.searchJobs(query: searchQuery);
+});

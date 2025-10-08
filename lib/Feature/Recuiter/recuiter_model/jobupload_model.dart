@@ -44,7 +44,7 @@ class JobModel {
       'ctc': ctc,
       'noticePeriod': noticePeriod,
       'location': location,
-      'application': application,
+      'application': application, //this is description 
       'imageUrl': imageUrl,
       'category': category,
       'isActive': isActive,

@@ -17,22 +17,26 @@ class JobState {
   final bool isLoading;
   final String? error;
   final bool success;
+  final bool isDeleting;
 
   const JobState({
     this.isLoading = false,
     this.error,
     this.success = false,
+    this.isDeleting = false,
   });
 
   JobState copyWith({
     bool? isLoading,
     String? error,
     bool? success,
+    bool? isDeleting,
   }) {
     return JobState(
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
       success: success ?? this.success,
+      isDeleting: isDeleting ?? this.isDeleting,
     );
   }
 }
@@ -42,7 +46,7 @@ class JobNotifier extends StateNotifier<JobState> {
   final FirebaseService _firebaseService;
   final Ref _ref;
 
-  JobNotifier(this._firebaseService, this._ref) : super(const JobState());
+   JobNotifier(this._firebaseService, this._ref) : super(const JobState());
 
   String get _recruiterEmail => _ref.read(currentUserEmailProvider);
 
@@ -79,6 +83,16 @@ class JobNotifier extends StateNotifier<JobState> {
       rethrow;
     }
   }
+   Future<void> deleteJob(String jobId) async {
+    state = state.copyWith(isDeleting: true, error: null);
+    try {
+      await _firebaseService.deleteJob(jobId, _recruiterEmail);
+      state = state.copyWith(isDeleting: false, success: true);
+    } catch (e) {
+      state = state.copyWith(isDeleting: false, error: 'Failed to delete job: $e');
+      rethrow;
+    }
+  }
 
   Future<void> toggleJobStatus(String jobId, bool currentStatus) async {
     try {
@@ -102,6 +116,20 @@ class JobNotifier extends StateNotifier<JobState> {
 final jobNotifierProvider = StateNotifierProvider<JobNotifier, JobState>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
   return JobNotifier(firebaseService, ref);
+});
+
+// DELETE PROVIDER - Add this provider for delete operations
+final jobDeleteProvider = FutureProvider.family<void, String>((ref, jobId) async {
+  final jobNotifier = ref.read(jobNotifierProvider.notifier);
+  await jobNotifier.deleteJob(jobId);
+});
+
+// JOB DETAIL PROVIDER - For getting individual job details
+final jobDetailProvider = StreamProvider.family<JobModel?, String>((ref, jobId) {
+  final firebaseService = ref.read(firebaseServiceProvider);
+  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  if (recruiterEmail.isEmpty) return Stream.value(null);
+   return Stream.fromFuture(firebaseService.getJobById(jobId, recruiterEmail));
 });
 
 // Stream providers with recruiter email

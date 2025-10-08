@@ -567,7 +567,7 @@ class _JobdetailScreenState extends ConsumerState<JobdetailScreen> {
         _buildTextFormField(height, width, _designationController, 'Designation *',
             icon: Icon(Iconsax.briefcase, size: 18), isRequired: true),
         _buildTextFormField(height, width, _ctcController, 'CTC *',
-            icon: Icon(Iconsax.wallet, size: 18), isRequired: true, isNumber: true),
+            icon: Icon(Iconsax.wallet, size: 18), isRequired: true, isNumber:false),
         _buildTextFormField(height, width, _noticePeriodController, 'Notice Period *',
             icon: Icon(Iconsax.calendar, size: 18), isRequired: true),
         _buildTextFormField(height, width, _locationController, 'Location *',
@@ -767,6 +767,9 @@ class _JobdetailScreenState extends ConsumerState<JobdetailScreen> {
         category: category,
         createdAt: widget.job?.createdAt ?? DateTime.now(),
         recruiterEmail: recruiterEmail,
+        benefits:_benefitsController.text,
+        qualifications: _qualificationsController.text,
+        skills: _skillsController.text
       );
 
       // Save or update job

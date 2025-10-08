@@ -1,32 +1,62 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jobapp/Feature/JobSeeker/provider/jobseekerInfo_provider.dart';
 
-
-class JobseekerInfo extends StatefulWidget {
+class JobseekerInfo extends ConsumerStatefulWidget {
   const JobseekerInfo({super.key});
 
   @override
-  State<JobseekerInfo> createState() => _JobseekerInfoState();
+  ConsumerState<JobseekerInfo> createState() => _JobseekerInfoState();
 }
 
-class _JobseekerInfoState extends State<JobseekerInfo> {
+class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController qualificationController = TextEditingController();
-  final TextEditingController jobdesignationController =
-      TextEditingController();
+  final TextEditingController jobdesignationController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController experienceController = TextEditingController();
-  final TextEditingController profileDesignationController =
-      TextEditingController();
+  final TextEditingController profileDesignationController = TextEditingController();
 
   // Form key for validation
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize controllers with provider state if needed
+    _initializeControllers();
+  }
+
+  void _initializeControllers() {
+    final state = ref.read(jobseekerInfoProvider);
+    
+    nameController.text = state.name;
+    emailController.text = state.email;
+    contactController.text = state.contact;
+    qualificationController.text = state.qualification;
+    jobdesignationController.text = state.jobDesignation;
+    locationController.text = state.location;
+    experienceController.text = state.experience;
+    profileDesignationController.text = state.profileDescription;
+
+    // Add listeners to update provider state
+    nameController.addListener(() => ref.read(jobseekerInfoProvider.notifier).setName(nameController.text));
+    emailController.addListener(() => ref.read(jobseekerInfoProvider.notifier).setEmail(emailController.text));
+    contactController.addListener(() => ref.read(jobseekerInfoProvider.notifier).setContact(contactController.text));
+    qualificationController.addListener(() => ref.read(jobseekerInfoProvider.notifier).setQualification(qualificationController.text));
+    jobdesignationController.addListener(() => ref.read(jobseekerInfoProvider.notifier).setJobDesignation(jobdesignationController.text));
+    locationController.addListener(() => ref.read(jobseekerInfoProvider.notifier).setLocation(locationController.text));
+    experienceController.addListener(() => ref.read(jobseekerInfoProvider.notifier).setExperience(experienceController.text));
+    profileDesignationController.addListener(() => ref.read(jobseekerInfoProvider.notifier).setProfileDescription(profileDesignationController.text));
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final jobseekerState = ref.watch(jobseekerInfoProvider);
+    
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     final colorScheme = Theme.of(context).colorScheme;
@@ -119,29 +149,36 @@ class _JobseekerInfoState extends State<JobseekerInfo> {
                   icon: const Icon(Icons.description),
                   maxline: 4,
                 ),
-                SizedBox(height: height * 0.03),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                      vertical: width * 0.03,
-                      horizontal: height * 0.09,
-                    ),
-                    backgroundColor: colorScheme.secondaryFixed,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                
+                // Error message
+                if (jobseekerState.error != null)
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: height * 0.01),
+                    child: Text(
+                      jobseekerState.error!,
+                      style: TextStyle(color: Colors.red, fontSize: 14),
                     ),
                   ),
-                  onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => JobseekerNavbar(),
-                    //   ),
-                    // );
-                    _submitForm();
-                  },
-                  child: const Text("Submit"),
-                ),
+                
+                SizedBox(height: height * 0.03),
+                
+                // Submit button
+                jobseekerState.isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            vertical: width * 0.03,
+                            horizontal: height * 0.09,
+                          ),
+                          backgroundColor: colorScheme.secondaryFixed,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: _submitForm,
+                        child: const Text("Submit"),
+                      ),
                 SizedBox(height: height * 0.02),
               ],
             ),
@@ -151,44 +188,58 @@ class _JobseekerInfoState extends State<JobseekerInfo> {
     );
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Form is valid, log the data
-      log('Name: ${nameController.text}');
-      log('Email: ${emailController.text}');
-      log('Contact: ${contactController.text}');
-      log('Qualification: ${qualificationController.text}');
-      log('Job Designation: ${jobdesignationController.text}');
-      log('Location: ${locationController.text}');
-      log('Experience: ${experienceController.text}');
-      log('Profile Description: ${profileDesignationController.text}');
+      try {
+        await ref.read(jobseekerInfoProvider.notifier).submitInfo();
+        
+        final currentState = ref.read(jobseekerInfoProvider);
+        
+        if (!currentState.isLoading && currentState.error == null) {
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              margin: EdgeInsets.all(16),
+              content: Text('Information submitted successfully!'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+          
+          // Log the data
+          log('Name: ${nameController.text}');
+          log('Email: ${emailController.text}');
+          log('Contact: ${contactController.text}');
+          log('Qualification: ${qualificationController.text}');
+          log('Job Designation: ${jobdesignationController.text}');
+          log('Location: ${locationController.text}');
+          log('Experience: ${experienceController.text}');
+          log('Profile Description: ${profileDesignationController.text}');
 
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          margin: EdgeInsets.all(16),
-          content: Text('Information submitted successfully!'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 1),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          // You can add navigation here
+          // Navigator.push(context, MaterialPageRoute(builder: (context) => JobseekerNavbar()));
+        }
+        
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ),
-          //     backgroundColor: Colors.green,
-        ),
-      );
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => SecondPage()),
-      // );
-      // You can add navigation or other actions here
+        );
+      }
     } else {
       // Form is invalid
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please fill all required fields correctly.'),
           backgroundColor: Colors.red,
-          duration: Duration(seconds: 1),
+          duration: Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -220,8 +271,8 @@ class _JobseekerInfoState extends State<JobseekerInfo> {
         keyboardType: isEmail
             ? TextInputType.emailAddress
             : isPhone || isNumber
-            ? TextInputType.phone
-            : TextInputType.text,
+                ? TextInputType.phone
+                : TextInputType.text,
         maxLines: maxline ?? 1,
         decoration: InputDecoration(
           labelText: label + (isRequired ? ' *' : ''),

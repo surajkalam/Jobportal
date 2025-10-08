@@ -6,38 +6,74 @@ import 'package:jobapp/core/util.dart/appcolors.dart';
 
 import '../provider/provider.dart';
 
-class JobSeekerDashboard extends ConsumerWidget {
+class JobSeekerDashboard extends ConsumerStatefulWidget {
   const JobSeekerDashboard({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
-    final selectedCategory = ref.watch(selectedCategoryProvider);
-    // final categoriesAsync = ref.watch(categoriesProvider);
-    final jobsAsync = ref.watch(filteredJobsProvider(selectedCategory));
+  ConsumerState<JobSeekerDashboard> createState() => _JobSeekerDashboardState();
+}
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.faintbackblue, AppColors.white],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [0.04, 0.3],
-            ),
+class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
+ final TextEditingController _searchController = TextEditingController();
+ @override
+  void initState() {
+    super.initState();
+    // Listen to search query changes and update controller
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    // Update provider only when text actually changes
+    if (_searchController.text != ref.read(searchQueryProvider)) {
+      ref.read(searchQueryProvider.notifier).state = _searchController.text;
+    }
+  }
+
+@override
+Widget build(BuildContext context) {
+  final ref = this.ref;
+  var height = MediaQuery.of(context).size.height;
+  var width = MediaQuery.of(context).size.width;
+  final selectedCategory = ref.watch(selectedCategoryProvider);
+  // final categoriesAsync = ref.watch(categoriesProvider);
+  // final jobsAsync = ref.watch(filteredJobsProvider(selectedCategory));
+  final searchQuery = ref.watch(searchQueryProvider);
+
+  // Decide which provider to use based on whether user is searching
+  final jobsAsync = searchQuery.isEmpty
+      ? ref.watch(filteredJobsProvider(selectedCategory)) // Use category filter
+      : ref.watch(searchOnlyProvider); // Use search results
+
+  return Scaffold(
+    body: SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColors.faintbackblue, AppColors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0.04, 0.3],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(2.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildWelcomeSection(height, width),
-                SizedBox(height: height * 0.02),
-                _buildSearchBar(height, width),
-                SizedBox(height: height * 0.02),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildWelcomeSection(height, width),
+              SizedBox(height: height * 0.02),
+              _buildSearchBar(height, width),
+              SizedBox(height: height * 0.02),
+              // Only show category section when not searching
+              if (searchQuery.isEmpty) ...[
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
@@ -45,7 +81,6 @@ class JobSeekerDashboard extends ConsumerWidget {
                       topRight: Radius.circular(20),
                     ),
                     border: BoxBorder.all(
-                      // ignore: deprecated_member_use
                       color: AppColors.grey.withOpacity(0.6),
                       width: 1.5,
                     ),
@@ -59,21 +94,63 @@ class JobSeekerDashboard extends ConsumerWidget {
                     child: Column(
                       children: [
                         _buildCategorySection(ref, height, width),
-                        // SizedBox(height:height*0.02),
                         _buildJobMatchHeader(),
-                        _buildJobsList(jobsAsync, selectedCategory),
+                        _buildJobsList(jobsAsync, selectedCategory, height, width),
+                      ],
+                    ),
+                  ),
+                ),
+              ] else ...[
+                // When searching, show search results in a simpler container
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: AppColors.grey.withOpacity(0.6),
+                      width: 1.5,
+                    ),
+                    color: Colors.transparent,
+                  ),
+                  constraints: BoxConstraints(
+                    minHeight: MediaQuery.of(context).size.height,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      children: [
+                        _buildSearchHeader(searchQuery, context),
+                        _buildJobsList(jobsAsync, "Search Results", height, width),
                       ],
                     ),
                   ),
                 ),
               ],
-            ),
+            ],
           ),
         ),
       ),
-    );
-  }
-
+    ),
+  );
+}
+Widget _buildSearchHeader(String searchQuery,BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        'Search Results for "$searchQuery"',
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+      ),
+      IconButton(
+        icon: Icon(Icons.close, size: 20),
+        onPressed: () {
+          // Clear search when close button is pressed
+          final ref = ProviderScope.containerOf(context);
+          ref.read(searchQueryProvider.notifier).state = '';
+        },
+      ),
+    ],
+  );
+}
   Widget _buildWelcomeSection(double height, double width) {
     return Padding(
       padding: EdgeInsets.only(
@@ -101,7 +178,6 @@ class JobSeekerDashboard extends ConsumerWidget {
               color: AppColors.black,
             ),
           ),
-
           Text(
             'Let\'s get you hired for the job you deserve!',
             style: TextStyle(fontSize: 10, color: AppColors.black),
@@ -112,36 +188,53 @@ class JobSeekerDashboard extends ConsumerWidget {
   }
 
   Widget _buildSearchBar(double height, double width) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: 'Search',
-          hintStyle: TextStyle(color: Colors.grey, fontSize: 12),
-          prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          filled: true,
-          fillColor: Colors.grey[100],
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.grey, width: 1),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.grey, width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: Colors.lightBlue,
-              width: 2,
-            ), // Light blue when focused
+  return Consumer(
+    builder: (context, ref, child) {
+      final searchQuery = ref.watch(searchQueryProvider);
+      // Sync controller with provider value (only if different)
+      if (_searchController.text != searchQuery) {
+        _searchController.text = searchQuery;
+      }
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: TextField(
+          controller: _searchController, // Use the same controller
+          decoration: InputDecoration(
+            hintText: 'Search by company, location, designation...',
+            hintStyle: TextStyle(color: Colors.grey, fontSize: 12),
+            prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
+            suffixIcon: searchQuery.isNotEmpty
+                ? IconButton(
+                    icon: Icon(Icons.clear, size: 16),
+                    onPressed: () {
+                      _searchController.clear();
+                    },
+                  )
+                : null,
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            filled: true,
+            fillColor: Colors.grey[100],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: AppColors.grey, width: 1),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: AppColors.grey, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Colors.lightBlue,
+                width: 2,
+              ),
+            ),
           ),
         ),
-      ),
-    );
-  }
-
+      );
+    },
+  );
+}
   Widget _buildCategorySection(WidgetRef ref, double height, double width) {
     final staticCats = ref.watch(staticCategoriesProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
@@ -220,6 +313,7 @@ class JobSeekerDashboard extends ConsumerWidget {
   Widget _buildJobsList(
     AsyncValue<List<JobModel>> jobsAsync,
     String selectedCategory,
+    double height,double width
   ) {
     return jobsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -299,7 +393,7 @@ class JobSeekerDashboard extends ConsumerWidget {
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: EdgeInsets.all(10.0),
                 child: Column(
                   children: [
                     Row(
@@ -323,7 +417,7 @@ class JobSeekerDashboard extends ConsumerWidget {
                               ],
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(2.0),
+                              padding: EdgeInsets.all(2.0),
                               child: ClipRRect(
                                 clipBehavior: Clip.antiAlias,
                                 borderRadius: BorderRadius.circular(50),
@@ -336,39 +430,42 @@ class JobSeekerDashboard extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width: 20),
+                        SizedBox(width: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  job.designation,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                SizedBox(
+                                      width: MediaQuery.of(context).size.width * 0.4, 
+                                  child: Text(
+                                    job.designation,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                // Spacer(),
-                                SizedBox(width: 50),
+                                SizedBox(width: 10,),
                                 Text(
                                   '${job.ctc} ',
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: 09,
                                     color: Colors.grey[600],
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 2),
+                            SizedBox(height: 2),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
                                   '${job.companyName} ',
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: 09,
                                     color: Colors.grey[600],
                                   ),
                                 ),
@@ -382,7 +479,7 @@ class JobSeekerDashboard extends ConsumerWidget {
                                 Text(
                                   ' ${job.location}',
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: 09,
                                     color: Colors.grey[600],
                                   ),
                                 ),
