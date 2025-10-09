@@ -1,7 +1,7 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
-import 'package:jobapp/Feature/Recuiter/recuiter_model/jobupload_model.dart';
+import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 
 class FirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -164,27 +164,33 @@ class FirebaseService {
 
   // Update job data for a specific recruiter
   Future<void> updateJobData(JobModel jobData, String recruiterEmail) async {
-    try {
-      await _firestore
-          .collection('jobs')
-          .doc(jobData.id)
-          .update({
-        'companyName': jobData.companyName,
-        'designation': jobData.designation,
-        'ctc': jobData.ctc,
-        'noticePeriod': jobData.noticePeriod,
-        'location': jobData.location,
-        'application': jobData.application,
-        'imageUrl': jobData.imageUrl,
-        'category': jobData.category,
-        'isActive': jobData.isActive,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      throw Exception('Failed to update job data: $e');
-    }
+  try {
+    await _firestore
+        .collection('jobs')
+        .doc(jobData.id)
+        .update({
+      'companyName': jobData.companyName,
+      'designation': jobData.designation,
+      'ctc': jobData.ctc,
+      'noticePeriod': jobData.noticePeriod,
+      'location': jobData.location,
+      'application': jobData.application,
+      'imageUrl': jobData.imageUrl,
+      'category': jobData.category,
+      'isActive': jobData.isActive,
+      'benefits': jobData.benefits,
+      'qualifications': jobData.qualifications,
+      'skills': jobData.skills,
+      'requirements': jobData.requirements,
+      'experience': jobData.experience,
+      'ageRange': jobData.ageRange,
+      'isUrgentHiring': jobData.isUrgentHiring,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  } catch (e) {
+    throw Exception('Failed to update job data: $e');
   }
-
+}
   // Delete job for a specific recruiter
   Future<void> deleteJob(String jobId, String recruiterEmail) async {
     try {
@@ -246,7 +252,20 @@ class FirebaseService {
       }).toList();
     });
   }
-
+ 
+ Future<void> updateUrgentHiringStatus(String jobId, bool isUrgentHiring, String recruiterEmail) async {
+  try {
+    await _firestore
+        .collection('jobs')
+        .doc(jobId)
+        .update({
+      'isUrgentHiring': isUrgentHiring,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  } catch (e) {
+    throw Exception('Failed to update urgent hiring status: $e');
+  }
+}
   // Calculate time difference in human readable format
   String _calculateTimeDifference(DateTime jobTime) {
     final now = DateTime.now();

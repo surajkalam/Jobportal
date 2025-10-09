@@ -1,8 +1,11 @@
+// Updated JobseekerProfileScreen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
-
-import '../../../core/util.dart/appcolors.dart';
+import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/jobseekerprofile_information.dart';
+import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
+import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
+import 'package:jobapp/core/util.dart/appcolors.dart';
 
 class JobseekerProfileScreen extends ConsumerStatefulWidget {
   const JobseekerProfileScreen({super.key});
@@ -13,9 +16,22 @@ class JobseekerProfileScreen extends ConsumerStatefulWidget {
 
 class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
   @override
+  void initState() {
+    super.initState();
+    // Load jobseeker info when screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(jobseekerProvider.notifier).loadJobseekerInfo();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final jobseekerState = ref.watch(jobseekerProvider);
+    final jobseekerInfo = jobseekerState.jobseekerInfo;
+    
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+    
     return Scaffold(
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -37,10 +53,10 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               SizedBox(height: height * 0.02),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: buildheadercontainer(height, width),
+                child: buildheadercontainer(height, width, jobseekerInfo),
               ),
               SizedBox(height: height * 0.02),
-              buildacountsession(height, width),
+              buildacountsession(height, width, jobseekerInfo),
             ],
           ),
         ),
@@ -48,14 +64,13 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
     );
   }
 
-  Widget buildheadercontainer(double height, double width) {
+  Widget buildheadercontainer(double height, double width, JobseekerModel? jobseekerInfo) {
     return Container(
       height: height * 0.2,
       width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: AppColors.grey),
-        // ignore: deprecated_member_use
         gradient: LinearGradient(
           colors: [AppColors.darkblue.withOpacity(0.6), AppColors.darkblue],
           begin: Alignment.centerLeft,
@@ -97,9 +112,11 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               Expanded(
                 child: Column(
                   children: [
-                    Padding(padding: EdgeInsetsGeometry.only(top: height * 0.01)),
+                    Padding(padding: EdgeInsets.only(top: height * 0.01)),
                     Text(
-                      'Kalamkar Suraj Pandurang ',
+                      jobseekerInfo?.name.isNotEmpty == true 
+                          ? jobseekerInfo!.name 
+                          : 'Your Name',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
@@ -112,7 +129,9 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          'Designer Manager',
+                          jobseekerInfo?.jobDesignation.isNotEmpty == true
+                              ? jobseekerInfo!.jobDesignation
+                              : 'Designation',
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w400,
@@ -120,9 +139,10 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                           ),
                         ),
                         SizedBox(width: width * 0.04),
-                        // Icon(Iconsax.more_circle),
                         Text(
-                          'Walmart',
+                          jobseekerInfo?.location.isNotEmpty == true
+                              ? jobseekerInfo!.location
+                              : 'Location',
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w400,
@@ -146,9 +166,17 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               buildemailheadercontainer(
                 height,
                 width,
-                'surajkalamkar@walmart.com',
+                jobseekerInfo?.email.isNotEmpty == true
+                    ? jobseekerInfo!.email
+                    : 'your@email.com',
               ),
-              buildemailheadercontainer(height, width, '87665748983'),
+              buildemailheadercontainer(
+                height, 
+                width, 
+                jobseekerInfo?.contact.isNotEmpty == true
+                    ? jobseekerInfo!.contact
+                    : 'Contact Number'
+              ),
             ],
           ),
         ],
@@ -163,7 +191,6 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: AppColors.grey),
-          // ignore: deprecated_member_use
           color: AppColors.white.withOpacity(0.1),
         ),
         child: Center(
@@ -184,7 +211,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
     );
   }
 
-  Widget buildacountsession(double height, double width) {
+  Widget buildacountsession(double height, double width, JobseekerModel? jobseekerInfo) {
     return Container(
       height: height * 0.78,
       width: width,
@@ -192,7 +219,6 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
         borderRadius: BorderRadius.circular(20),
         color: AppColors.white,
         border: Border.all(color: AppColors.grey),
-        // ignore: deprecated_member_use
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -218,53 +244,75 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Column(
                   children: [
-                    // Row 1: Profile Information
-                    _buildAccountRow(
-                      icon: Icons.person_outline,
-                      title: 'Profile Information',
-                      subtitle: '',
-                      hasArrow: true,
-                      width: width,
+                    // Row 1: Profile Information - WITH ACTION
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileInformationScreen(),
+                          ),
+                        );
+                      },
+                      child: _buildAccountRow(
+                        icon: Icons.person_outline,
+                        title: 'Profile Information',
+                        subtitle: 'View and edit',
+                        hasArrow: true,
+                        width: width,
+                      ),
                     ),
-                    // ignore: deprecated_member_use
                     Divider(color: AppColors.grey.withOpacity(0.3)),
-                    // Row 2: Email
+                    
+                    // Row 2: Email - NO ACTION
                     _buildAccountRow(
                       icon: Icons.email_outlined,
                       title: 'Email',
-                      subtitle: 'verify',
-                      hasArrow: true,
+                      subtitle: jobseekerInfo?.email.isNotEmpty == true
+                          ? jobseekerInfo!.email
+                          : 'Not set',
+                      hasArrow: false, // No arrow for email
                       width: width,
                     ),
-                    // ignore: deprecated_member_use
                     Divider(color: AppColors.grey.withOpacity(0.3)),
-            
+                    
+                    // Row 3: Age - NO ACTION
                     _buildAccountRow(
                       icon: Iconsax.heart,
                       title: 'Age',
-                      subtitle: '25 years',
-                      hasArrow: true,
+                      subtitle: jobseekerInfo?.age != null && jobseekerInfo!.age > 0
+                          ? '${jobseekerInfo.age} years'
+                          : 'Not set',
+                      hasArrow: false, // No arrow for age
                       width: width,
                     ),
-                    // ignore: deprecated_member_use
                     Divider(color: AppColors.grey.withOpacity(0.3)),
+                    
+                    // Row 4: Profession - NO ACTION
                     _buildAccountRow(
                       icon: Icons.work_outline,
                       title: 'Profession',
-                      subtitle: 'Marketing Manager',
-                      hasArrow: true,
+                      subtitle: jobseekerInfo?.jobDesignation.isNotEmpty == true
+                          ? jobseekerInfo!.jobDesignation
+                          : 'Not set',
+                      hasArrow: false, // No arrow for profession
                       width: width,
                     ),
-                    // ignore: deprecated_member_use
                     Divider(color: AppColors.grey.withOpacity(0.3)),
-                    // Row 5: Logout
-                    _buildAccountRow(
-                      icon: Iconsax.logout_14,
-                      title: 'Logout',
-                      subtitle: '',
-                      hasArrow: true, // No arrow for logout
-                      textColor: Colors.red,
-                      width: width,
+                    
+                    // Row 5: Logout - WITH ACTION
+                    GestureDetector(
+                      onTap: () {
+                        _showLogoutDialog(context);
+                      },
+                      child: _buildAccountRow(
+                        icon: Iconsax.logout_14,
+                        title: 'Logout',
+                        subtitle: '',
+                        hasArrow: true,
+                        textColor: Colors.red,
+                        width: width,
+                      ),
                     ),
                   ],
                 ),
@@ -285,57 +333,74 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
     Color textColor = Colors.black,
     required double width,
   }) {
-    return GestureDetector(
-      onTap: () {
-        // Add onTap functionality for each row
-      },
-      child: Container(
-        padding:EdgeInsets.all(10),
-        child: Row(
-          children: [
-            // Icon
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, size: 25, color: textColor),
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
             ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Row(
-                children: [
-                  // Title
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: textColor,
-                    ),
+            child: Icon(icon, size: 25, color: textColor),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: Row(
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: textColor,
                   ),
-                  Spacer(),
-                  if (subtitle.isNotEmpty)
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontFamily: 'italic',
-                        fontSize: 10,
-                        color: AppColors.grey,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                ),
+                Spacer(),
+                if (subtitle.isNotEmpty)
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 10,
+                      color: AppColors.grey,
                     ),
-
-                ],
-              ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+              ],
             ),
+          ),
+          SizedBox(width: width * 0.01),
+          if (hasArrow)
+            Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.grey),
+        ],
+      ),
+    );
+  }
 
-            SizedBox(width: width * 0.01),
-            if (hasArrow)
-              Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.grey),
-          ],
-        ),
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Logout'),
+        content: Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Add your logout logic here
+            },
+            child: Text(
+              'Logout',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -350,7 +415,6 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              // color: AppColors.black
             ),
           ),
           Spacer(),

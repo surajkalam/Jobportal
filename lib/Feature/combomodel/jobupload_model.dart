@@ -17,6 +17,11 @@ class JobModel {
   final String benefits;
   final String qualifications;
   final String skills;
+   final String requirements; // Add this field
+  final String experience; // Add this field
+  final String ageRange; // Add this field
+  final bool isUrgentHiring;
+  // final String jobType; 
 
   JobModel({
     this.id = '',
@@ -35,6 +40,11 @@ class JobModel {
     this.benefits = '',
     this.qualifications = '',
     this.skills = '',
+     this.requirements = '', 
+    this.experience = '', 
+    this.ageRange = '', 
+    this.isUrgentHiring = false,
+    //  this.jobType = 'Full-time',
   });
 
   Map<String, dynamic> toMap() {
@@ -52,6 +62,11 @@ class JobModel {
       'benefits': benefits,
       'qualifications': qualifications,
       'skills': skills,
+       'requirements': requirements, // Add to map
+      'experience': experience, // Add to map
+      'ageRange': ageRange, // Add to map
+      'isUrgentHiring': isUrgentHiring, // Add to map
+      //  'jobType': jobType, 
       'createdAt': FieldValue.serverTimestamp(),
     };
   }
@@ -72,6 +87,11 @@ class JobModel {
       benefits: map['benefits'] ?? '',
       qualifications: map['qualifications'] ?? '',
       skills: map['skills'] ?? '',
+        requirements: map['requirements'] ?? '', // Add from map
+      experience: map['experience'] ?? '', // Add from map
+      ageRange: map['ageRange'] ?? '', // Add from map
+      isUrgentHiring: map['isUrgentHiring'] ?? false,
+        //  jobType: map['jobType'] ?? 'Full-time', 
       createdAt: map['createdAt'] != null 
           ? (map['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
@@ -98,6 +118,12 @@ class JobModel {
     String? benefits,
     String? qualifications,
     String? skills,
+    String? requirements, // Add to copyWith
+    String? experience, // Add to copyWith
+    String? ageRange, // Add to copyWith
+    bool? isUrgentHiring, 
+    // String? jobType,
+   
   }) {
     return JobModel(
       id: id ?? this.id,
@@ -116,6 +142,11 @@ class JobModel {
       benefits: benefits ?? this.benefits,
       qualifications: qualifications ?? this.qualifications,
       skills: skills ?? this.skills,
+      requirements: requirements ?? this.requirements, // Add
+      experience: experience ?? this.experience, // Add
+      ageRange: ageRange ?? this.ageRange, // Add
+      isUrgentHiring: isUrgentHiring ?? this.isUrgentHiring,
+      //  jobType: jobType ?? this.jobType,
     );
   }
 }

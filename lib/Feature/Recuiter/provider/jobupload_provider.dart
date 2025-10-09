@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:jobapp/Feature/Recuiter/provider/requiterinfo_provider.dart';
 import 'package:jobapp/Feature/Recuiter/recuiter_firebase/jobupload_firebase.dart';
-import 'package:jobapp/Feature/Recuiter/recuiter_model/jobupload_model.dart';
+import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 
 // Firebase Service Provider
 final firebaseServiceProvider = Provider<FirebaseService>((ref) {
@@ -117,14 +117,13 @@ final jobNotifierProvider = StateNotifierProvider<JobNotifier, JobState>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
   return JobNotifier(firebaseService, ref);
 });
-
-// DELETE PROVIDER - Add this provider for delete operations
+// delete operations
 final jobDeleteProvider = FutureProvider.family<void, String>((ref, jobId) async {
   final jobNotifier = ref.read(jobNotifierProvider.notifier);
   await jobNotifier.deleteJob(jobId);
 });
 
-// JOB DETAIL PROVIDER - For getting individual job details
+//  getting individual job details
 final jobDetailProvider = StreamProvider.family<JobModel?, String>((ref, jobId) {
   final firebaseService = ref.read(firebaseServiceProvider);
   final recruiterEmail = ref.watch(currentUserEmailProvider);
@@ -316,4 +315,44 @@ final mostRecentJobProvider = Provider<JobModel?>((ref) {
     orElse: () => null,
   );
 });
+
+//urgent hiring status
+
+final urgentHiringProvider = StateNotifierProvider.family<UrgentHiringNotifier, AsyncValue<bool>, String>((ref, jobId) {
+  final firebaseService = ref.read(firebaseServiceProvider);
+  return UrgentHiringNotifier(firebaseService, jobId, ref);
+});
+
+class UrgentHiringNotifier extends StateNotifier<AsyncValue<bool>> {
+  final FirebaseService _firebaseService;
+  final String jobId;
+  final Ref _ref;
+
+  UrgentHiringNotifier(this._firebaseService, this.jobId, this._ref) : super(const AsyncValue.loading()) {
+    _loadInitialStatus();
+  }
+
+  String get _recruiterEmail => _ref.read(currentUserEmailProvider);
+
+  Future<void> _loadInitialStatus() async {
+    try {
+      final job = await _firebaseService.getJobById(jobId, _recruiterEmail);
+      state = AsyncValue.data(job?.isUrgentHiring ?? false);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<void> toggleUrgentHiring() async {
+    try {
+      final currentStatus = state.value ?? false;
+      state = const AsyncValue.loading();
+      await _firebaseService.updateUrgentHiringStatus(jobId, !currentStatus, _recruiterEmail);
+      state = AsyncValue.data(!currentStatus);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
+    }
+  }
+}
 

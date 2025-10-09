@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jobapp/Feature/Recuiter/recuiter_model/jobupload_model.dart';
+import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 import 'package:jobapp/core/util.dart/appcolors.dart';
 
 import '../provider/provider.dart';
@@ -81,6 +81,7 @@ Widget build(BuildContext context) {
                       topRight: Radius.circular(20),
                     ),
                     border: BoxBorder.all(
+                      // ignore: deprecated_member_use
                       color: AppColors.grey.withOpacity(0.6),
                       width: 1.5,
                     ),
@@ -106,6 +107,7 @@ Widget build(BuildContext context) {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
+                      // ignore: deprecated_member_use
                       color: AppColors.grey.withOpacity(0.6),
                       width: 1.5,
                     ),
@@ -423,8 +425,10 @@ Widget _buildSearchHeader(String searchQuery,BuildContext context) {
                                 borderRadius: BorderRadius.circular(50),
                                 child: Image.network(
                                   job.imageUrl,
-                                  // height: 20,
-                                  // width: 40,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(Icons.broken_image, color: Colors.grey);
+                                  },
                                 ),
                               ),
                             ),
@@ -438,7 +442,7 @@ Widget _buildSearchHeader(String searchQuery,BuildContext context) {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SizedBox(
-                                      width: MediaQuery.of(context).size.width * 0.4, 
+                                      width: MediaQuery.of(context).size.width * 0.4,
                                   child: Text(
                                     job.designation,
                                     style: TextStyle(
@@ -494,7 +498,7 @@ Widget _buildSearchHeader(String searchQuery,BuildContext context) {
                       children: [
                         _buildJobTag('Remote'),
                         const SizedBox(width: 8),
-                        _buildJobTag('Full-time'),
+                        _buildJobTag('full Time'),
                         // _buildJobTag('${job.ctc}/month'),
                       ],
                     ),
@@ -530,6 +534,7 @@ Widget _buildSearchHeader(String searchQuery,BuildContext context) {
                     ),
                   ),
                   Spacer(),
+                  if (job.isUrgentHiring)
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
@@ -537,6 +542,7 @@ Widget _buildSearchHeader(String searchQuery,BuildContext context) {
                       borderRadius: BorderRadius.circular(4),
                       boxShadow: [
                         BoxShadow(
+                          // ignore: deprecated_member_use
                           color: Colors.grey.withOpacity(0.05),
                           blurRadius: 2,
                           offset: Offset(0, 1),
@@ -552,14 +558,14 @@ Widget _buildSearchHeader(String searchQuery,BuildContext context) {
                       ),
                     ),
                   ),
-                ],
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildJobTag(String text) {
     return Container(

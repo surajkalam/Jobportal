@@ -41,7 +41,7 @@ class AppRouter {
       GoRoute(
         path: '/job-details',
         name: 'job_details',
-        builder: (context, state) => JobdetailScreen(),
+        builder: (context, state) => JobuploaddetailScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

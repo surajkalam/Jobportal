@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:jobapp/Feature/Recuiter/recuiter_model/jobupload_model.dart';
+import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 
 class JobRepository {
   final FirebaseFirestore _firestore;
@@ -18,7 +18,6 @@ class JobRepository {
             .map((doc) => JobModel.fromMap(doc.id, doc.data()))
             .toList());
   }
-
   // Fetch jobs by category
   Stream<List<JobModel>> getJobsByCategory(String category) {
     return _firestore

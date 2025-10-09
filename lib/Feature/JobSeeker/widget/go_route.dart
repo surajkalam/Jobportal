@@ -44,13 +44,18 @@ class JobseekeerAppRouter {
         path: '/job-details',
         builder: (context, state) {
           final job = state.extra as JobModel?;
-          // if (job == null) {
-          //   return Scaffold(
-          //     appBar: AppBar(title: Text('Error')),
-          //     body: Center(child: Text('Job not found')),
-          //   );
-          // }
-          return JobDetailsScreen(job: job!);
+          if(job == null){
+            return Scaffold(
+              body: Center(child: Text('No job data provided')),
+            );
+          }
+          return JobDetailsScreen(job: job);
+        },
+      ),
+       GoRoute(
+        path: '/uploaddetail-job',
+        builder: (context, state) {
+          return JobuploaddetailScreen();
         },
       ),
     ],
