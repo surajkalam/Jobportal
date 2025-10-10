@@ -83,31 +83,31 @@ class _ProfileInformationScreenState
                     icon: Icons.person_outline,
                     children: [
                       _buildInfoRow(
-                        'Full Name',
+                        'Full Name :',
                         jobseekerInfo.name,
                         height,
                         width,
                       ),
                       _buildInfoRow(
-                        'Email',
+                        'Email :',
                         jobseekerInfo.email,
                         height,
                         width,
                       ),
                       _buildInfoRow(
-                        'Contact',
+                        'Contact :',
                         jobseekerInfo.contact,
                         height,
                         width,
                       ),
                       _buildInfoRow(
-                        'Date of Birth',
+                        'Date of Birth :',
                         jobseekerInfo.dateOfBirth,
                         height,
                         width,
                       ),
                       _buildInfoRow(
-                        'Age',
+                        'Age :',
                         '${jobseekerInfo.age} years',
                         height,
                         width,
@@ -118,32 +118,31 @@ class _ProfileInformationScreenState
                     width: width,
                   ),
                   SizedBox(height: 16),
-
                   // Professional Information Card
                   _buildInfoCard(
                     title: 'Professional Information',
                     icon: Icons.work_outline,
                     children: [
                       _buildInfoRow(
-                        'Job Designation',
+                        'Job Designation :',
                         jobseekerInfo.jobDesignation,
                         height,
                         width,
                       ),
                       _buildInfoRow(
-                        'Qualification',
+                        'Qualification :',
                         jobseekerInfo.qualification,
                         height,
                         width,
                       ),
                       _buildInfoRow(
-                        'Experience',
+                        'Experience :',
                         jobseekerInfo.experience,
                         height,
                         width,
                       ),
                       _buildInfoRow(
-                        'Location',
+                        'Location :',
                         jobseekerInfo.location,
                         height,
                         width,
@@ -156,7 +155,7 @@ class _ProfileInformationScreenState
                   SizedBox(height: 16),
                   // Resume Information Card
                   _buildInfoCard(
-                    title: 'Resume',
+                    title: 'Resume ',
                     icon: Icons.description_outlined,
                     children: [
                       if (jobseekerInfo.resumeUrl.isNotEmpty)
@@ -178,7 +177,6 @@ class _ProfileInformationScreenState
             ),
     );
   }
-
   Widget _buildInfoCard({
     required String title,
     required IconData icon,
@@ -221,7 +219,6 @@ class _ProfileInformationScreenState
       ),
     );
   }
-
   Widget _buildInfoRow(
     String label,
     String value,
@@ -261,7 +258,6 @@ class _ProfileInformationScreenState
       ),
     );
   }
-
   Widget _buildResumeSection(
     JobseekerModel jobseekerInfo,
     BuildContext context,
@@ -269,7 +265,6 @@ class _ProfileInformationScreenState
     double width,
   ) {
     final hasResume = jobseekerInfo.resumeUrl.isNotEmpty;
-
     return Column(
       children: [
         _buildInfoRow(
@@ -279,7 +274,6 @@ class _ProfileInformationScreenState
           width,
         ),
         SizedBox(height: 8),
-
         // Resume Actions Row
         Row(
           children: [
@@ -288,12 +282,6 @@ class _ProfileInformationScreenState
               child: ElevatedButton.icon(
                 onPressed: hasResume
                     ? () {
-                        // Open resume URL
-                        // if (jobseekerInfo.resumeUrl.isNotEmpty) {
-                        //   log('Open Resume URL: ${jobseekerInfo.resumeUrl}');
-                        //   // You can use url_launcher here
-                        //   // launchUrl(Uri.parse(jobseekerInfo.resumeUrl));
-                        // }
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -324,11 +312,9 @@ class _ProfileInformationScreenState
                 ),
               ),
             ),
-
             // Edit and Delete Buttons (only show if resume exists)
             if (hasResume) ...[
               SizedBox(width: 8),
-
               // Edit Button
               SizedBox(
                 width: 40,
@@ -385,7 +371,6 @@ class _ProfileInformationScreenState
       ],
     );
   }
-
   Future<void> _uploadResumeWithProvider() async {
     try {
       final pdfService = ref.read(pdfUploadServiceProvider);
@@ -393,20 +378,11 @@ class _ProfileInformationScreenState
       // Pick PDF file using your existing service
       final File? pdfFile = await pdfService.pickPdf();
       if (pdfFile == null) return;
-
       // ignore: use_build_context_synchronously
       _showSnackBar(context: context, text: 'Uploading resume...');
       await ref.read(jobseekerProvider.notifier).uploadResume(pdfFile);
-
       // ignore: use_build_context_synchronously
       _showSnackBar(context: context, text: 'Resume uploaded successfully!');
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: Text('Resume uploaded successfully!'),
-      //     backgroundColor: Colors.green,
-      //     duration: Duration(seconds: 2),
-      //   ),
-      // );
     } catch (e) {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
@@ -418,7 +394,6 @@ class _ProfileInformationScreenState
       );
     }
   }
-
   void _showDeleteResumeDialog(JobseekerModel jobseekerInfo) {
     showDialog(
       context: context,
@@ -450,7 +425,6 @@ class _ProfileInformationScreenState
       ),
     );
   }
-
   Future<void> _deleteResume() async {
     try {
       await ref.read(jobseekerProvider.notifier).deleteResume();
@@ -466,7 +440,6 @@ class _ProfileInformationScreenState
       );
     }
   }
-
   void _showSnackBar({
     required BuildContext context,
     required String text,

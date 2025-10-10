@@ -18,49 +18,30 @@ class JobDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    
-    // Log job data for debugging
-    log('Job Data:');
-    log('Company: ${job.companyName}');
-    log('Designation: ${job.designation}');
-    log('Location: ${job.location}');
-    log('CTC: ${job.ctc}');
-    log('Experience: ${job.experience}');
-    log('Age Range: ${job.ageRange}');
-    log('Benefits: ${job.benefits}');
-    log('Description: ${job.application}');
-    log('Requirements: ${job.requirements}');
-    log('Urgent Hiring: ${job.isUrgentHiring}');
-    log('Created At: ${job.createdAt}');
-
+    // log('Job Data:');
+    // log('Company: ${job.companyName}');
+    // log('Designation: ${job.designation}');
+    // log('Location: ${job.location}');
+    // log('CTC: ${job.ctc}');
+    // log('Experience: ${job.experience}');
+    // log('Age Range: ${job.ageRange}');
+    // log('Benefits: ${job.benefits}');
+    // log('Description: ${job.application}');
+    // log('Requirements: ${job.requirements}');
+    // log('Urgent Hiring: ${job.isUrgentHiring}');
+    // log('Created At: ${job.createdAt}');
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: AppColors.white,
         elevation: 0,
-        leading: Padding(
-          padding: EdgeInsets.only(left: width * 0.01),
-          child: Container(
-            height: height * 0.05,
-            width: width * 0.11,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
-              border: Border.all(
-                color: AppColors.darkGrey.withOpacity(0.2),
-                width: 1.5,
-              ),
-            ),
-            child: Center(
-              child: IconButton(
-                icon: Icon(
-                  Iconsax.arrow_left_2,
-                  color: AppColors.black,
-                  size: 18,
-                ),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
+        leading: IconButton(
+          icon: Icon(
+            Iconsax.arrow_left_2,
+            color: AppColors.black,
+            size: 18,
           ),
+          onPressed: () => Navigator.pop(context),
         ),
         actions: [
           Padding(
@@ -71,6 +52,7 @@ class JobDetailsScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
                 border: Border.all(
+                  // ignore: deprecated_member_use
                   color: AppColors.darkGrey.withOpacity(0.2),
                   width: 1.5,
                 ),
@@ -99,6 +81,7 @@ class JobDetailsScreen extends ConsumerWidget {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,6 +109,7 @@ class JobDetailsScreen extends ConsumerWidget {
 
             // Apply Button
             _buildApplyButton(context, job),
+            SizedBox(height: height * 0.1),
           ],
         ),
       ),
@@ -570,28 +554,57 @@ class JobDetailsScreen extends ConsumerWidget {
   }
 
   Widget _buildApplyButton(BuildContext context, JobModel job) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          _showApplyDialog(context, job);
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: job.isUrgentHiring ? Colors.red : AppColors.lightBlue,
-          padding: EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  return SizedBox(
+    width: double.infinity,
+    child: GestureDetector(
+      onTap: () {
+        _showApplyDialog(context, job);
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          border: Border.all(
+            // ignore: deprecated_member_use
+            color: AppColors.black.withOpacity( 0.2),
+            width: 1.5,
+          ),
+          gradient: LinearGradient(
+            colors: [
+              AppColors.faintbackblue,
+               AppColors.white
+            ],
+            // colors: job.isUrgentHiring
+            //   ? [Colors.red, Colors.orange] // Urgent hiring gradient
+            //   : [AppColors.lightBlue, AppColors.faintbackblue], // Normal gradient
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            stops: [0.0, 1.0], // Smooth transition from left to right
+          ),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              // ignore: deprecated_member_use
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+
         ),
-        child: Text(
-          job.isUrgentHiring ? 'Apply Urgently' : 'Apply Now',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
+        child: Center(
+          child: Text(
+            job.isUrgentHiring ? 'Apply Now' : 'Apply Now',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.black,
+            ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   void _showApplyDialog(BuildContext context, JobModel job) {
     showDialog(
@@ -630,11 +643,16 @@ class JobDetailsScreen extends ConsumerWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Application submitted successfully!'),
-                  backgroundColor: job.isUrgentHiring ? Colors.red : AppColors.lightBlue,
-                ),
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //   SnackBar(
+              //     content: Text('Application submitted successfully!'),
+              //     backgroundColor: job.isUrgentHiring ? Colors.red : AppColors.lightBlue,
+              //   ),
+              // );
+              _showSnackBar(
+                context: context,
+                text: 'Application submitted successfully!',
+                
               );
             },
             style: ElevatedButton.styleFrom(
@@ -666,4 +684,33 @@ class JobDetailsScreen extends ConsumerWidget {
       return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
     }
   }
+void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 4),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text, 
+        style: TextStyle(
+          color: textColor,
+          fontSize: 10,
+        fontWeight: FontWeight.w500),
+        textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
+        ),
+      ),
+    );
+  }
+
 }
