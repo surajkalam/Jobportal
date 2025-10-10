@@ -105,16 +105,13 @@ class JobDetailsScreen extends ConsumerWidget {
           children: [
             // Company Header Section
             _buildCompanyHeader(height, width, job),
-            SizedBox(height: height * 0.008),
-            
+            SizedBox(height: height * 0.015),
             // Job Tags Section - Updated to use actual data
             _buildJobTagsSection(job, width, height),
             SizedBox(height: height * 0.02),
-            
             selectinfocontainer(context, width, height, ref),
             SizedBox(height: height * 0.01),
             SizedBox(height: height * 0.02),
-
             // Job Description - Updated to use actual data
             _buildDescriptionSection(job, height, width),
             SizedBox(height: 20),
@@ -144,8 +141,8 @@ class JobDetailsScreen extends ConsumerWidget {
       child: Row(
         children: [
           Container(
-            width: 60,
-            height: 60,
+            width: width * 0.14,
+            height: height * 0.06,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
               border: Border.all(color: AppColors.grey),
@@ -171,21 +168,30 @@ class JobDetailsScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        job.designation.isNotEmpty ? job.designation : 'Designation not specified',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                      SizedBox(
+                        width: width * 0.6,
+                        child: Text(
+                          job.designation.isNotEmpty ? job.designation : 'Designation not specified',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            height: 1.3
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 4),
+                      SizedBox(height: height * 0.005),
                       Row(
                         children: [
-                          Text(
-                            job.companyName.isNotEmpty ? job.companyName : 'Company not specified',
-                            style: TextStyle(fontSize: 10, color: AppColors.grey),
+                          SizedBox(
+                            width: width * 0.4,
+                            child: Text(
+                              job.companyName.isNotEmpty ? job.companyName : 'Company not specified',
+                              style: TextStyle(fontSize: 10, color: AppColors.grey),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                           SizedBox(width: width * 0.01),
                           Icon(
@@ -194,9 +200,14 @@ class JobDetailsScreen extends ConsumerWidget {
                             color: AppColors.black,
                           ),
                           SizedBox(width: width * 0.005),
-                          Text(
-                            job.location.isNotEmpty ? job.location : 'Location not specified',
-                            style: TextStyle(color: AppColors.grey, fontSize: 10),
+                          SizedBox(
+                            width: width * 0.25,
+                            child: Text(
+                              job.location.isNotEmpty ? job.location : 'Location not specified',
+                              style: TextStyle(color: AppColors.grey, fontSize: 10),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       ),
@@ -204,23 +215,23 @@ class JobDetailsScreen extends ConsumerWidget {
                   ),
                 ),
                 // Show Urgent Hiring Badge
-                if (job.isUrgentHiring)
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.red[50],
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Colors.red.withOpacity(0.3)),
-                    ),
-                    child: Text(
-                      'URGENT',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                // if (job.isUrgentHiring)
+                //   Container(
+                //     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                //     decoration: BoxDecoration(
+                //       color: Colors.red[50],
+                //       borderRadius: BorderRadius.circular(6),
+                //       border: Border.all(color: Colors.red.withOpacity(0.3)),
+                //     ),
+                //     child: Text(
+                //       'URGENT',
+                //       style: TextStyle(
+                //         color: Colors.red,
+                //         fontSize: 10,
+                //         fontWeight: FontWeight.w600,
+                //       ),
+                //     ),
+                //   ),
               ],
             ),
           ),
@@ -265,12 +276,12 @@ class JobDetailsScreen extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.flash_on, size: 12, color: Colors.red),
+                Icon(Icons.flash_on, size: 10, color: Colors.red),
                 SizedBox(width: 4),
                 Text(
                   'Urgent Hiring',
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 08,
                     color: Colors.red,
                     fontWeight: FontWeight.w600,
                   ),
@@ -286,14 +297,16 @@ class JobDetailsScreen extends ConsumerWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
+        // ignore: deprecated_member_use
         color: AppColors.lightblue.withOpacity(0.3),
+        // ignore: deprecated_member_use
         border: Border.all(color: AppColors.grey.withOpacity(0.3)),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         text,
         style: TextStyle(
-          fontSize: 10,
+          fontSize: 08,
           color: AppColors.black,
           fontWeight: FontWeight.w400,
         ),
@@ -376,6 +389,7 @@ class JobDetailsScreen extends ConsumerWidget {
         Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
+            // ignore: deprecated_member_use
             color: AppColors.verylightblue.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.grey.withOpacity(0.2)),
@@ -387,7 +401,8 @@ class JobDetailsScreen extends ConsumerWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,
-              color: AppColors.black.withOpacity(0.8),
+              // ignore: deprecated_member_use
+              color: AppColors.grey,
               height: 1.5,
             ),
           ),

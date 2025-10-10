@@ -116,7 +116,8 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
         _selectedResume = pdfFile;
       });
       // Show uploading message
-      ScaffoldMessenger.of(context).showSnackBar(
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of( context).showSnackBar(
         SnackBar(
           content: Text('Uploading resume...'),
           backgroundColor: Colors.blue,
@@ -352,6 +353,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(
+                            // ignore: deprecated_member_use
                             color: Colors.grey.withOpacity(0.5),
                           ),
                           borderRadius: BorderRadius.circular(12),
@@ -364,7 +366,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                                 ? Colors.green
                                 : Colors.grey,
                           ),
-                          title: _selectedResume != null
+                         title: _selectedResume != null
                               ? Text(
                                   'Resume Selected',
                                   style: TextStyle(
