@@ -125,4 +125,5 @@ class JobseekerNavbar extends ConsumerWidget {
       ),
     );
   }
+  
 }

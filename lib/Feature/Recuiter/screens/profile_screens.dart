@@ -242,20 +242,24 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
         // Close bottom sheet
         if (mounted) {
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profile updated successfully!'),
-              backgroundColor: Colors.green,
-            ),
+          _showSnackBar(
+            context: context,
+            text: 'Profile updated successfully! 👍',
+            textColor: Colors.green,
           );
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error updating profile: $e'),
-              backgroundColor: Colors.red,
-            ),
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content: Text('Error updating profile: $e'),
+          //     backgroundColor: Colors.red,
+          //   ),
+          // );
+          _showSnackBar(
+            context: context,
+            text: 'Error updating profile 👎 try again',
+            textColor: Colors.red,
           );
         }
       } finally {
@@ -344,6 +348,34 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
           }
           return null;
         },
+      ),
+    );
+  }
+  void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 3),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text, 
+        style: TextStyle(
+          color: textColor,
+          fontSize: 10,
+        fontWeight: FontWeight.w500),
+        textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
+        ),
       ),
     );
   }

@@ -53,6 +53,7 @@ class JobseekerModel {
   }
   Map<String, dynamic> toMap() {
     return {
+       'jobseeker_id': id,
       'name': name,
       'email': email,
       'contact': contact,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 import 'package:jobapp/core/util.dart/appcolors.dart';
 
@@ -18,6 +19,15 @@ class JobDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+    final jobseekerState = ref.watch(jobseekerProvider);
+    final jobseekerInfo = jobseekerState.jobseekerInfo;
+    log('Jobseeker Info: $jobseekerInfo');
+   if(jobseekerInfo !=null){
+     log(jobseekerInfo.name);
+     log(jobseekerInfo.email);
+     log(jobseekerInfo.contact);
+
+   }
     // log('Job Data:');
     // log('Company: ${job.companyName}');
     // log('Designation: ${job.designation}');
@@ -108,7 +118,7 @@ class JobDetailsScreen extends ConsumerWidget {
             SizedBox(height: 30),
 
             // Apply Button
-            _buildApplyButton(context, job),
+            _buildApplyButton(context, job,height,width),
             SizedBox(height: height * 0.1),
           ],
         ),
@@ -459,7 +469,7 @@ class JobDetailsScreen extends ConsumerWidget {
   // Updated Benefits Section to use actual data
   Widget _buildBenefitsSection(JobModel job, double height, double width) {
     final benefits = job.benefits.isNotEmpty 
-        ? job.benefits.split(',').where((benefit) => benefit.trim().isNotEmpty).toList()
+        ? job.benefits.split('.').where((benefit) => benefit.trim().isNotEmpty).toList()
         : [
             'Competitive salary package',
             'Health insurance coverage',
@@ -553,12 +563,12 @@ class JobDetailsScreen extends ConsumerWidget {
         .toList();
   }
 
-  Widget _buildApplyButton(BuildContext context, JobModel job) {
+  Widget _buildApplyButton(BuildContext context, JobModel job,double height, double width) {
   return SizedBox(
     width: double.infinity,
     child: GestureDetector(
       onTap: () {
-        _showApplyDialog(context, job);
+        _showApplyDialog(context, job,height,width);
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10),
@@ -571,7 +581,7 @@ class JobDetailsScreen extends ConsumerWidget {
           gradient: LinearGradient(
             colors: [
               AppColors.faintbackblue,
-               AppColors.white
+              AppColors.white
             ],
             // colors: job.isUrgentHiring
             //   ? [Colors.red, Colors.orange] // Urgent hiring gradient
@@ -589,11 +599,11 @@ class JobDetailsScreen extends ConsumerWidget {
               offset: Offset(0, 2),
             ),
           ],
-
         ),
         child: Center(
           child: Text(
-            job.isUrgentHiring ? 'Apply Now' : 'Apply Now',
+            // job.isUrgentHiring ? 'Apply Now' : 'Apply Now
+            'Apply Now',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -606,7 +616,7 @@ class JobDetailsScreen extends ConsumerWidget {
   );
 }
 
-  void _showApplyDialog(BuildContext context, JobModel job) {
+  void _showApplyDialog(BuildContext context, JobModel job,double height, double width) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -623,7 +633,7 @@ class JobDetailsScreen extends ConsumerWidget {
               ? 'This is an urgent hiring position! Apply now to get priority consideration for ${job.designation} at ${job.companyName}.'
               : 'Are you sure you want to apply for ${job.designation} at ${job.companyName}?',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 12,
             fontWeight: FontWeight.w400,
             color: Colors.black,
           ),
@@ -634,7 +644,7 @@ class JobDetailsScreen extends ConsumerWidget {
             child: Text(
               'Cancel',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 11,
                 fontWeight: FontWeight.w400,
                 color: Colors.black,
               ),
@@ -643,16 +653,9 @@ class JobDetailsScreen extends ConsumerWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              // ScaffoldMessenger.of(context).showSnackBar(
-              //   SnackBar(
-              //     content: Text('Application submitted successfully!'),
-              //     backgroundColor: job.isUrgentHiring ? Colors.red : AppColors.lightBlue,
-              //   ),
-              // );
               _showSnackBar(
                 context: context,
                 text: 'Application submitted successfully!',
-                
               );
             },
             style: ElevatedButton.styleFrom(
@@ -661,8 +664,8 @@ class JobDetailsScreen extends ConsumerWidget {
             child: Text(
               job.isUrgentHiring ? 'Apply Urgently' : 'Apply',
               style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
                 color: Colors.white,
               ),
             ),

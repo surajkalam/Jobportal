@@ -398,6 +398,12 @@ Widget _buildSearchHeader(String searchQuery,BuildContext context) {
                 padding: EdgeInsets.all(10.0),
                 child: Column(
                   children: [
+                    Text('jobid :${job.id.toString()}',
+                      style: TextStyle(
+                        fontSize: 8,
+                        color: Colors.black,
+                      ),
+                    ),
                     Row(
                       children: [
                         Padding(

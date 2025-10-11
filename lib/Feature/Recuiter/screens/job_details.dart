@@ -42,6 +42,14 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
     '7-10 years',
     '10+ years'
   ];
+  String selectedJobType = 'Full-time';
+  final List<String> jobTypeOptions = [
+    'Full-time',
+    'Part-time',
+    'Internship',
+    'Contract',
+    'Remote'
+  ];
 
   @override
   void initState() {
@@ -145,6 +153,7 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
             icon: Icon(Iconsax.calendar, size: 18), isRequired: true),
         _buildTextFormField(height, width, _locationController, 'Location *',
             icon: Icon(Iconsax.location, size: 18), isRequired: true),
+         _buildJobTypeSelector(height, width),
         _buildTextFormField(height, width, _requirementsController, 'Requirements (use commas to separate) *',
             icon: Icon(Iconsax.task, size: 18), isRequired: true, maxline: 3),
         _buildExperienceSelector(height, width),
@@ -186,7 +195,69 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
       ],
     );
   }
-
+  Widget _buildJobTypeSelector(double height, double width) {
+  return Padding(
+    padding: EdgeInsets.symmetric(
+      horizontal: width * 0.02,
+      vertical: height * 0.012,
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Job Type *',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+        SizedBox(height: 8),
+        SizedBox(
+          height: height * 0.04,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: jobTypeOptions.length,
+            itemBuilder: (context, index) {
+              final jobType = jobTypeOptions[index];
+              final isSelected = selectedJobType == jobType;
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedJobType = jobType;
+                  });
+                },
+                child: Container(
+                  margin: EdgeInsets.only(right: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isSelected 
+                        ? Theme.of(context).colorScheme.primary 
+                        : Color.fromRGBO(223, 226, 230, 1),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isSelected 
+                          ? Theme.of(context).colorScheme.primary 
+                          : Colors.grey,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      jobType,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: isSelected 
+                            ? Colors.white 
+                            : Colors.black87,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    ),
+  );
+}
   Widget _buildExperienceSelector(double height, double width) {
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -360,13 +431,15 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
         bool fileExists = await image.exists();
         
         if (!fileExists) {
-          _showSnackBar('Selected image file is not accessible');
+          // ignore: use_build_context_synchronously
+          _showSnackBar(context: context, text:'Selected image file is not accessible 👎', textColor: Colors.red);
           return;
         }
 
         final fileLength = await image.length();
         if (fileLength > 10 * 1024 * 1024) {
-          _showSnackBar('Image file is too large. Please select a smaller image.');
+          // ignore: use_build_context_synchronously
+          _showSnackBar(context: context, text: 'Image file is too large. Please select a smaller image.', textColor: Colors.red);
           return;
         }
 
@@ -374,10 +447,13 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
           _selectedImage = image;
         });
         
-        _showSnackBar('Image selected successfully');
+        // _showSnackBar('Image selected successfully');
+        // ignore: use_build_context_synchronously
+        _showSnackBar(context: context, text:'Image selected successfully 👍', textColor: Colors.green);
       }
     } catch (e) {
-      _showSnackBar('Failed to pick image: $e');
+      // ignore: use_build_context_synchronously
+      _showSnackBar(context: context, text: 'Failed to pick image try again', textColor: Colors.red);
       log('Image picking error: $e');
     }
   }
@@ -444,7 +520,7 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
 
       // Validate required fields
       if (_selectedImage == null) {
-        _showSnackBar('Please select a company image');
+        _showSnackBar(context: context, text: 'Please select a company image', textColor: Colors.red);
         return;
       }
 
@@ -456,13 +532,13 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
           _descriptionController.text.isEmpty ||
           _requirementsController.text.isEmpty ||
           _ageRangeController.text.isEmpty) {
-        _showSnackBar('Please fill all required fields');
+        _showSnackBar(context: context, text: 'Please fill all required fields', textColor: Colors.red);
         return;
       }
 
       // Validate age range format
       if (!_isValidAgeRange(_ageRangeController.text)) {
-        _showSnackBar('Please enter age range in format like 18-27 or 20-30');
+        _showSnackBar(context: context, text: 'Please enter age range in format like 18-27 or 20-30', textColor: Colors.red);
         return;
       }
 
@@ -474,9 +550,10 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
       
       // Upload image
       String imageUrl = await jobNotifier.uploadImage(_selectedImage!);
-
+       String jobId = 'JOB_${DateTime.now().millisecondsSinceEpoch}';
       // Create job model
       JobModel jobData = JobModel(
+        id: jobId,
         companyName: _companyNameController.text,
         designation: _designationController.text,
         ctc: _ctcController.text,
@@ -502,12 +579,15 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
       // Check if successful
       final currentState = ref.read(jobNotifierProvider);
       if (currentState.success) {
-        _showSnackBar('$category Job posted successfully!');
+        // _showSnackBar('$category Job posted successfully!');
+        // ignore: use_build_context_synchronously
+        _showSnackBar(context: context, text:'$category Job posted successfully!', textColor: Colors.green);
         _clearForm(); // Clear form after successful submission
       }
       
     } catch (e) {
-      _showSnackBar('Error: $e');
+      // ignore: use_build_context_synchronously
+      _showSnackBar(context: context, textColor: Colors.red, text: 'check all fields and try again');
       log('Error submitting job: $e');
     }
   }
@@ -543,16 +623,34 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
       isUrgentHiring = false; // Reset to default
       selectedIndex = 0; // Reset category selection
     });
-    
-    _showSnackBar('Form cleared. Ready for new job posting.');
+  _showSnackBar(context: context, text: 'Form cleared. Ready for new job posting.', textColor: Colors.green, );
   }
 
-  void _showSnackBar(String message) {
+  void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 3),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: TextStyle(fontSize: 12)),
-        backgroundColor: Colors.blueAccent,
-        duration: Duration(seconds: 3),
+        content: Text(text, 
+        style: TextStyle(
+          color: textColor,
+          fontSize: 10,
+        fontWeight: FontWeight.w500),
+        textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
+        ),
       ),
     );
   }
@@ -610,7 +708,6 @@ class CustomScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(

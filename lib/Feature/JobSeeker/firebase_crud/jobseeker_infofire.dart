@@ -136,8 +136,8 @@ class JobseekerFirebaseService {
 
   // Update resume info in Firestore
   Future<void> updateResumeInfo(
-    String email, 
-    String resumeUrl, 
+    String email,
+    String resumeUrl,
     String resumeFileName
   ) async {
     try {

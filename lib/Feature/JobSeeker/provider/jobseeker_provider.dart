@@ -8,7 +8,9 @@ import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 
 // Current User Provider with default email
 final currentUserProvider = StateProvider<String>((ref) => 'suraj@gmail.com');
-
+final jobseekerIdProvider = Provider<String>((ref) {
+  return ref.read(currentUserProvider);
+});
 // Jobseeker Firebase Service Provider
 final jobseekerFirebaseServiceProvider = Provider<JobseekerFirebaseService>((
   ref,
@@ -122,19 +124,14 @@ class JobseekerNotifier extends StateNotifier<JobseekerState> {
   Future<void> uploadResume(File resumeFile) async {
     try {
       state = state.copyWith(isLoading: true, error: null);
-      
       // Upload to Firebase Storage
       final resumeUrl = await _firebaseService.uploadResume(resumeFile, _currentUserEmail);
-      
       // Get file name
       final resumeFileName = resumeFile.path.split('/').last;
-      
       // Update resume info in Firestore
       await _firebaseService.updateResumeInfo(_currentUserEmail, resumeUrl, resumeFileName);
-      
       // Reload jobseeker info to get updated data
       await loadJobseekerInfo();
-      
       state = state.copyWith(isLoading: false, success: true);
     } catch (e) {
       state = state.copyWith(
@@ -149,12 +146,9 @@ class JobseekerNotifier extends StateNotifier<JobseekerState> {
   Future<void> deleteResume() async {
     try {
       state = state.copyWith(isLoading: true, error: null);
-      
       await _firebaseService.deleteResume(_currentUserEmail);
-      
       // Reload jobseeker info to get updated data
       await loadJobseekerInfo();
-      
       state = state.copyWith(isLoading: false, success: true);
     } catch (e) {
       state = state.copyWith(

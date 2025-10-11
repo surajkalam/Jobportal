@@ -117,13 +117,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
       });
       // Show uploading message
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of( context).showSnackBar(
-        SnackBar(
-          content: Text('Uploading resume...'),
-          backgroundColor: Colors.blue,
-          duration: Duration(seconds: 2),
-        ),
-      );
+      _showSnackBar(context: context, text: 'Uploading resume...',);
       // Get current user info
       final currentEmail = ref.read(currentUserProvider);
       final name = nameController.text.isNotEmpty
@@ -139,21 +133,18 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
       // Update resume field with download URL
       resumeController.text = downloadUrl;
       // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Resume uploaded successfully!'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
+      _showSnackBar(
+        // ignore: use_build_context_synchronously
+        context: context,
+        text: 'Resume uploaded successfully!',
       );
       log('Resume uploaded: $downloadUrl');
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to upload resume: $e'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 3),
-        ),
+      _showSnackBar(
+        // ignore: use_build_context_synchronously
+        context: context,
+        text: 'Failed to upload resume try again please',
+        textColor: Colors.red,
       );
     } finally {
       setState(() {
@@ -302,7 +293,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                   experienceController,
                   'Experience (years)',
                   icon: const Icon(Icons.work_history),
-                  isNumber: true,
+                   isRequired: true,
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -311,9 +302,14 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                   ),
                   child: TextFormField(
                     controller: dateOfBirthController,
+                    style: TextStyle(fontSize: 11),
                     readOnly: true,
                     decoration: InputDecoration(
                       labelText: 'Date of Birth *',
+                      labelStyle: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -366,11 +362,11 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                                 ? Colors.green
                                 : Colors.grey,
                           ),
-                         title: _selectedResume != null
+                        title: _selectedResume != null
                               ? Text(
                                   'Resume Selected',
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     color: Colors.green,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -378,7 +374,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                               : Text(
                                   'Tap to upload PDF resume',
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     color: Colors.grey[600],
                                   ),
                                 ),
@@ -453,12 +449,10 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       if (resumeController.text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Please upload your resume before submitting.'),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 2),
-          ),
+        _showSnackBar(
+          context: context,
+          text: 'Please upload your resume before submitting .',
+          backgroundColor: Colors.red,
         );
         return;
       }
@@ -466,6 +460,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
         final currentEmail = ref.read(currentUserProvider);
         // Create JobseekerModel object
         final jobseekerInfo = JobseekerModel(
+          id: 'PRO_${DateTime.now().millisecondsSinceEpoch}',
           name: nameController.text,
           email: emailController.text,
           contact: contactController.text,
@@ -492,18 +487,10 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           experienceController.clear();
           dateOfBirthController.clear();
           resumeController.clear();
-          // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              margin: EdgeInsets.all(16),
-              content: Text('Profile submitted successfully!'),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 3),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
+          _showSnackBar(
+            // ignore: use_build_context_synchronously
+            context: context,
+            text: 'Profile submitted successfully 👍 ',
           );
           log('Jobseeker Profile Saved to Firebase:');
           log('Email: $currentEmail');
@@ -511,25 +498,27 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           log('Resume URL: ${resumeController.text}');
         }
       } catch (e) {
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
-          ),
+        _showSnackBar(
+          // ignore: use_build_context_synchronously
+          context: context,
+          text: 'try again something went wrong ',
+          textColor: Colors.red,
         );
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please fill all required fields correctly.'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 2),
-        ),
+      _showSnackBar(
+        context: context,
+        text: 'Please fill all required fields correctly.',
+        textColor: Colors.red,
       );
     }
   }
+
+//   Future<String> _generateJobseekerId() async {
+//   final snapshot = await FirebaseFirestore.instance.collection('jobseekers').get();
+//   final nextId = snapshot.docs.length + 1;
+//   return 'jobseeker_id:$nextId';
+// }
   Widget textformfield(
     double height,
     double width,
@@ -546,11 +535,12 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: width * 0.02,
-        vertical: height * 0.015,
+        vertical: height * 0.008,
       ),
       child: TextFormField(
         controller: controller,
         readOnly: readOnly,
+        style: TextStyle(fontSize: 11),
         keyboardType: isEmail
             ? TextInputType.emailAddress
             : isPhone || isNumber
@@ -559,7 +549,12 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
         maxLines: maxline ?? 1,
         decoration: InputDecoration(
           labelText: label + (isRequired ? ' *' : ''),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          labelStyle: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w400,
+          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)
+          ),
           prefixIcon: icon,
           filled: true,
           fillColor: readOnly
@@ -625,7 +620,7 @@ void _showWelcomeDialog(String userName) {
             mainAxisSize: MainAxisSize.min,
             children: [
               // Lottie Animation
-              Container(
+              SizedBox(
                 height: 120, // Medium size
                 width: 120,
                 child: Lottie.asset(
@@ -688,4 +683,32 @@ void _showWelcomeDialog(String userName) {
     },
   );
 }
+void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 3),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text, 
+        style: TextStyle(
+          color: textColor,
+          fontSize: 10,
+        fontWeight: FontWeight.w500),
+        textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
+        ),
+      ),
+    );
+  }
 }

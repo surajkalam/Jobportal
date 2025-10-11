@@ -259,32 +259,28 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
       setState(() {
         _selectedImage = File(image.path);
       });
-      
       // Set the photo controller text with the image path
       photoController.text = image.path;
-      
       // Debug: Check if file exists
       bool fileExists = await _selectedImage!.exists();
       log('File exists: $fileExists');
       log('File path: ${_selectedImage!.path}');
       log('File size: ${await _selectedImage!.length()} bytes');
-      
       // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Photo selected successfully'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
+      _showSnackBar(
+        // ignore: use_build_context_synchronously
+        context: context,
+        text: 'Photo selected successfully !👍',
+        textColor: Colors.green,
       );
     }
   } catch (e) {
     log('Error picking image: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Error picking image: $e'),
-        backgroundColor: Colors.red,
-      ),
+    _showSnackBar(
+      // ignore: use_build_context_synchronously
+      context: context,
+      text: 'Error picking image. check image is not corrupted',
+      textColor: Colors.red,
     );
   }
 }
@@ -323,27 +319,32 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
     _selectedImage = null;
   });
   photoController.clear();
-  
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Photo cleared'),
-      backgroundColor: Colors.orange,
-      duration: Duration(seconds: 2),
-    ),
+  _showSnackBar(
+    context: context,
+    text: 'Photo cleared',
+    textColor: Colors.deepOrange,
   );
 }
 
   void _submitForm() {
   // Check if image is required but not selected
   if (_selectedImage == null) {
-    _showErrorSnackBar('Please select a recruiter photo.');
+    _showSnackBar(
+      context: context,
+      text: 'Please select a recruiter photo.',
+      textColor: Colors.red,
+    );
     return;
   }
   
   if (_formKey.currentState!.validate()) {
     _saveRecruiterInfo();
   } else {
-    _showErrorSnackBar('Please fill all required fields correctly.');
+    _showSnackBar(
+      context: context,
+      text: 'Please fill all required fields correctly.',
+      textColor: Colors.red,
+    );
   }
 }
 
@@ -351,15 +352,13 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
     ref.read(loadingStateProvider.notifier).state = true;
     try {
       String photoUrl = '';
-
       // First upload image if selected
       if (_selectedImage != null) {
         photoUrl = await _uploadImageToStorage();
       }
-
       // Create recruiter model
       final recruiter = RecruiterModel(
-        id: emailController.text,
+        id: 'REQ_${DateTime.now().millisecondsSinceEpoch}',
         name: nameController.text,
         email: emailController.text,
         contact: contactController.text,
@@ -373,16 +372,17 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
       // Save to Firestore using provider
       await ref.read(recruiterDataProvider.notifier).saveRecruiter(recruiter);
       ref.read(currentUserEmailProvider.notifier).state = emailController.text;
-      _showSuccessSnackBar('Recruiter information submitted successfully!');
+      // ignore: use_build_context_synchronously
+      _showSnackBar(context: context, text:' Recruiter information submitted successfully! 👍',textColor: Colors.green);
       // ignore: use_build_context_synchronously
         context.go('/navbar');
       // _navigateToDashboard();
       // WidgetsBinding.instance.addPostFrameCallback((_) {
       //  context.go('/navbar');
       // });
-    
     } catch (e) {
-      _showErrorSnackBar('Error saving recruiter information: $e');
+      // ignore: use_build_context_synchronously
+      _showSnackBar(context: context, text:' Error saving recruiter information check all fields ',textColor: Colors.red);
       log('Error saving recruiter: $e');
     } finally {
       ref.read(loadingStateProvider.notifier).state = false;
@@ -412,36 +412,20 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
   //   });
   // }
 
-  void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        margin: EdgeInsets.all(16),
-        content: Text(message),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 3),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-    );
-  }
-
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        margin: EdgeInsets.all(16),
-        content: Text(message),
-        backgroundColor: Colors.red,
-        duration: Duration(seconds: 3),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-    );
-  }
-
+  // void _showSuccessSnackBar(String message) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       margin: EdgeInsets.all(16),
+  //       content: Text(message),
+  //       backgroundColor: Colors.green,
+  //       duration: Duration(seconds: 3),
+  //       behavior: SnackBarBehavior.floating,
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(12),
+  //       ),
+  //     ),
+  //   );
+  // }
   Widget textformfield(
     double height,
     double width,
@@ -498,6 +482,34 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
     );
   }
 
+  void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 3),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text, 
+        style: TextStyle(
+          color: textColor,
+          fontSize: 10,
+        fontWeight: FontWeight.w500),
+        textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
+        ),
+      ),
+    );
+  }
   @override
   void dispose() {
     nameController.dispose();
@@ -509,4 +521,5 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
     photoController.dispose();
     super.dispose();
   }
+
 }
