@@ -36,34 +36,30 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   bool _validateForm() {
     // Check mobile number
     if (_phoneController.text.length != 10) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid 10-digit mobile number'),
-          backgroundColor: Colors.red,
-        ),
+      _showSnackBar(
+        context: context,
+        text: 'Please enter a valid 10-digit mobile number',
+        textColor: Colors.red,
       );
       return false;
     }
 
     // Check password length
     if (_passwordController.text.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password must be at least 6 characters'),
-          backgroundColor: Colors.red,
-        ),
+      _showSnackBar(
+        context: context,
+        text: 'Password must be at least 6 characters',
+        textColor: Colors.red,
       );
       return false;
     }
 
     // Check password match
     if (_confirmPasswordController.text != _passwordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match!'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 2),
-        ),
+      _showSnackBar(
+        context: context,
+        text: 'Passwords do not match!',
+        textColor: Colors.red,
       );
       return false;
     }
@@ -91,23 +87,23 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       debugPrint(
         "✅ Signup successful with: ${_emailOrMobileController.text}",
       );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Signup successful!"),
-          backgroundColor: Colors.green,
-        ),
+      _showSnackBar(
+        // ignore: use_build_context_synchronously
+        context: context,
+        text: '✅ Signup successful !👍 ',
+        textColor: Colors.green,
       );
 
       // Navigate based on user type from provider
       _navigateBasedOnUserType();
 
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Signup failed: $e'),
-          backgroundColor: Colors.red,
-        ),
+      _showSnackBar(
+        // ignore: use_build_context_synchronously
+        context: context,
+        text: 'Signup failed try again and fill all details',
+        textColor: Colors.red,
+       
       );
     } finally {
       setState(() {
@@ -120,13 +116,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     if (!_validateForm()) {
       return;
     }
-
-    // Handle Google signup logic here
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Google signup functionality'),
-        backgroundColor: Colors.blue,
-      ),
+    _showSnackBar(
+      context: context,
+      text: 'Google signup functionality',
     );
   }
 
@@ -395,6 +387,34 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+  void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 3),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text, 
+        style: TextStyle(
+          color: textColor,
+          fontSize: 10,
+        fontWeight: FontWeight.w500),
+        textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
         ),
       ),
     );
