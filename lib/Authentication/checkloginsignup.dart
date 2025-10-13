@@ -30,7 +30,7 @@ class _CheckLoginSignupScreenState extends ConsumerState<CheckLoginSignupScreen>
 
   @override
   Widget build(BuildContext context) {
-    final userType = ref.watch(selectionProvider);
+    // final userType = ref.watch(selectionProvider);
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
@@ -43,187 +43,223 @@ class _CheckLoginSignupScreenState extends ConsumerState<CheckLoginSignupScreen>
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(padding: EdgeInsets.only(top: height * 0.1)),
-          SizedBox(height: height * 0.05),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    body: Column(
+  children: [
+    Expanded(
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('asset/images/back.jpg'), // Replace with your image path
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              // ignore: deprecated_member_use
+              Colors.black.withOpacity(0.3), // Optional: Add overlay for better text visibility
+              BlendMode.darken,
+            ),
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                height: height * 0.045,
-                width: width * 0.8,
-                decoration: BoxDecoration(
-                  color: whiteColor,
-                  borderRadius: BorderRadius.circular(width * 0.05),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 4,
-                      offset: const Offset(1, 2),
+              Padding(padding: EdgeInsets.only(top: height * 0.1)),
+              SizedBox(height: height * 0.05),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: height * 0.045,
+                    width: width * 0.8,
+                    decoration: BoxDecoration(
+                      // ignore: deprecated_member_use
+                      color: whiteColor.withOpacity(0.9), // Added opacity for better blend
+                      borderRadius: BorderRadius.circular(width * 0.05),
+                      boxShadow: [
+                        BoxShadow(
+                          // ignore: deprecated_member_use
+                          color: Colors.black.withOpacity(0.2), // Increased opacity
+                          spreadRadius: 1,
+                          blurRadius: 6,
+                          offset: const Offset(1, 2),
+                        ),
+                      ],
                     ),
-                  ], 
+                    child: Row(
+                      children: [
+                        // Jobseeker Option
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedIndex = 0;
+                            });
+                            ref.read(selectionProvider.notifier).state = UserType.jobseeker;
+                          },
+                          child: Container(
+                            width: width * 0.4,
+                            decoration: BoxDecoration(
+                              color: _selectedIndex == 0 ? selectedBlue : lightBlue,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(width * 0.05),
+                                bottomLeft: Radius.circular(width * 0.05),
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Jobseeker",
+                                style: GoogleFonts.poppins(
+                                  fontSize: width * 0.04,
+                                  color: _selectedIndex == 0 ? whiteColor : selectedBlue,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Recruiter Option
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedIndex = 1;
+                            });
+                            ref.read(selectionProvider.notifier).state = UserType.recruiter;
+                          },
+                          child: Container(
+                            width: width * 0.4,
+                            decoration: BoxDecoration(
+                              color: _selectedIndex == 1 ? selectedBlue : lightBlue,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(width * 0.05),
+                                bottomRight: Radius.circular(width * 0.05),
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Recruiter",
+                                style: GoogleFonts.poppins(
+                                  fontSize: width * 0.04,
+                                  color: _selectedIndex == 1 ? whiteColor : selectedBlue,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.02,
+                  vertical: height * 0.06,
                 ),
-                child: Row(
+                child: Column(
                   children: [
-                    // Jobseeker Option
+                    // Login Button
                     GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedIndex = 0;
-                        });
-                        ref.read(selectionProvider.notifier).state = UserType.jobseeker;
-                      },
+                      onTap: _navigateToLogin,
                       child: Container(
-                        width: width * 0.4,
+                        height: height * 0.06,
+                        width: width * 0.5,
                         decoration: BoxDecoration(
-                          color: _selectedIndex == 0 ? selectedBlue : lightBlue,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(width * 0.05),
-                            bottomLeft: Radius.circular(width * 0.05),
-                          ),
+                          color: selectedBlue,
+                          borderRadius: BorderRadius.circular(width * 0.02),
+                          boxShadow: [
+                            BoxShadow(
+                              // ignore: deprecated_member_use
+                              color: Colors.black.withOpacity(0.3), // Increased opacity
+                              spreadRadius: 2,
+                              blurRadius: 8,
+                              offset: const Offset(2, 3),
+                            ),
+                          ],
                         ),
                         child: Center(
                           child: Text(
-                            "Jobseeker",
+                            "Login",
                             style: GoogleFonts.poppins(
                               fontSize: width * 0.04,
-                              color: _selectedIndex == 0 ? whiteColor : selectedBlue,
+                              color: whiteColor,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
                       ),
                     ),
-                    // Recruiter Option
+                    SizedBox(height: height * 0.04),
+                    // SignUp Button
                     GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedIndex = 1;
-                        });
-                        ref.read(selectionProvider.notifier).state = UserType.recruiter;
-                      },
+                      onTap: _navigateToSignup,
                       child: Container(
-                        width: width * 0.4,
+                        height: height * 0.06,
+                        width: width * 0.5,
                         decoration: BoxDecoration(
-                          color: _selectedIndex == 1 ? selectedBlue : lightBlue,
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(width * 0.05),
-                            bottomRight: Radius.circular(width * 0.05),
-                          ),
+                          // ignore: deprecated_member_use
+                          color: whiteColor.withOpacity(0.9), // Added opacity
+                          border: Border.all(color: selectedBlue, width: 2),
+                          borderRadius: BorderRadius.circular(width * 0.02),
+                          boxShadow: [
+                            BoxShadow(
+                              // ignore: deprecated_member_use
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 6,
+                              offset: const Offset(1, 2),
+                            ),
+                          ],
                         ),
                         child: Center(
                           child: Text(
-                            "Recruiter",
+                            "SignUp",
                             style: GoogleFonts.poppins(
                               fontSize: width * 0.04,
-                              color: _selectedIndex == 1 ? whiteColor : selectedBlue,
+                              color: selectedBlue,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
                       ),
+                    ),
+                    SizedBox(height: height * 0.09),
+                    // Text with better visibility on background
+                    Column(
+                      children: [
+                        Text(
+                          "your journey starts today.",
+                          style: GoogleFonts.lora(
+                            fontSize: width * 0.042,
+                            color: Colors.black, // Changed to white for better contrast
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
+                          softWrap: true,
+                        ),
+                        SizedBox(height: height * 0.01),
+                        Text(
+                          "Fresh beginnings, Bright opportunities.",
+                          style: GoogleFonts.lora(
+                            fontSize: width * 0.042,
+                             color: Colors.black, // Changed to white for better contrast
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
+                          softWrap: true,
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: width * 0.02,
-              vertical: height * 0.06,
-            ),
-            child: Column(
-              children: [
-                // Login Button
-                GestureDetector(
-                  onTap: _navigateToLogin,
-                  child: Container(
-                    height: height * 0.06,
-                    width: width * 0.5,
-                    decoration: BoxDecoration(
-                      color: selectedBlue,
-                      borderRadius: BorderRadius.circular(width * 0.02),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 2,
-                          blurRadius: 6,
-                          offset: const Offset(2, 3),
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Login",
-                        style: GoogleFonts.poppins(
-                          fontSize: width * 0.04,
-                          color: whiteColor,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: height * 0.04),
-                // SignUp Button
-                GestureDetector(
-                  onTap: _navigateToSignup,
-                  child: Container(
-                    height: height * 0.06,
-                    width: width * 0.5,
-                    decoration: BoxDecoration(
-                      color: whiteColor,
-                      border: Border.all(color: selectedBlue, width: 2),
-                      borderRadius: BorderRadius.circular(width * 0.02),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: const Offset(1, 2),
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Text(
-                        "SignUp",
-                        style: GoogleFonts.poppins(
-                          fontSize: width * 0.04,
-                          color: selectedBlue,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: height * 0.09),
-                Text(
-                  "your journey starts today.",
-                  style: GoogleFonts.lora(
-                    fontSize: width * 0.042,
-                    color: selectedBlue,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  softWrap: true,
-                ),
-                Text(
-                  "Fresh beginnings,Bright opportunities.",
-                  style: GoogleFonts.lora(
-                    fontSize: width * 0.042,
-                    color: selectedBlue,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  softWrap: true,
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
+    ),
+  ],
+    ),
     );
   }
 }

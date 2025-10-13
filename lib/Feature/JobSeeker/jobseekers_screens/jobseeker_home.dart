@@ -12,7 +12,6 @@ class JobSeekerDashboard extends ConsumerStatefulWidget {
   @override
   ConsumerState<JobSeekerDashboard> createState() => _JobSeekerDashboardState();
 }
-
 class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
  final TextEditingController _searchController = TextEditingController();
  @override
@@ -21,21 +20,18 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
     // Listen to search query changes and update controller
     _searchController.addListener(_onSearchChanged);
   }
-
   @override
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
-
   void _onSearchChanged() {
     // Update provider only when text actually changes
     if (_searchController.text != ref.read(searchQueryProvider)) {
       ref.read(searchQueryProvider.notifier).state = _searchController.text;
     }
   }
-
 @override
 Widget build(BuildContext context) {
   final ref = this.ref;
@@ -188,55 +184,6 @@ Widget _buildSearchHeader(String searchQuery,BuildContext context) {
       ),
     );
   }
-
-//   Widget _buildSearchBar(double height, double width) {
-//   return Consumer(
-//     builder: (context, ref, child) {
-//       final searchQuery = ref.watch(searchQueryProvider);
-//       // Sync controller with provider value (only if different)
-//       if (_searchController.text != searchQuery) {
-//         _searchController.text = searchQuery;
-//       }
-//       return Padding(
-//         padding: EdgeInsets.symmetric(horizontal: 10),
-//         child: TextField(
-//           controller: _searchController, // Use the same controller
-//           decoration: InputDecoration(
-//             hintText: 'Search by company, location, designation...',
-//             hintStyle: TextStyle(color: Colors.grey, fontSize: 12),
-//             prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
-//             suffixIcon: searchQuery.isNotEmpty
-//                 ? IconButton(
-//                     icon: Icon(Icons.clear, size: 16),
-//                     onPressed: () {
-//                       _searchController.clear();
-//                     },
-//                   )
-//                 : null,
-//             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-//             filled: true,
-//             fillColor: Colors.grey[100],
-//             border: OutlineInputBorder(
-//               borderRadius: BorderRadius.circular(12),
-//               borderSide: BorderSide(color: AppColors.grey, width: 1),
-//             ),
-//             enabledBorder: OutlineInputBorder(
-//               borderRadius: BorderRadius.circular(12),
-//               borderSide: BorderSide(color: AppColors.grey, width: 1),
-//             ),
-//             focusedBorder: OutlineInputBorder(
-//               borderRadius: BorderRadius.circular(12),
-//               borderSide: BorderSide(
-//                 color: Colors.lightBlue,
-//                 width: 2,
-//               ),
-//             ),
-//           ),
-//         ),
-//       );
-//     },
-//   );
-// }
 Widget _buildSearchBar(double height, double width) {
   return Consumer(
     builder: (context, ref, child) {
@@ -286,7 +233,6 @@ Widget _buildSearchBar(double height, double width) {
                 ),
               ),
             ),
-
               // Filter Button
               SizedBox(width: width * 0.01),
               InkWell(
@@ -315,14 +261,6 @@ Widget _buildSearchBar(double height, double width) {
                         color: Colors.grey[600],
                       ),
                       SizedBox(width: width * 0.005),
-                      // Text(
-                      //   'Filter',
-                      //   style: TextStyle(
-                      //     fontSize: 08,
-                      //     color: Colors.grey[700],
-                      //     fontWeight: FontWeight.w500,
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -333,44 +271,6 @@ Widget _buildSearchBar(double height, double width) {
       },
     );
   }
-
-  // Example filter dialog method
-  // void _showFilterDialog(BuildContext context, WidgetRef ref) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: Text('Filter Options'),
-  //       content: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           // Add your filter options here
-  //           ListTile(
-  //             title: Text('Option 1'),
-  //             trailing: Checkbox(value: false, onChanged: (value) {}),
-  //           ),
-  //           ListTile(
-  //             title: Text('Option 2'),
-  //             trailing: Checkbox(value: false, onChanged: (value) {}),
-  //           ),
-  //           // Add more filter options as needed
-  //         ],
-  //       ),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () => Navigator.pop(context),
-  //           child: Text('Cancel'),
-  //         ),
-  //         TextButton(
-  //           onPressed: () {
-  //             // Apply filters
-  //             Navigator.pop(context);
-  //           },
-  //           child: Text('Apply'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
   Widget _buildCategorySection(WidgetRef ref, double height, double width) {
     final staticCats = ref.watch(staticCategoriesProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);

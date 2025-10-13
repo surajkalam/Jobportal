@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobapp/Authentication/provider.dart';
+import 'package:lottie/lottie.dart';
 class SignupScreen extends ConsumerStatefulWidget {
   final String option;
   const SignupScreen({super.key, required this.option});
@@ -348,7 +349,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     ),
                   ),
                 ),
-
                 // Signup Button
                 SizedBox(
                   width: double.infinity,
@@ -367,11 +367,15 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         ? SizedBox(
                             height: width * 0.04,
                             width: width * 0.04,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                colorScheme.onPrimary,
-                              ),
+                            // child: CircularProgressIndicator(
+                            //   strokeWidth: 2,
+                            //   valueColor: AlwaysStoppedAnimation<Color>(
+                            //     colorScheme.onPrimary,
+                            //   ),
+                            // ),
+                            child: Lottie.asset('asset/icons/loading colour.json',
+                            height: width * 0.01,
+                            fit: BoxFit.cover
                             ),
                           )
                         : Text(
