@@ -11,7 +11,7 @@ final currentScreenProvider = Provider<Widget>((ref) {
   final screens = [
     JobSeekerDashboard(),
     JobApplicationscreen(),
-    MessageScreen(),
+    JobseekerInfo(),
     JobseekerProfileScreen(),
   ];
   return screens[index];

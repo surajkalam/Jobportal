@@ -1,3 +1,303 @@
+// import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'dart:io';
+// import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
+
+// class FirebaseService {
+//   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+//   final FirebaseStorage _storage = FirebaseStorage.instance;
+
+//   Future<String> uploadImage(File imageFile, String recruiterEmail) async {
+//     try {
+//       if (!await imageFile.exists()) {
+//         throw Exception('Image file does not exist or is inaccessible');
+//       }
+
+//       final fileLength = await imageFile.length();
+//       if (fileLength > 10 * 1024 * 1024) {
+//         throw Exception('Image file is too large. Maximum size is 10MB');
+//       }
+
+//       String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+//       Reference storageRef = _storage.ref().child('company_images/$recruiterEmail/$fileName');
+      
+//       final metadata = SettableMetadata(
+//         contentType: 'image/jpeg',
+//         customMetadata: {'picked-file-path': imageFile.path},
+//       );
+
+//       UploadTask uploadTask = storageRef.putFile(imageFile, metadata);
+//       TaskSnapshot snapshot = await uploadTask;
+//       String downloadUrl = await snapshot.ref.getDownloadURL();
+//       return downloadUrl;
+//     } catch (e) {
+//       throw Exception('Image upload failed: $e');
+//     }
+//   }
+
+//   Future<void> saveJobData(JobModel jobData, String recruiterEmail) async {
+//     try {
+//       // Save under jobs collection with auto-generated document ID
+//       await _firestore
+//           .collection('jobs')
+//           .add({
+//             ...jobData.toMap(),
+//             'recruiterEmail': recruiterEmail, 
+//             'createdAt': FieldValue.serverTimestamp(),
+//           });
+//     } catch (e) {
+//       throw Exception('Failed to save job data: $e');
+//     }
+//   }
+
+//   // Get all jobs for a specific recruiter
+//   Stream<List<JobModel>> getAllJobs(String recruiterEmail) {
+//     return _firestore
+//         .collection('jobs')
+//         .where('recruiterEmail', isEqualTo: recruiterEmail)
+//         // .orderBy('createdAt', descending: true)
+//         .snapshots()
+//         .map((snapshot) => snapshot.docs
+//             .map((doc) => JobModel.fromMap(doc.id, doc.data()))
+//             .toList());
+//   }
+
+//   // Get jobs by category for a specific recruiter
+//   Stream<List<JobModel>> getJobsByCategory(String category, String recruiterEmail) {
+//     return _firestore
+//         .collection('jobs')
+//         .where('recruiterEmail', isEqualTo: recruiterEmail)
+//         .where('category', isEqualTo: category)
+//         // .orderBy('createdAt', descending: true)
+//         .snapshots()
+//         .map((snapshot) => snapshot.docs
+//             .map((doc) => JobModel.fromMap(doc.id, doc.data()))
+//             .toList());
+//   }
+
+//   // Get active jobs for a specific recruiter
+//   Stream<List<JobModel>> getActiveJobs(String recruiterEmail) {
+//     return _firestore
+//         .collection('jobs')
+//         .where('recruiterEmail', isEqualTo: recruiterEmail)
+//         .where('isActive', isEqualTo: true)
+//         // .orderBy('createdAt', descending: true)
+//         .snapshots()
+//         .map((snapshot) => snapshot.docs
+//             .map((doc) => JobModel.fromMap(doc.id, doc.data()))
+//             .toList());
+//   }
+
+//   // Get inactive jobs for a specific recruiter
+//   Stream<List<JobModel>> getInactiveJobs(String recruiterEmail) {
+//     return _firestore
+//         .collection('jobs')
+//         .where('recruiterEmail', isEqualTo: recruiterEmail)
+//         .where('isActive', isEqualTo: false)
+//         // .orderBy('createdAt', descending: true)
+//         .snapshots()
+//         .map((snapshot) => snapshot.docs
+//             .map((doc) => JobModel.fromMap(doc.id, doc.data()))
+//             .toList());
+//   }
+
+//   // Get total jobs count for a specific recruiter
+//   Stream<int> getTotalJobsCount(String recruiterEmail) {
+//     return _firestore
+//         .collection('jobs')
+//         .where('recruiterEmail', isEqualTo: recruiterEmail)
+//         .snapshots()
+//         .map((snapshot) => snapshot.docs.length);
+//   }
+
+//   // Get active jobs count for a specific recruiter
+//   Stream<int> getActiveJobsCount(String recruiterEmail) {
+//     return _firestore
+//         .collection('jobs')
+//         .where('recruiterEmail', isEqualTo: recruiterEmail)
+//         .where('isActive', isEqualTo: true)
+//         .snapshots()
+//         .map((snapshot) => snapshot.docs.length);
+//   }
+
+//   // Get inactive jobs count for a specific recruiter
+//   Stream<int> getInactiveJobsCount(String recruiterEmail) {
+//     return _firestore
+//         .collection('jobs')
+//         .where('recruiterEmail', isEqualTo: recruiterEmail)
+//         .where('isActive', isEqualTo: false)
+//         .snapshots()
+//         .map((snapshot) => snapshot.docs.length);
+//   }
+
+//   // Toggle job status for a specific recruiter
+//   Future<void> updateJobStatus(String jobId, bool isActive, String recruiterEmail) async {
+//     try {
+//       await _firestore
+//           .collection('jobs')
+//           .doc(jobId)
+//           .update({
+//         'isActive': isActive,
+//         'updatedAt': FieldValue.serverTimestamp(),
+//       });
+//     } catch (e) {
+//       throw Exception('Failed to update job status: $e');
+//     }
+//   }
+
+//   // Get job by ID for a specific recruiter
+//   Future<JobModel?> getJobById(String jobId, String recruiterEmail) async {
+//     try {
+//       final doc = await _firestore
+//           .collection('jobs')
+//           .doc(jobId)
+//           .get();
+      
+//       if (doc.exists && doc.data()?['recruiterEmail'] == recruiterEmail) {
+//         return JobModel.fromMap(doc.id, doc.data()!);
+//       }
+//       return null;
+//     } catch (e) {
+//       throw Exception('Failed to get job: $e');
+//     }
+//   }
+
+//   // Update job data for a specific recruiter
+//   Future<void> updateJobData(JobModel jobData, String recruiterEmail) async {
+//   try {
+//     await _firestore
+//         .collection('jobs')
+//         .doc(jobData.id)
+//         .update({
+//       'companyName': jobData.companyName,
+//       'designation': jobData.designation,
+//       'ctc': jobData.ctc,
+//       'noticePeriod': jobData.noticePeriod,
+//       'location': jobData.location,
+//       'application': jobData.application,
+//       'imageUrl': jobData.imageUrl,
+//       'category': jobData.category,
+//       'isActive': jobData.isActive,
+//       'benefits': jobData.benefits,
+//       'qualifications': jobData.qualifications,
+//       'skills': jobData.skills,
+//       'requirements': jobData.requirements,
+//       'experience': jobData.experience,
+//       'ageRange': jobData.ageRange,
+//       'isUrgentHiring': jobData.isUrgentHiring,
+//       'updatedAt': FieldValue.serverTimestamp(),
+//     });
+//   } catch (e) {
+//     throw Exception('Failed to update job data: $e');
+//   }
+// }
+//   // Delete job for a specific recruiter
+//   Future<void> deleteJob(String jobId, String recruiterEmail) async {
+//     try {
+//       await _firestore
+//           .collection('jobs')
+//           .doc(jobId)
+//           .delete();
+//     } catch (e) {
+//       throw Exception('Failed to delete job: $e');
+//     }
+//   }
+
+//   // Get all recruiters (for admin purposes) - Now we need to query distinct emails
+//   Stream<List<String>> getAllRecruiters() {
+//     return _firestore
+//         .collection('jobs')
+//         .snapshots()
+//         .map((snapshot) {
+//           final emails = <String>{};
+//           for (final doc in snapshot.docs) {
+//             final email = doc.data()['recruiterEmail'];
+//             if (email != null) {
+//               emails.add(email);
+//             }
+//           }
+//           return emails.toList();
+//         });
+//   }
+
+//   Stream<List<JobModel>> getRecentJobs(String recruiterEmail, {int limit = 3}) {
+//     return _firestore
+//         .collection('jobs')
+//         .where('recruiterEmail', isEqualTo: recruiterEmail)
+//         // .orderBy('createdAt', descending: true)
+//         .limit(limit)
+//         .snapshots()
+//         .map((snapshot) => snapshot.docs
+//             .map((doc) => JobModel.fromMap(doc.id, doc.data()))
+//             .toList());
+//   }
+
+//   // Get recent jobs with time difference calculation
+//   Stream<List<Map<String, dynamic>>> getRecentJobsWithTime(String recruiterEmail, {int limit = 3}) {
+//     return _firestore
+//         .collection('jobs')
+//         .where('recruiterEmail', isEqualTo: recruiterEmail)
+//         // .orderBy('createdAt', descending: true)
+//         .limit(limit)
+//         .snapshots()
+//         .map((snapshot) {
+//       return snapshot.docs.map((doc) {
+//         final job = JobModel.fromMap(doc.id, doc.data());
+//         final timeDifference = _calculateTimeDifference(job.createdAt);
+//         return {
+//           'job': job,
+//           'timeAgo': timeDifference,
+//           'isNew': _isNewJob(job.createdAt),
+//         };
+//       }).toList();
+//     });
+//   }
+ 
+//  Future<void> updateUrgentHiringStatus(String jobId, bool isUrgentHiring, String recruiterEmail) async {
+//   try {
+//     await _firestore
+//         .collection('jobs')
+//         .doc(jobId)
+//         .update({
+//       'isUrgentHiring': isUrgentHiring,
+//       'updatedAt': FieldValue.serverTimestamp(),
+//     });
+//   } catch (e) {
+//     throw Exception('Failed to update urgent hiring status: $e');
+//   }
+// }
+//   // Calculate time difference in human readable format
+//   String _calculateTimeDifference(DateTime jobTime) {
+//     final now = DateTime.now();
+//     final difference = now.difference(jobTime);
+
+//     if (difference.inMinutes < 1) {
+//       return 'Just now';
+//     } else if (difference.inMinutes < 60) {
+//       return '${difference.inMinutes} min ago';
+//     } else if (difference.inHours < 24) {
+//       return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+//     } else if (difference.inDays < 7) {
+//       return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+//     } else if (difference.inDays < 30) {
+//       final weeks = (difference.inDays / 7).floor();
+//       return '$weeks week${weeks > 1 ? 's' : ''} ago';
+//     } else {
+//       final months = (difference.inDays / 30).floor();
+//       return '$months month${months > 1 ? 's' : ''} ago';
+//     }
+//   }
+
+//   // Check if job is new (less than 24 hours old)
+//   bool _isNewJob(DateTime jobTime) {
+//     final now = DateTime.now();
+//     return now.difference(jobTime).inHours < 24;
+//   }
+// }
+
+
+// All in one file
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
@@ -37,12 +337,13 @@ class FirebaseService {
 
   Future<void> saveJobData(JobModel jobData, String recruiterEmail) async {
     try {
-      // Save under jobs collection with auto-generated document ID
+      // Save job under recruiter's jobs subcollection
       await _firestore
+          .collection('recruiters')
+          .doc(recruiterEmail)
           .collection('jobs')
           .add({
             ...jobData.toMap(),
-            'recruiterEmail': recruiterEmail, 
             'createdAt': FieldValue.serverTimestamp(),
           });
     } catch (e) {
@@ -53,9 +354,9 @@ class FirebaseService {
   // Get all jobs for a specific recruiter
   Stream<List<JobModel>> getAllJobs(String recruiterEmail) {
     return _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
         .collection('jobs')
-        .where('recruiterEmail', isEqualTo: recruiterEmail)
-        // .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => JobModel.fromMap(doc.id, doc.data()))
@@ -65,10 +366,10 @@ class FirebaseService {
   // Get jobs by category for a specific recruiter
   Stream<List<JobModel>> getJobsByCategory(String category, String recruiterEmail) {
     return _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
         .collection('jobs')
-        .where('recruiterEmail', isEqualTo: recruiterEmail)
         .where('category', isEqualTo: category)
-        // .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => JobModel.fromMap(doc.id, doc.data()))
@@ -78,10 +379,10 @@ class FirebaseService {
   // Get active jobs for a specific recruiter
   Stream<List<JobModel>> getActiveJobs(String recruiterEmail) {
     return _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
         .collection('jobs')
-        .where('recruiterEmail', isEqualTo: recruiterEmail)
         .where('isActive', isEqualTo: true)
-        // .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => JobModel.fromMap(doc.id, doc.data()))
@@ -91,10 +392,10 @@ class FirebaseService {
   // Get inactive jobs for a specific recruiter
   Stream<List<JobModel>> getInactiveJobs(String recruiterEmail) {
     return _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
         .collection('jobs')
-        .where('recruiterEmail', isEqualTo: recruiterEmail)
         .where('isActive', isEqualTo: false)
-        // .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => JobModel.fromMap(doc.id, doc.data()))
@@ -104,8 +405,9 @@ class FirebaseService {
   // Get total jobs count for a specific recruiter
   Stream<int> getTotalJobsCount(String recruiterEmail) {
     return _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
         .collection('jobs')
-        .where('recruiterEmail', isEqualTo: recruiterEmail)
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
   }
@@ -113,8 +415,9 @@ class FirebaseService {
   // Get active jobs count for a specific recruiter
   Stream<int> getActiveJobsCount(String recruiterEmail) {
     return _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
         .collection('jobs')
-        .where('recruiterEmail', isEqualTo: recruiterEmail)
         .where('isActive', isEqualTo: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
@@ -123,8 +426,9 @@ class FirebaseService {
   // Get inactive jobs count for a specific recruiter
   Stream<int> getInactiveJobsCount(String recruiterEmail) {
     return _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
         .collection('jobs')
-        .where('recruiterEmail', isEqualTo: recruiterEmail)
         .where('isActive', isEqualTo: false)
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
@@ -134,6 +438,8 @@ class FirebaseService {
   Future<void> updateJobStatus(String jobId, bool isActive, String recruiterEmail) async {
     try {
       await _firestore
+          .collection('recruiters')
+          .doc(recruiterEmail)
           .collection('jobs')
           .doc(jobId)
           .update({
@@ -149,11 +455,13 @@ class FirebaseService {
   Future<JobModel?> getJobById(String jobId, String recruiterEmail) async {
     try {
       final doc = await _firestore
+          .collection('recruiters')
+          .doc(recruiterEmail)
           .collection('jobs')
           .doc(jobId)
           .get();
       
-      if (doc.exists && doc.data()?['recruiterEmail'] == recruiterEmail) {
+      if (doc.exists) {
         return JobModel.fromMap(doc.id, doc.data()!);
       }
       return null;
@@ -164,37 +472,42 @@ class FirebaseService {
 
   // Update job data for a specific recruiter
   Future<void> updateJobData(JobModel jobData, String recruiterEmail) async {
-  try {
-    await _firestore
-        .collection('jobs')
-        .doc(jobData.id)
-        .update({
-      'companyName': jobData.companyName,
-      'designation': jobData.designation,
-      'ctc': jobData.ctc,
-      'noticePeriod': jobData.noticePeriod,
-      'location': jobData.location,
-      'application': jobData.application,
-      'imageUrl': jobData.imageUrl,
-      'category': jobData.category,
-      'isActive': jobData.isActive,
-      'benefits': jobData.benefits,
-      'qualifications': jobData.qualifications,
-      'skills': jobData.skills,
-      'requirements': jobData.requirements,
-      'experience': jobData.experience,
-      'ageRange': jobData.ageRange,
-      'isUrgentHiring': jobData.isUrgentHiring,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-  } catch (e) {
-    throw Exception('Failed to update job data: $e');
+    try {
+      await _firestore
+          .collection('recruiters')
+          .doc(recruiterEmail)
+          .collection('jobs')
+          .doc(jobData.id)
+          .update({
+        'companyName': jobData.companyName,
+        'designation': jobData.designation,
+        'ctc': jobData.ctc,
+        'noticePeriod': jobData.noticePeriod,
+        'location': jobData.location,
+        'application': jobData.application,
+        'imageUrl': jobData.imageUrl,
+        'category': jobData.category,
+        'isActive': jobData.isActive,
+        'benefits': jobData.benefits,
+        'qualifications': jobData.qualifications,
+        'skills': jobData.skills,
+        'requirements': jobData.requirements,
+        'experience': jobData.experience,
+        'ageRange': jobData.ageRange,
+        'isUrgentHiring': jobData.isUrgentHiring,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Failed to update job data: $e');
+    }
   }
-}
+
   // Delete job for a specific recruiter
   Future<void> deleteJob(String jobId, String recruiterEmail) async {
     try {
       await _firestore
+          .collection('recruiters')
+          .doc(recruiterEmail)
           .collection('jobs')
           .doc(jobId)
           .delete();
@@ -203,28 +516,22 @@ class FirebaseService {
     }
   }
 
-  // Get all recruiters (for admin purposes) - Now we need to query distinct emails
+  // Get all recruiters (for admin purposes)
   Stream<List<String>> getAllRecruiters() {
     return _firestore
-        .collection('jobs')
+        .collection('recruiters')
         .snapshots()
-        .map((snapshot) {
-          final emails = <String>{};
-          for (final doc in snapshot.docs) {
-            final email = doc.data()['recruiterEmail'];
-            if (email != null) {
-              emails.add(email);
-            }
-          }
-          return emails.toList();
-        });
+        .map((snapshot) => snapshot.docs
+            .map((doc) => doc.id)
+            .toList());
   }
 
   Stream<List<JobModel>> getRecentJobs(String recruiterEmail, {int limit = 3}) {
     return _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
         .collection('jobs')
-        .where('recruiterEmail', isEqualTo: recruiterEmail)
-        // .orderBy('createdAt', descending: true)
+        .orderBy('createdAt', descending: true)
         .limit(limit)
         .snapshots()
         .map((snapshot) => snapshot.docs
@@ -235,9 +542,10 @@ class FirebaseService {
   // Get recent jobs with time difference calculation
   Stream<List<Map<String, dynamic>>> getRecentJobsWithTime(String recruiterEmail, {int limit = 3}) {
     return _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
         .collection('jobs')
-        .where('recruiterEmail', isEqualTo: recruiterEmail)
-        // .orderBy('createdAt', descending: true)
+        .orderBy('createdAt', descending: true)
         .limit(limit)
         .snapshots()
         .map((snapshot) {
@@ -252,20 +560,23 @@ class FirebaseService {
       }).toList();
     });
   }
- 
- Future<void> updateUrgentHiringStatus(String jobId, bool isUrgentHiring, String recruiterEmail) async {
-  try {
-    await _firestore
-        .collection('jobs')
-        .doc(jobId)
-        .update({
-      'isUrgentHiring': isUrgentHiring,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-  } catch (e) {
-    throw Exception('Failed to update urgent hiring status: $e');
+
+  Future<void> updateUrgentHiringStatus(String jobId, bool isUrgentHiring, String recruiterEmail) async {
+    try {
+      await _firestore
+          .collection('recruiters')
+          .doc(recruiterEmail)
+          .collection('jobs')
+          .doc(jobId)
+          .update({
+        'isUrgentHiring': isUrgentHiring,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Failed to update urgent hiring status: $e');
+    }
   }
-}
+
   // Calculate time difference in human readable format
   String _calculateTimeDifference(DateTime jobTime) {
     final now = DateTime.now();
@@ -292,5 +603,35 @@ class FirebaseService {
   bool _isNewJob(DateTime jobTime) {
     final now = DateTime.now();
     return now.difference(jobTime).inHours < 24;
+  }
+
+  // New method to get applications for a specific job
+  Stream<List<Map<String, dynamic>>> getApplicationsForJob(String recruiterEmail, String jobId) {
+    return _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
+        .collection('jobs')
+        .doc(jobId)
+        .collection('applications')
+        .orderBy('appliedAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => {
+                  'id': doc.id,
+                  ...doc.data(),
+                })
+            .toList());
+  }
+
+  // New method to get application count for a job
+  Stream<int> getApplicationCount(String recruiterEmail, String jobId) {
+    return _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
+        .collection('jobs')
+        .doc(jobId)
+        .collection('applications')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
   }
 }

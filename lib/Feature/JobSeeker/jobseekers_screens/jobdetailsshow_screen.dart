@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:jobapp/Feature/JobSeeker/firebase_crud/jobaccess_repository.dart';
+import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 import 'package:jobapp/core/util.dart/appcolors.dart';
@@ -118,7 +120,7 @@ class JobDetailsScreen extends ConsumerWidget {
             SizedBox(height: 30),
 
             // Apply Button
-            _buildApplyButton(context, job,height,width),
+            _buildApplyButton(context, ref,job,height,width),
             SizedBox(height: height * 0.1),
           ],
         ),
@@ -265,6 +267,7 @@ class JobDetailsScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: Colors.red[50],
               borderRadius: BorderRadius.circular(10),
+              // ignore: deprecated_member_use
               border: Border.all(color: Colors.red.withOpacity(0.3)),
             ),
             child: Row(
@@ -316,7 +319,9 @@ class JobDetailsScreen extends ConsumerWidget {
   ) {
     return Container(
       decoration: BoxDecoration(
+        // ignore: deprecated_member_use
         border: Border.all(color: AppColors.grey.withOpacity(0.3)),
+        // ignore: deprecated_member_use
         color: AppColors.verylightblue.withOpacity(0.3),
         borderRadius: BorderRadius.circular(25),
       ),
@@ -386,6 +391,7 @@ class JobDetailsScreen extends ConsumerWidget {
             // ignore: deprecated_member_use
             color: AppColors.verylightblue.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
+            // ignore: deprecated_member_use
             border: Border.all(color: AppColors.grey.withOpacity(0.2)),
           ),
           child: Text(
@@ -429,8 +435,10 @@ class JobDetailsScreen extends ConsumerWidget {
         Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
+            // ignore: deprecated_member_use
             color: AppColors.verylightblue.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
+            // ignore: deprecated_member_use
             border: Border.all(color: AppColors.grey.withOpacity(0.2)),
           ),
           child: Column(
@@ -490,8 +498,10 @@ class JobDetailsScreen extends ConsumerWidget {
         Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
+            // ignore: deprecated_member_use
             color: AppColors.verylightblue.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
+            // ignore: deprecated_member_use
             border: Border.all(color: AppColors.grey.withOpacity(0.2)),
           ),
           child: Column(
@@ -563,12 +573,12 @@ class JobDetailsScreen extends ConsumerWidget {
         .toList();
   }
 
-  Widget _buildApplyButton(BuildContext context, JobModel job,double height, double width) {
+  Widget _buildApplyButton(BuildContext context, WidgetRef ref,JobModel job,double height, double width) {
   return SizedBox(
     width: double.infinity,
     child: GestureDetector(
       onTap: () {
-        _showApplyDialog(context, job,height,width);
+         _showApplyDialog(context, job, height, width, ref); 
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10),
@@ -616,48 +626,72 @@ class JobDetailsScreen extends ConsumerWidget {
   );
 }
 
-  void _showApplyDialog(BuildContext context, JobModel job,double height, double width) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Apply for ${job.designation}',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
+  void _showApplyDialog(BuildContext context, JobModel job, double height, double width, WidgetRef ref) {
+  final jobseekerState = ref.read(jobseekerProvider);
+  final jobseekerInfo = jobseekerState.jobseekerInfo;
+  log(job.id);
+  
+  // Check if jobseeker has complete profile and resume
+  final hasCompleteProfile = jobseekerInfo != null && 
+      jobseekerInfo.name.isNotEmpty && 
+      jobseekerInfo.resumeUrl.isNotEmpty;
+  
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(
+        'Apply for ${job.designation}',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
         ),
-        content: Text(
-          job.isUrgentHiring 
-              ? 'This is an urgent hiring position! Apply now to get priority consideration for ${job.designation} at ${job.companyName}.'
-              : 'Are you sure you want to apply for ${job.designation} at ${job.companyName}?',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
-            color: Colors.black,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
+      ),
+      content: hasCompleteProfile 
+          ? Text(
+              job.isUrgentHiring 
+                  ? 'This is an urgent hiring position! Apply now to get priority consideration for ${job.designation} at ${job.companyName}.'
+                  : 'Are you sure you want to apply for ${job.designation} at ${job.companyName}?',
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: FontWeight.w400,
                 color: Colors.black,
               ),
+            )
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Complete your profile to apply:',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 8),
+                if (jobseekerInfo == null || jobseekerInfo.name.isEmpty)
+                  Text('• Add your personal information', style: TextStyle(fontSize: 10)),
+                if (jobseekerInfo?.resumeUrl.isEmpty ?? true)
+                  Text('• Upload your resume', style: TextStyle(fontSize: 10)),
+              ],
+            ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(
+            'Cancel',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w400,
+              color: Colors.black,
             ),
           ),
+        ),
+        if (hasCompleteProfile)
           ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _showSnackBar(
-                context: context,
-                text: 'Application submitted successfully!',
-              );
-            },
+            onPressed: () => _submitApplication(context, job, jobseekerInfo, ref),
             style: ElevatedButton.styleFrom(
               backgroundColor: job.isUrgentHiring ? Colors.red : AppColors.lightBlue,
             ),
@@ -669,11 +703,95 @@ class JobDetailsScreen extends ConsumerWidget {
                 color: Colors.white,
               ),
             ),
+          )
+        else
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Navigate to profile completion screen
+              _navigateToProfile(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.grey,
+            ),
+            child: Text(
+              'Complete Profile',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+                color: Colors.white,
+              ),
+            ),
           ),
-        ],
-      ),
+      ],
+    ),
+  );
+}
+void _submitApplication(BuildContext context, JobModel job, JobseekerModel jobseekerInfo, WidgetRef ref) async {
+  try {
+    final jobRepository = JobRepository();
+    // Check if already applied
+    final hasApplied = await jobRepository.hasAppliedForJob(
+      jobseekerInfo.email, 
+      job.id,
+      job.recruiterEmail // Make sure JobModel has recruiterEmail field
+    );
+    
+    if (hasApplied) {
+      _showSnackBar(
+        // ignore: use_build_context_synchronously
+        context: context,
+        text: 'You have already applied for this position!',
+        textColor: Colors.orange,
+      );
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
+      return;
+    }
+    
+    // Submit application
+    await jobRepository.applyForJob(
+      jobseekerEmail: jobseekerInfo.email,
+      jobseekerName: jobseekerInfo.name,
+      jobId: job.id,
+      recruiterEmail: job.recruiterEmail, // Make sure JobModel has this field
+      jobTitle: job.designation,
+      resumeUrl: jobseekerInfo.resumeUrl,
+      coverLetter: '', // You can add a cover letter field later
+    );
+    
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context);
+    _showSnackBar(
+      // ignore: use_build_context_synchronously
+      context: context,
+      text: 'Application submitted successfully!',
+      textColor: Colors.green,
+    );
+    
+  } catch (e) {
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context);
+    _showSnackBar(
+      // ignore: use_build_context_synchronously
+      context: context,
+      text: 'Failed to submit application: $e',
+      textColor: Colors.red,
     );
   }
+}
+void _navigateToProfile(BuildContext context) {
+  // Navigate to profile screen to complete profile
+  // You can implement this based on your app navigation
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Please complete your profile and upload resume'),
+      backgroundColor: Colors.orange,
+    ),
+  );
+}
+
+
 
   String _calculateTimeAgo(DateTime? postedDate) {
     if (postedDate == null) return 'Recently';
