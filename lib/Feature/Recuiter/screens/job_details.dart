@@ -546,7 +546,7 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
       String category = selectedIndex == 1 ? 'Airline' : 'Hospitality';
 
       final jobNotifier = ref.read(jobNotifierProvider.notifier);
-      final recruiterEmail = ref.read(currentUserEmailProvider);
+      final recruiterEmail = ref.read(currentrecuiterUserEmailProvider);
       
       // Upload image
       String imageUrl = await jobNotifier.uploadImage(_selectedImage!);

@@ -91,7 +91,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Column(
             children: [
               Icon(icon, color: color, size: 30),
-               SizedBox(height:height*0.005),
+              SizedBox(height:height*0.005),
               Text('$value', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               Text(title, style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500)),
             ],

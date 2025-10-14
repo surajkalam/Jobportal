@@ -48,7 +48,7 @@ class JobNotifier extends StateNotifier<JobState> {
 
    JobNotifier(this._firebaseService, this._ref) : super(const JobState());
 
-  String get _recruiterEmail => _ref.read(currentUserEmailProvider);
+  String get _recruiterEmail => _ref.read(currentrecuiterUserEmailProvider);
 
   Future<String> uploadImage(File imageFile) async {
     try {
@@ -126,7 +126,7 @@ final jobDeleteProvider = FutureProvider.family<void, String>((ref, jobId) async
 //  getting individual job details
 final jobDetailProvider = StreamProvider.family<JobModel?, String>((ref, jobId) {
   final firebaseService = ref.read(firebaseServiceProvider);
-  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
   if (recruiterEmail.isEmpty) return Stream.value(null);
    return Stream.fromFuture(firebaseService.getJobById(jobId, recruiterEmail));
 });
@@ -134,35 +134,35 @@ final jobDetailProvider = StreamProvider.family<JobModel?, String>((ref, jobId) 
 // Stream providers with recruiter email
 final airlineJobsProvider = StreamProvider<List<JobModel>>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
-  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
   if (recruiterEmail.isEmpty) return Stream.value([]);
   return firebaseService.getJobsByCategory('Airline', recruiterEmail);
 });
 
 final hospitalityJobsProvider = StreamProvider<List<JobModel>>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
-  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
   if (recruiterEmail.isEmpty) return Stream.value([]);
   return firebaseService.getJobsByCategory('Hospitality', recruiterEmail);
 });
 
 final allJobsProvider = StreamProvider<List<JobModel>>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
-  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
   if (recruiterEmail.isEmpty) return Stream.value([]);
   return firebaseService.getAllJobs(recruiterEmail);
 });
 
 final activeJobsProvider = StreamProvider<List<JobModel>>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
-  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
   if (recruiterEmail.isEmpty) return Stream.value([]);
   return firebaseService.getActiveJobs(recruiterEmail);
 });
 
 final inactiveJobsProvider = StreamProvider<List<JobModel>>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
-  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
   if (recruiterEmail.isEmpty) return Stream.value([]);
   return firebaseService.getInactiveJobs(recruiterEmail);
 });
@@ -170,21 +170,21 @@ final inactiveJobsProvider = StreamProvider<List<JobModel>>((ref) {
 // Count providers
 final totalJobsCountProvider = StreamProvider<int>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
-  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
   if (recruiterEmail.isEmpty) return Stream.value(0);
   return firebaseService.getTotalJobsCount(recruiterEmail);
 });
 
 final activeJobsCountProvider = StreamProvider<int>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
-  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
   if (recruiterEmail.isEmpty) return Stream.value(0);
   return firebaseService.getActiveJobsCount(recruiterEmail);
 });
 
 final inactiveJobsCountProvider = StreamProvider<int>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
-  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
   if (recruiterEmail.isEmpty) return Stream.value(0);
   return firebaseService.getInactiveJobsCount(recruiterEmail);
 });
@@ -204,7 +204,7 @@ class JobStatusNotifier extends StateNotifier<AsyncValue<bool>> {
     _loadInitialStatus();
   }
 
-  String get _recruiterEmail => _ref.read(currentUserEmailProvider);
+  String get _recruiterEmail => _ref.read(currentrecuiterUserEmailProvider);
 
   Future<void> _loadInitialStatus() async {
     try {
@@ -230,7 +230,7 @@ class JobStatusNotifier extends StateNotifier<AsyncValue<bool>> {
 // Provider for recent jobs (last 3)
 final recentJobsProvider = StreamProvider<List<JobModel>>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
-  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
   
   if (recruiterEmail.isEmpty) return Stream.value([]);
   
@@ -240,7 +240,7 @@ final recentJobsProvider = StreamProvider<List<JobModel>>((ref) {
 // Provider for recent jobs with time information
 final recentJobsWithTimeProvider = StreamProvider<List<Map<String, dynamic>>>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
-  final recruiterEmail = ref.watch(currentUserEmailProvider);
+  final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
   
   if (recruiterEmail.isEmpty) return Stream.value([]);
   
@@ -332,7 +332,7 @@ class UrgentHiringNotifier extends StateNotifier<AsyncValue<bool>> {
     _loadInitialStatus();
   }
 
-  String get _recruiterEmail => _ref.read(currentUserEmailProvider);
+  String get _recruiterEmail => _ref.read(currentrecuiterUserEmailProvider);
 
   Future<void> _loadInitialStatus() async {
     try {

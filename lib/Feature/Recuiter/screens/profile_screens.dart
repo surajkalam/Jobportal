@@ -22,7 +22,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void _loadRecruiterData() {
-    final email = ref.read(currentUserEmailProvider);
+    final email = ref.read(currentrecuiterUserEmailProvider);
     if (email.isNotEmpty) {
       ref.read(recruiterDataProvider.notifier).getRecruiterByEmail(email);
     }

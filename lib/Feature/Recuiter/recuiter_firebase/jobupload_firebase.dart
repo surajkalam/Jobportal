@@ -298,8 +298,11 @@
 
 // All in one file
 
+import 'dart:developer';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:jobapp/Feature/combomodel/application_model.dart';
 import 'dart:io';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 
@@ -336,21 +339,32 @@ class FirebaseService {
   }
 
   Future<void> saveJobData(JobModel jobData, String recruiterEmail) async {
-    try {
-      // Save job under recruiter's jobs subcollection
-      await _firestore
-          .collection('recruiters')
-          .doc(recruiterEmail)
-          .collection('jobs')
-          .add({
-            ...jobData.toMap(),
-            'createdAt': FieldValue.serverTimestamp(),
-          });
-    } catch (e) {
-      throw Exception('Failed to save job data: $e');
-    }
-  }
+  try {
+    // Save to nested structure (for recruiters)
+    final docRef = await _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
+        .collection('jobs')
+        .add({
+          ...jobData.toMap(),
+          'recruiterEmail': recruiterEmail,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
 
+    // Also save to flat collection (for jobseekers to browse)
+    await _firestore
+        .collection('jobs')
+        .doc(docRef.id)
+        .set({
+          ...jobData.toMap(),
+          'recruiterEmail': recruiterEmail,
+          'jobId': docRef.id, // Store the same ID
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+  } catch (e) {
+    throw Exception('Failed to save job data: $e');
+  }
+}
   // Get all jobs for a specific recruiter
   Stream<List<JobModel>> getAllJobs(String recruiterEmail) {
     return _firestore
@@ -606,22 +620,47 @@ class FirebaseService {
   }
 
   // New method to get applications for a specific job
-  Stream<List<Map<String, dynamic>>> getApplicationsForJob(String recruiterEmail, String jobId) {
-    return _firestore
-        .collection('recruiters')
-        .doc(recruiterEmail)
-        .collection('jobs')
-        .doc(jobId)
-        .collection('applications')
-        .orderBy('appliedAt', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => {
-                  'id': doc.id,
-                  ...doc.data(),
-                })
-            .toList());
-  }
+  // Stream<List<Map<String, dynamic>>> getApplicationsForJob(String recruiterEmail, String jobId) {
+  //   return _firestore
+  //       .collection('recruiters')
+  //       .doc(recruiterEmail)
+  //       .collection('jobs')
+  //       .doc(jobId)
+  //       .collection('applications')
+  //       .orderBy('appliedAt', descending: true)
+  //       .snapshots()
+  //       .map((snapshot) => snapshot.docs
+  //           .map((doc) => {
+  //                 'id': doc.id,
+  //                 ...doc.data(),
+  //               })
+  //           .toList());
+  // }
+  // Get applications for a specific job
+Stream<List<ApplicationModel>> getApplicationsForJob(String recruiterEmail, String jobId) {
+   log('=== FIRESTORE QUERY DEBUG ===');
+  log('Querying applications for:');
+  log('Recruiter Email: $recruiterEmail');
+  log('Job ID: $jobId');
+  log('Full path: recruiters/$recruiterEmail/jobs/$jobId/applications');
+  return _firestore
+      .collection('recruiters')
+      .doc(recruiterEmail)
+      .collection('jobs')
+      .doc(jobId)
+      .collection('applications')
+      .orderBy('appliedAt', descending: true)
+      .snapshots()
+      .map((snapshot) {
+        log('Found ${snapshot.docs.length} applications for job $jobId');
+        return snapshot.docs
+            .map((doc) {
+              log('Application doc: ${doc.id} - ${doc.data()}');
+              return ApplicationModel.fromMap(doc.id, doc.data());
+            })
+            .toList();
+      });
+}
 
   // New method to get application count for a job
   Stream<int> getApplicationCount(String recruiterEmail, String jobId) {
@@ -634,4 +673,146 @@ class FirebaseService {
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
   }
+
+  // Get applications for a specific job
+// Stream<List<ApplicationModel>> getApplicationsForJob(String recruiterEmail, String jobId) {
+//   return _firestore
+//       .collection('recruiters')
+//       .doc(recruiterEmail)
+//       .collection('jobs')
+//       .doc(jobId)
+//       .collection('applications')
+//       .orderBy('appliedAt', descending: true)
+//       .snapshots()
+//       .map((snapshot) => snapshot.docs
+//           .map((doc) => ApplicationModel.fromMap(doc.id, doc.data()))
+//           .toList());
+// }
+
+// Get all applications for recruiter (across all jobs)
+// Alternative method without collectionGroup query
+Stream<List<ApplicationModel>> getAllApplicationsForRecruiter(String recruiterEmail) {
+  log('=== FIRESTORE QUERY DEBUG (ALL APPLICATIONS) ===');
+  log('Querying ALL applications for recruiter: $recruiterEmail');
+  
+  return _firestore
+      .collection('recruiters')
+      .doc(recruiterEmail)
+      .collection('jobs')
+      .snapshots()
+      .asyncMap((jobsSnapshot) async {
+        log('Found ${jobsSnapshot.docs.length} jobs for recruiter $recruiterEmail');
+        
+        final allApplications = <ApplicationModel>[];
+        for (final jobDoc in jobsSnapshot.docs) {
+          try {
+            log('Checking job: ${jobDoc.id} - ${jobDoc.data()}');
+            
+            final applicationsSnapshot = await _firestore
+                .collection('recruiters')
+                .doc(recruiterEmail)
+                .collection('jobs')
+                .doc(jobDoc.id)
+                .collection('applications')
+                .orderBy('appliedAt', descending: true)
+                .get();
+            
+            log('Found ${applicationsSnapshot.docs.length} applications for job ${jobDoc.id}');
+            
+            allApplications.addAll(applicationsSnapshot.docs
+                .map((doc) {
+                  log('Application: ${doc.id} - ${doc.data()}');
+                  return ApplicationModel.fromMap(doc.id, doc.data());
+                })
+                .toList());
+          } catch (e) {
+            log('Error fetching applications for job ${jobDoc.id}: $e');
+          }
+        }
+        
+        // Sort all applications by appliedAt date
+        allApplications.sort((a, b) => b.appliedAt.compareTo(a.appliedAt));
+        log('Total applications found: ${allApplications.length}');
+        return allApplications;
+      });
+}
+
+// Update application status
+Future<void> updateApplicationStatus({
+  required String recruiterEmail,
+  required String jobId,
+  required String applicationId,
+  required String newStatus,
+}) async {
+  try {
+    await _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
+        .collection('jobs')
+        .doc(jobId)
+        .collection('applications')
+        .doc(applicationId)
+        .update({
+          'status': newStatus,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+    // Also update in jobseeker's applications collection
+    final applicationDoc = await _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
+        .collection('jobs')
+        .doc(jobId)
+        .collection('applications')
+        .doc(applicationId)
+        .get();
+
+    if (applicationDoc.exists) {
+      final applicationData = applicationDoc.data()!;
+      final jobseekerEmail = applicationData['jobseekerEmail'];
+      
+      // Find and update in jobseeker's applications
+      final jobseekerApplications = await _firestore
+          .collection('jobseekers')
+          .doc(jobseekerEmail)
+          .collection('applications')
+          .where('job_id', isEqualTo: jobId)
+          .where('recruiter_email', isEqualTo: recruiterEmail)
+          .get();
+
+      for (final doc in jobseekerApplications.docs) {
+        await doc.reference.update({
+          'status': newStatus,
+          'updated_at': FieldValue.serverTimestamp(),
+        });
+      }
+    }
+  } catch (e) {
+    throw Exception('Failed to update application status: $e');
+  }
+}
+
+// Get application statistics
+Future<Map<String, int>> getApplicationStats(String recruiterEmail, String jobId) async {
+  try {
+    final applications = await _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
+        .collection('jobs')
+        .doc(jobId)
+        .collection('applications')
+        .get();
+
+    final stats = {
+      'total': applications.docs.length,
+      'pending': applications.docs.where((doc) => doc.data()['status'] == 'pending').length,
+      'shortlisted': applications.docs.where((doc) => doc.data()['status'] == 'shortlisted').length,
+      'rejected': applications.docs.where((doc) => doc.data()['status'] == 'rejected').length,
+    };
+
+    return stats;
+  } catch (e) {
+    throw Exception('Failed to get application stats: $e');
+  }
+}
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:jobapp/Feature/Recuiter/screens/applications_screen.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 
 import '../provider/provider.dart';
@@ -34,7 +35,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
   }
 
   void _refreshRecentJobs() {
-    final recruiterEmail = ref.read(currentUserEmailProvider);
+    final recruiterEmail = ref.read(currentrecuiterUserEmailProvider);
     if (recruiterEmail.isNotEmpty) {
       ref
           .read(recentJobsNotifierProvider(recruiterEmail).notifier)
@@ -44,7 +45,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final recruiterEmail = ref.watch(currentUserEmailProvider);
+    final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
     final recentJobsAsync = ref.watch(recentJobsProvider);
     final totalJobsCount = ref.watch(totalJobsCountProvider);
     final activeJobsCount = ref.watch(activeJobsCountProvider);
@@ -398,6 +399,14 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
       onLongPress: () {
         _showDeleteDialog(job);
       },
+      onTap: (){
+         Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ApplicationsScreen(job: job),
+          ),
+         );
+      },
       child: Card(
         elevation: 1,
         child: ListTile(
@@ -553,9 +562,6 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
               ],
             ),
           ),
-          onTap: () {
-            // Navigate to job details or edit screen
-          },
         ),
       ),
     );
@@ -596,7 +602,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
   }
 
   void _refreshUrgentHiring(String jobId) {
-    final recruiterEmail = ref.read(currentUserEmailProvider);
+    final recruiterEmail = ref.read(currentrecuiterUserEmailProvider);
     if (recruiterEmail.isNotEmpty) {
       ref.invalidate(urgentHiringProvider(jobId));
     }
@@ -652,7 +658,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
 
   //refresh recent jobs
   void _refreshJobStatus(String jobId) {
-    final recruiterEmail = ref.read(currentUserEmailProvider);
+    final recruiterEmail = ref.read(currentrecuiterUserEmailProvider);
     if (recruiterEmail.isNotEmpty) {
       ref.invalidate(jobStatusProvider(jobId));
     }

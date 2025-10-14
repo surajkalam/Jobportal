@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -378,14 +380,15 @@ Widget _buildSearchBar(double height, double width) {
           itemCount: jobs.length,
           itemBuilder: (context, index) {
             final job = jobs[index];
-            return _buildJobCard(context, job);
+            return _buildJobCard(context, job,height,width);
           },
         );
       },
     );
   }
 
-  Widget _buildJobCard(BuildContext context, JobModel job) {
+  Widget _buildJobCard(BuildContext context, JobModel job,double height,double width) {
+    log('jobid: ${job.id.toString()}');
     return InkWell(
       onTap: () {
         context.push('/job-details', extra: job);
@@ -506,11 +509,16 @@ Widget _buildSearchBar(double height, double width) {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Text(
-                                  '${job.companyName} ',
-                                  style: TextStyle(
-                                    fontSize: 09,
-                                    color: Colors.grey[600],
+                                SizedBox(
+                                  width: width*0.3,
+                                  child: Text(
+                                    '${job.companyName} ',
+                                    style: TextStyle(
+                                      fontSize: 09,
+                                      color: Colors.grey[600],
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 SizedBox(width: 4),
@@ -520,11 +528,16 @@ Widget _buildSearchBar(double height, double width) {
                                   // ignore: deprecated_member_use
                                   color: AppColors.grey.withOpacity(0.8),
                                 ),
-                                Text(
-                                  ' ${job.location}',
-                                  style: TextStyle(
-                                    fontSize: 09,
-                                    color: Colors.grey[600],
+                                SizedBox(
+                                  width: width*0.2,
+                                  child: Text(
+                                    ' ${job.location}',
+                                    style: TextStyle(
+                                      fontSize: 09,
+                                      color: Colors.grey[600],
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],

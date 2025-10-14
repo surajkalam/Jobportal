@@ -16,7 +16,7 @@ class _RecruiterNavbarState extends State<RecruiterNavbar> {
   final List<Widget> _pages = [
     HomeScreen(),
     UploadJobsScreen(),
-    ApplicationsScreen(),
+    ProfileScreen(),
     ProfileScreen(),
   ];
 

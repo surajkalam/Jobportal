@@ -371,7 +371,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
 
       // Save to Firestore using provider
       await ref.read(recruiterDataProvider.notifier).saveRecruiter(recruiter);
-      ref.read(currentUserEmailProvider.notifier).state = emailController.text;
+      ref.read(currentrecuiterUserEmailProvider.notifier).state = emailController.text;
       // ignore: use_build_context_synchronously
       _showSnackBar(context: context, text:' Recruiter information submitted successfully! 👍',textColor: Colors.green);
       // ignore: use_build_context_synchronously

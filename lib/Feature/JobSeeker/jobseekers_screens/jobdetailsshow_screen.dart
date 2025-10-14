@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:jobapp/Feature/JobSeeker/firebase_crud/jobaccess_repository.dart';
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
+import 'package:jobapp/Feature/JobSeeker/provider/application_provider.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 import 'package:jobapp/core/util.dart/appcolors.dart';
@@ -25,10 +26,10 @@ class JobDetailsScreen extends ConsumerWidget {
     final jobseekerInfo = jobseekerState.jobseekerInfo;
     log('Jobseeker Info: $jobseekerInfo');
    if(jobseekerInfo !=null){
-     log(jobseekerInfo.name);
-     log(jobseekerInfo.email);
-     log(jobseekerInfo.contact);
-
+    log(jobseekerInfo.name);
+    log(jobseekerInfo.email);
+    log(jobseekerInfo.contact);
+    log(job.id);
    }
     // log('Job Data:');
     // log('Company: ${job.companyName}');
@@ -727,14 +728,70 @@ class JobDetailsScreen extends ConsumerWidget {
     ),
   );
 }
+// void _submitApplication(BuildContext context, JobModel job, JobseekerModel jobseekerInfo, WidgetRef ref) async {
+//   try {
+//     final jobRepository = JobRepository();
+//     // Check if already applied
+//     final hasApplied = await jobRepository.hasAppliedForJob(
+//       jobseekerInfo.email, 
+//       job.id,
+//       job.recruiterEmail // Make sure JobModel has recruiterEmail field
+//     );
+    
+//     if (hasApplied) {
+//       _showSnackBar(
+//         // ignore: use_build_context_synchronously
+//         context: context,
+//         text: 'You have already applied for this position!',
+//         textColor: Colors.orange,
+//       );
+//       // ignore: use_build_context_synchronously
+//       Navigator.pop(context);
+//       return;
+//     }
+    
+//     // Submit application
+//     await jobRepository.applyForJob(
+//       jobseekerEmail: jobseekerInfo.email,
+//       jobseekerName: jobseekerInfo.name,
+//       jobId: job.id,
+//       recruiterEmail: job.recruiterEmail, // Make sure JobModel has this field
+//       jobTitle: job.designation,
+//       resumeUrl: jobseekerInfo.resumeUrl,
+//       coverLetter: '', // You can add a cover letter field later
+//     );
+    
+//     // ignore: use_build_context_synchronously
+//     Navigator.pop(context);
+//     _showSnackBar(
+//       // ignore: use_build_context_synchronously
+//       context: context,
+//       text: 'Application submitted successfully!',
+//       textColor: Colors.green,
+//     );
+    
+//   } catch (e) {
+//     // ignore: use_build_context_synchronously
+//     Navigator.pop(context);
+//     _showSnackBar(
+//       // ignore: use_build_context_synchronously
+//       context: context,
+//       text: 'Failed to submit application: $e',
+//       textColor: Colors.red,
+//     );
+//   }
+// }
 void _submitApplication(BuildContext context, JobModel job, JobseekerModel jobseekerInfo, WidgetRef ref) async {
   try {
-    final jobRepository = JobRepository();
+    final isUpdating = ref.read(applicationUpdateProvider);
+    if (isUpdating) return; // Prevent multiple clicks
+    
     // Check if already applied
-    final hasApplied = await jobRepository.hasAppliedForJob(
+    final repository = ref.read(jobRepositoryProvider);
+    final hasApplied = await repository.hasAppliedForJob(
       jobseekerInfo.email, 
       job.id,
-      job.recruiterEmail // Make sure JobModel has recruiterEmail field
+      job.recruiterEmail
     );
     
     if (hasApplied) {
@@ -749,15 +806,11 @@ void _submitApplication(BuildContext context, JobModel job, JobseekerModel jobse
       return;
     }
     
-    // Submit application
-    await jobRepository.applyForJob(
-      jobseekerEmail: jobseekerInfo.email,
-      jobseekerName: jobseekerInfo.name,
-      jobId: job.id,
-      recruiterEmail: job.recruiterEmail, // Make sure JobModel has this field
-      jobTitle: job.designation,
-      resumeUrl: jobseekerInfo.resumeUrl,
-      coverLetter: '', // You can add a cover letter field later
+    // Submit application using provider
+    await ref.read(applicationUpdateProvider.notifier).applyForJob(
+      job: job,
+      jobseekerInfo: jobseekerInfo,
+      coverLetter: '', // Add cover letter if needed
     );
     
     // ignore: use_build_context_synchronously

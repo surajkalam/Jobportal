@@ -10,7 +10,7 @@ final currentScreenProvider = Provider<Widget>((ref) {
   final index = ref.watch(currentIndexProvider);
   final screens = [
     JobSeekerDashboard(),
-    JobApplicationscreen(),
+    AppliedJobsScreen(),
     JobseekerInfo(),
     JobseekerProfileScreen(),
   ];
