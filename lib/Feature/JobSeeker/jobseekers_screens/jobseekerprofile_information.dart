@@ -8,7 +8,8 @@ import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/resumeview_screen.da
 
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
-import 'package:jobapp/core/util.dart/appcolors.dart';
+import 'package:jobapp/core/util/appcolors.dart';
+
 
 import '../service.dart/pdf_uploadservice.dart' show pdfUploadServiceProvider;
 
@@ -299,7 +300,8 @@ class _ProfileInformationScreenState
                 ),
                 label: Text(
                   hasResume
-                      ? 'View ${jobseekerInfo.resumeFileName}'
+                      // ? 'View ${jobseekerInfo.resumeFileName}'
+                      ? 'View'
                       : 'Upload Resume',
                   style: TextStyle(fontSize: 12),
                 ),

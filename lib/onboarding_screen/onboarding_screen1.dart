@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jobapp/onboarding_screen/onboarding_screen2.dart';
 
 class OnboardingScreen1 extends ConsumerWidget {
@@ -7,6 +8,8 @@ class OnboardingScreen1 extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var height=MediaQuery.of(context).size.height;
+    var width=MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -17,7 +20,7 @@ class OnboardingScreen1 extends ConsumerWidget {
               const SizedBox(height: 40),
               Container(
                 width: double.infinity,
-                height: 280,
+                height: height*0.27,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   image: const DecorationImage(
@@ -26,34 +29,34 @@ class OnboardingScreen1 extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+               SizedBox(height:height*0.04),
               const Text(
                 'Discover Your Dream\nJob',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF1F1F39),
                   height: 1.3,
                 ),
               ),
-              const SizedBox(height: 16),
+               SizedBox(height: height*0.016),
               const Text(
                 'Browse thousands of job opportunities from\ntop companies around the world.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 12,
                   color: Color(0xFF858597),
                   height: 1.5,
                 ),
               ),
-              const SizedBox(height: 32),
+               SizedBox(height: height*0.034),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    width: 24,
-                    height: 8,
+                    width: width*0.029,
+                    height: height*0.009,
                     decoration: BoxDecoration(
                       color: const Color(0xFF00A884),
                       borderRadius: BorderRadius.circular(4),
@@ -91,9 +94,11 @@ class OnboardingScreen1 extends ConsumerWidget {
               const Spacer(),
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: height*0.056,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                  context.push('/on-board2');
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF00A884),
                     shape: RoundedRectangleBorder(
@@ -104,27 +109,27 @@ class OnboardingScreen1 extends ConsumerWidget {
                   child: const Text(
                     'Next',
                     style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                       color: Colors.white,
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>OnboardingScreen2()));
-                },
-                child: const Text(
-                  'Skip',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFF858597),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 40),
+              // TextButton(
+              //   onPressed: () {
+              //     context.push('/on-board2');
+              //   },
+              //   child: const Text(
+              //     'Skip',
+              //     style: TextStyle(
+              //       fontSize: 16,
+              //       color: Color(0xFF858597),
+              //     ),
+              //   ),
+              // ),
+              // const SizedBox(height: 40),
             ],
           ),
         ),

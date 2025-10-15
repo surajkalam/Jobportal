@@ -78,3 +78,17 @@ final searchOnlyProvider = StreamProvider<List<JobModel>>((ref) {
   
   return jobRepository.searchJobs(query: searchQuery);
 });
+
+// Provider to fetch job details by jobId and recruiterEmail
+final jobDetailsProvider = FutureProvider.autoDispose.family<JobModel?, JobDetailsParams>((ref, params) async {
+  final repository = ref.read(jobRepositoryProvider);
+  return await repository.getJobById(params.jobId, params.recruiterEmail);
+});
+
+// Parameters class for job details
+class JobDetailsParams {
+  final String jobId;
+  final String recruiterEmail;
+
+  JobDetailsParams({required this.jobId, required this.recruiterEmail});
+}

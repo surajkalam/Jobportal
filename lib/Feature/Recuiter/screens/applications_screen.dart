@@ -5,7 +5,7 @@ import 'package:jobapp/Feature/Recuiter/provider/application_provider.dart';
 import 'package:jobapp/Feature/Recuiter/provider/requiterinfo_provider.dart';
 import 'package:jobapp/Feature/combomodel/application_model.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
-import 'package:jobapp/core/util.dart/appcolors.dart';
+import 'package:jobapp/core/util/appcolors.dart';
 class ApplicationsScreen extends ConsumerStatefulWidget {
   final JobModel? job; // Make it optional again
   const ApplicationsScreen({super.key, this.job});

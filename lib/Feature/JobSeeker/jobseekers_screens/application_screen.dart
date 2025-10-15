@@ -1,444 +1,13 @@
-// import 'package:flutter/material.dart';
-// import 'package:iconsax/iconsax.dart';
-// import 'package:jobapp/core/util.dart/appcolors.dart';
-
-// // ignore: camel_case_types
-// class JobApplicationscreen extends StatefulWidget {
-//   const JobApplicationscreen({super.key});
-
-//   @override
-//   State<JobApplicationscreen> createState() => _JobApplicationscreenState();
-// }
-
-// class _JobApplicationscreenState extends State<JobApplicationscreen> {
-//   TextEditingController searchcontroller = TextEditingController();
-//   @override
-//   Widget build(BuildContext context) {
-//     final colorScheme = Theme.of(context).colorScheme;
-//     final textTheme = Theme.of(context).textTheme;
-//     var height = MediaQuery.of(context).size.height;
-//     var width = MediaQuery.of(context).size.width;
-//     return Scaffold(
-//       body: Container(
-//         decoration: BoxDecoration(
-//           gradient: LinearGradient(
-//             colors: [AppColors.faintbackblue, AppColors.white],
-//             begin: Alignment.topCenter,
-//             end: Alignment.bottomCenter,
-//             stops: [0.04, 0.3],
-//           ),
-//         ),
-//         child: Padding(
-//           padding: EdgeInsets.only(top:height*0.02),
-//           child: Column(
-//             children: [
-//               SizedBox(height: 50),
-//               Padding(
-//                 padding: EdgeInsets.only(
-//                   left: width * 0.02,
-//                   right: width * 0.025,
-//                 ),
-//                 child: TextField(
-//                   decoration: InputDecoration(
-//                     hintText: 'search a job ..',
-//                     hintStyle: textTheme.bodySmall?.copyWith(
-//                       color: colorScheme.secondary,
-//                     ),
-//                     prefixIcon: Icon(Iconsax.search_normal),
-//                     labelText: 'search',
-//                     labelStyle: textTheme.bodySmall?.copyWith(
-//                       color: colorScheme.secondary,
-//                     ),
-//                     border: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(12),
-//                     ),
-//                     filled: true,
-//                     fillColor: colorScheme.surface,
-//                     enabledBorder: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(10),
-//                       borderSide: BorderSide(color: colorScheme.secondary),
-//                     ),
-//                     focusedBorder: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(10),
-//                       borderSide: BorderSide(
-//                         color: colorScheme.onSecondary,
-//                         width: 2.0,
-//                       ),
-//                     ),
-//                     errorBorder: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(30),
-//                       borderSide: BorderSide(color: Colors.red),
-//                     ),
-//                     contentPadding: EdgeInsets.zero,
-//                   ),
-//                 ),
-//               ),
-//               SizedBox(height: 20),
-//               Padding(
-//                 padding: EdgeInsets.only(
-//                   left: width * 0.02,
-//                   right: width * 0.025,
-//                 ),
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [Text('My status')],
-//                 ),
-//               ),
-//               detailsContainer(height, width),
-//               SizedBox(height: height*0.01,),
-//               Expanded(
-//                 child: Container(
-//                   width: double.infinity,
-//                   decoration: BoxDecoration(
-//                     // ignore: deprecated_member_use
-//                     color: AppColors.faintbackblue.withOpacity(0.1),
-//                     border: Border.all(color: Colors.black),
-//                     borderRadius: BorderRadius.only(
-//                       topRight: Radius.circular(20),
-//                       topLeft: Radius.circular(20),
-//                     ),
-//                   ),
-//                   child: Padding(
-//                     padding: EdgeInsets.only(
-//                       left: width * 0.02,
-//                       right: width * 0.02,
-//                       top: height * 0.01,
-//                     ),
-//                     child: Column(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       children: [
-//                         Text('My applications'),
-//                         SizedBox(height: height * 0.002),
-//                         Expanded(
-//                           child: ListView(
-//                             children: [
-//                               applicationContainer(height, width),
-//                               SizedBox(height: height * 0.02),
-//                               applicationContainer(height, width),
-//                               SizedBox(height: height * 0.02),
-//                               applicationContainer(height, width),
-//                               SizedBox(height: height * 0.02),
-//                               applicationContainer(height, width),
-//                               SizedBox(height: height * 0.02),
-//                               applicationContainer(height, width),
-//                             ],
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget detailsContainer(double height, double width) {
-//     return Padding(
-//       padding: EdgeInsets.symmetric(vertical: 10, horizontal: width * 0.024),
-//       child: Container(
-//         height:
-//             height * 0.12, // Slightly increased height to accommodate content
-//         width: double.infinity,
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.circular(10),
-//           boxShadow: [
-//             BoxShadow(
-//               color: Colors.black38,
-//               offset: Offset(0, 4),
-//               blurRadius: 5,
-//               spreadRadius: 0,
-//             ),
-//           ],
-//         ),
-//         child: Padding(
-//           padding: EdgeInsets.symmetric(
-//             horizontal: 8,
-//             vertical: 12,
-//           ), // Reduced vertical padding
-//           child: Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//             children: [
-//               Expanded(
-//                 child: Container(
-//                   decoration: BoxDecoration(color: Colors.white),
-//                   child: Column(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: [
-//                       Text(
-//                         '17 Jobs',
-//                         style: TextStyle(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w600,
-//                         ),
-//                       ),
-//                       SizedBox(height: 4), // Reduced spacing
-//                       Text(
-//                         'Applied',
-//                         style: TextStyle(
-//                           color: Colors.black,
-//                           fontSize: 10,
-//                           fontWeight: FontWeight.w400,
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//               Container(
-//                 width: 1,
-//                 height: 30,
-//                 decoration: BoxDecoration(
-//                   color: Colors.blue,
-//                   borderRadius: BorderRadius.circular(20),
-//                 ),
-//               ),
-//               Expanded(
-//                 child: Container(
-//                   decoration: BoxDecoration(color: Colors.white),
-//                   child: Column(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: [
-//                       Text(
-//                         '5 Jobs',
-//                         style: TextStyle(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w600,
-//                         ),
-//                       ),
-//                       SizedBox(height: 4), // Reduced spacing
-//                       Text(
-//                         'Shortlisted',
-//                         style: TextStyle(
-//                           color: Colors.black,
-//                           fontSize: 10,
-//                           fontWeight: FontWeight.w400,
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//               Container(
-//                 width: 1,
-//                 height: 30,
-//                 decoration: BoxDecoration(
-//                   color: Colors.blue,
-//                   borderRadius: BorderRadius.circular(20),
-//                 ),
-//               ),
-//               Expanded(
-//                 child: Container(
-//                   decoration: BoxDecoration(color: Colors.white),
-//                   child: Column(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: [
-//                       Text(
-//                         '4 Jobs',
-//                         style: TextStyle(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w600,
-//                         ),
-//                       ),
-//                       SizedBox(height: 4), // Reduced spacing
-//                       Text(
-//                         'Rejected',
-//                         style: TextStyle(
-//                           color: Colors.black,
-//                           fontSize: 10,
-//                           fontWeight: FontWeight.w400,
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget applicationContainer(double height, double width) {
-//     return Container(
-//       height: height * 0.2,
-//       width: double.infinity,
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.all(Radius.circular(20)),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black38,
-//             offset: Offset(0, 4),
-//             blurRadius: 5,
-//             spreadRadius: 2,
-//           ),
-//         ],
-//       ),
-//       child: Padding(
-//         padding: EdgeInsets.all(15.0),
-//         child: Column(
-//           children: [
-//             Row(
-//               children: [
-//                 Text(
-//                   'Software Engineer',
-//                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-//                 ),
-//               ],
-//             ),
-//             Row(
-//               children: [
-//                 // ignore: deprecated_member_use
-//                 Text(
-//                   'Congnizant | Banglore',
-//                   style: TextStyle(
-//                     fontSize: 10,
-//                     fontWeight: FontWeight.w400,
-//                     // ignore: deprecated_member_use
-//                     color: Colors.black.withOpacity(0.5),
-//                   ),
-//                 ),
-//                 Spacer(),
-//                 Container(
-//                   height: height * 0.02,
-//                   width: width * 0.04,
-//                   decoration: BoxDecoration(
-//                     color: AppColors.faintbackblue,
-//                     borderRadius: BorderRadius.circular(50),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             SizedBox(height: height * 0.01),
-//             Row(
-//               children: [
-//                 // ignore: deprecated_member_use
-//                 Icon(Icons.location_pin, size: 15, color: Colors.black),
-//                 Text(
-//                   'Banglore',
-//                   style: TextStyle(
-//                     fontSize: 11,
-//                     fontWeight: FontWeight.w400,
-//                     color: Colors.black.withOpacity(0.5),
-//                   ),
-//                 ),
-//                 SizedBox(width: width * 0.01),
-//                 Icon(Icons.wallet, size: 15, color: Colors.black),
-//                 Text(
-//                   '5 -7 LPA',
-//                   style: TextStyle(
-//                     fontSize: 11,
-//                     fontWeight: FontWeight.w400,
-//                     // ignore: deprecated_member_use
-//                     color: Colors.black.withOpacity(0.5),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             SizedBox(height: height * 0.01),
-//             Row(
-//               children: [
-//                 Icon(Icons.calendar_today, size: 15, color: Colors.black),
-//                 SizedBox(width: width * 0.02),
-//                 Text('0 -2 years', style: TextStyle(fontSize: 12)),
-//               ],
-//             ),
-//             SizedBox(height: height * 0.01),
-//             Padding(
-//               padding: EdgeInsets.only(left: width * 0.05),
-//               child: Row(
-//                 children: [
-//                   Container(
-//                     decoration: BoxDecoration(
-//                       borderRadius: BorderRadius.circular(10),
-//                       // ignore: deprecated_member_use
-//                       color: Colors.greenAccent.withOpacity(0.2),
-//                     ),
-//                     child: Padding(
-//                       padding: EdgeInsets.symmetric(
-//                         horizontal: width * 0.02,
-//                         vertical: height * 0.002,
-//                       ),
-//                       child: Center(
-//                         child: Row(
-//                           children: [
-//                             Icon(Icons.alarm, size: 12, color: Colors.green),
-//                             SizedBox(width: width * 0.01),
-//                             Text(
-//                               'posted 1 day ago',
-//                               style: TextStyle(
-//                                 fontSize: 08,
-//                                 fontWeight: FontWeight.w400,
-//                                 // ignore: deprecated_member_use
-//                                 color: Colors.green,
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                   SizedBox(width: width * 0.04),
-//                   Container(
-//                     decoration: BoxDecoration(
-//                       borderRadius: BorderRadius.circular(10),
-//                       // ignore: deprecated_member_use
-//                       color: AppColors.white,
-//                       border: BoxBorder.all(color: AppColors.black),
-//                     ),
-//                     child: Padding(
-//                       padding: EdgeInsets.symmetric(
-//                         horizontal: width * 0.02,
-//                         vertical: height * 0.002,
-//                       ),
-//                       child: Center(
-//                         child: Row(
-//                           children: [
-//                             Icon(
-//                               Icons.alarm,
-//                               size: 12,
-//                               color: AppColors.darkblue,
-//                             ),
-//                             SizedBox(width: width * 0.01),
-//                             Text(
-//                               'posted 1 day ago',
-//                               style: TextStyle(
-//                                 fontSize: 08,
-//                                 fontWeight: FontWeight.w400,
-//                                 // ignore: deprecated_member_use
-//                                 color: AppColors.darkblue,
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 // applied_jobs_screen.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/jobdetailsshow_screen.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/application_provider.dart';
-import 'package:jobapp/core/util.dart/appcolors.dart';
+import 'package:jobapp/core/util/appcolors.dart';
 
 class AppliedJobsScreen extends ConsumerWidget {
   const AppliedJobsScreen({super.key});
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
@@ -452,11 +21,8 @@ class AppliedJobsScreen extends ConsumerWidget {
           // Statistics Section
           _buildStatisticsSection(ref),
           SizedBox(height: 16),
-          
           // Applications List
-          Expanded(
-            child: _buildApplicationsList(ref),
-          ),
+          Expanded(child: _buildApplicationsList(ref)),
         ],
       ),
     );
@@ -464,7 +30,6 @@ class AppliedJobsScreen extends ConsumerWidget {
 
   Widget _buildStatisticsSection(WidgetRef ref) {
     final stats = ref.watch(applicationStatsProvider);
-    
     return Container(
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
@@ -473,6 +38,7 @@ class AppliedJobsScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.grey.withOpacity(0.1),
             blurRadius: 10,
             offset: Offset(0, 2),
@@ -497,6 +63,7 @@ class AppliedJobsScreen extends ConsumerWidget {
         Container(
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
+            // ignore: deprecated_member_use
             color: color.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
@@ -524,7 +91,7 @@ class AppliedJobsScreen extends ConsumerWidget {
 
   Widget _buildApplicationsList(WidgetRef ref) {
     final applicationsAsync = ref.watch(appliedJobsProvider);
-    
+
     return applicationsAsync.when(
       loading: () => Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(
@@ -549,70 +116,127 @@ class AppliedJobsScreen extends ConsumerWidget {
         if (applications.isEmpty) {
           return _buildEmptyState();
         }
-        
+
         return ListView.builder(
           padding: EdgeInsets.all(16),
           itemCount: applications.length,
           itemBuilder: (context, index) {
-            return _buildApplicationCard(applications[index]);
+            return _buildApplicationCard(context, applications[index], ref);
           },
         );
       },
     );
   }
 
-  Widget _buildApplicationCard(Map<String, dynamic> application) {
+  Widget _buildApplicationCard(
+    BuildContext context,
+    Map<String, dynamic> application,
+    WidgetRef ref,
+  ) {
+    final jobId = application['job_id'];
+    final recruiterEmail = application['recruiter_email'];
+
     return Card(
       elevation: 2,
       margin: EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    application['job_title'] ?? 'Unknown Job',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+      child: InkWell(
+        onTap: () {
+          _navigateToJobDetails(context, jobId, recruiterEmail, ref);
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      application['job_title'] ?? 'Unknown Job',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                _buildStatusBadge(application['status'] ?? 'pending'),
-              ],
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Company: ${application['recruiter_email']?.split('@').first ?? 'Unknown'}',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.grey,
+                  _buildStatusBadge(application['status'] ?? 'pending'),
+                ],
               ),
-            ),
-            SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(Icons.calendar_today, size: 14, color: AppColors.grey),
-                SizedBox(width: 4),
-                Text(
-                  _formatDate(application['applied_at']),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.grey,
+              SizedBox(height: 8),
+              Text(
+                'Company: ${application['recruiter_email']?.split('@').first ?? 'Unknown'}',
+                style: TextStyle(fontSize: 14, color: AppColors.grey),
+              ),
+              SizedBox(height: 8),
+              Row(
+                children: [
+                  Icon(Icons.calendar_today, size: 14, color: AppColors.grey),
+                  SizedBox(width: 4),
+                  Text(
+                    _formatDate(application['applied_at']),
+                    style: TextStyle(fontSize: 12, color: AppColors.grey),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void _navigateToJobDetails(
+    BuildContext context,
+    String jobId,
+    String recruiterEmail,
+    WidgetRef ref,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(child: CircularProgressIndicator()),
+    );
+    final jobDetailsFuture = ref
+        .read(jobRepositoryProvider)
+        .getJobById(jobId, recruiterEmail);
+
+    jobDetailsFuture
+        .then((job) {
+          // ignore: use_build_context_synchronously
+          Navigator.pop(context); // Close loading dialog
+
+          if (job != null) {
+            // Navigate to job details screen
+            Navigator.push(
+              // ignore: use_build_context_synchronously
+              context,
+              MaterialPageRoute(
+                builder: (context) => JobDetailsScreen(job: job),
+              ),
+            );
+          } else {
+            _showSnackBar(
+              // ignore: use_build_context_synchronously
+              context: context,
+              text: 'Job details not found ',
+              textColor: Colors.red,
+            );
+          }
+        })
+        .catchError((error) {
+          // ignore: use_build_context_synchronously
+          Navigator.pop(context);
+          _showSnackBar(
+            // ignore: use_build_context_synchronously
+            context: context,
+            text: 'job details not found ',
+            textColor: Colors.red,
+          );
+        });
   }
 
   Widget _buildStatusBadge(String status) {
@@ -622,26 +246,29 @@ class AppliedJobsScreen extends ConsumerWidget {
 
     switch (status) {
       case 'shortlisted':
+        // ignore: deprecated_member_use
         backgroundColor = Colors.green.withOpacity(0.1);
         textColor = Colors.green;
         statusText = 'Shortlisted';
         break;
       case 'rejected':
+        // ignore: deprecated_member_use
         backgroundColor = Colors.red.withOpacity(0.1);
         textColor = Colors.red;
         statusText = 'Rejected';
         break;
       default:
+        // ignore: deprecated_member_use
         backgroundColor = Colors.orange.withOpacity(0.1);
         textColor = Colors.orange;
         statusText = 'Pending';
     }
-
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(20),
+        // ignore: deprecated_member_use
         border: Border.all(color: textColor.withOpacity(0.3)),
       ),
       child: Text(
@@ -673,10 +300,7 @@ class AppliedJobsScreen extends ConsumerWidget {
           SizedBox(height: 8),
           Text(
             'Apply to jobs to see them here',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.grey,
-            ),
+            style: TextStyle(fontSize: 14, color: AppColors.grey),
           ),
         ],
       ),
@@ -685,7 +309,7 @@ class AppliedJobsScreen extends ConsumerWidget {
 
   String _formatDate(dynamic timestamp) {
     if (timestamp == null) return 'Unknown date';
-    
+
     try {
       if (timestamp is Timestamp) {
         final date = timestamp.toDate();
@@ -695,5 +319,36 @@ class AppliedJobsScreen extends ConsumerWidget {
     } catch (e) {
       return 'Unknown date';
     }
+  }
+
+  void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 4),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
+        ),
+      ),
+    );
   }
 }

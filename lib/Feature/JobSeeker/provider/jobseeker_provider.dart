@@ -3,11 +3,12 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:jobapp/Authentication/user_provider.dart';
 import 'package:jobapp/Feature/JobSeeker/firebase_crud/jobseeker_infofire.dart';
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 
 // Current User Provider with default email
-final currentUserProvider = StateProvider<String>((ref) => 'suraj@gmail.com');
+
 final jobseekerIdProvider = Provider<String>((ref) {
   return ref.read(currentUserProvider);
 });

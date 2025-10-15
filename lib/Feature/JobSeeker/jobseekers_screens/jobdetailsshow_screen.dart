@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:jobapp/Feature/JobSeeker/firebase_crud/jobaccess_repository.dart';
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/application_provider.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
-import 'package:jobapp/core/util.dart/appcolors.dart';
+import 'package:jobapp/core/util/appcolors.dart';
 
 final selectedTabProvider = StateProvider<String>((ref) => 'description');
 

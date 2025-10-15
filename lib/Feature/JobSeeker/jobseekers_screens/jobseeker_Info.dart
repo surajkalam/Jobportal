@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jobapp/Authentication/user_provider.dart';
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
 import 'package:jobapp/Feature/JobSeeker/service.dart/pdf_uploadservice.dart';
@@ -128,6 +130,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
         pdfFile,
         currentEmail,
         name,
+        ref
       );
       final fileName = pdfService.getFileNameFromPath(pdfFile.path);
       // Update resume field with download URL
@@ -268,6 +271,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                   width,
                   qualificationController,
                   'Qualification',
+                  icon: Icon(Icons.school),
                   isRequired: true,
                 ),
                 textformfield(
@@ -452,7 +456,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
         _showSnackBar(
           context: context,
           text: 'Please upload your resume before submitting .',
-          backgroundColor: Colors.red,
+          textColor: Colors.red,
         );
         return;
       }
@@ -496,6 +500,8 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           log('Email: $currentEmail');
           log('Name: ${nameController.text}');
           log('Resume URL: ${resumeController.text}');
+          // ignore: use_build_context_synchronously
+          context.go('/job-nav');
         }
       } catch (e) {
         _showSnackBar(

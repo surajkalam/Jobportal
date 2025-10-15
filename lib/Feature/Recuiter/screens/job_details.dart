@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
-import 'package:jobapp/core/util.dart/image_pickerutil.dart';
+import 'package:jobapp/core/util/image_pickerutil.dart';
 import 'dart:io';
 import '../provider/provider.dart';
 

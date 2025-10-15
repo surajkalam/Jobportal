@@ -1,7 +1,7 @@
 // resume_viewer_screen.dart
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:jobapp/core/util.dart/appcolors.dart';
+import 'package:jobapp/core/util/appcolors.dart';
 
 class ResumeViewerScreen extends StatelessWidget {
   final String resumeUrl;

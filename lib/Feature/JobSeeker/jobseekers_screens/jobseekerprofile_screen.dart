@@ -5,7 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/jobseekerprofile_information.dart';
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
-import 'package:jobapp/core/util.dart/appcolors.dart';
+import 'package:jobapp/core/util/appcolors.dart';
 
 class JobseekerProfileScreen extends ConsumerStatefulWidget {
   const JobseekerProfileScreen({super.key});

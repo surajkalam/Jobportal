@@ -17,17 +17,13 @@ class _CheckLoginSignupScreenState extends ConsumerState<CheckLoginSignupScreen>
   void _navigateToLogin() {
     final userType = ref.read(selectionProvider);
     final option = userType == UserType.jobseeker ? 'jobseeker' : 'recruiter';
-    
     context.goNamed('login', extra: option);
   }
-
   void _navigateToSignup() {
     final userType = ref.read(selectionProvider);
     final option = userType == UserType.jobseeker ? 'jobseeker' : 'recruiter';
-    
     context.goNamed('signup', extra: option);
   }
-
   @override
   Widget build(BuildContext context) {
     // final userType = ref.watch(selectionProvider);

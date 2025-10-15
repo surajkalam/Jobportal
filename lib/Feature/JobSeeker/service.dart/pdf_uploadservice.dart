@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jobapp/Authentication/user_provider.dart';
+import 'package:jobapp/Feature/Recuiter/provider/provider.dart';
 
 class PdfUploadService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -12,7 +14,7 @@ class PdfUploadService {
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions:['word','pdf','doc','docx'],
+        allowedExtensions:['pdf','doc','docx'],
       );
       if (result != null && result.files.single.path != null) {
         return File(result.files.single.path!);
@@ -24,10 +26,12 @@ class PdfUploadService {
   }
 
   // Upload PDF to Firebase Storage
-  Future<String> uploadPdf(File pdfFile, String email, String name) async {
+  Future<String> uploadPdf(File pdfFile, String email, String name ,WidgetRef ref) async {
     try {
       // Create storage path: currentuseremail/name/resume.pdf
-      String fileName = 'resume_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      // String fileName = 'resume_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      final currentusername=ref.watch(currentUserProvider);
+      String fileName = 'resume_$currentusername.pdf';
       Reference storageRef = _storage.ref().child('resumes/$email/$fileName');
       
       // Upload file

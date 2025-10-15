@@ -93,7 +93,6 @@ class ApplicationUpdateNotifier extends StateNotifier<bool> {
     state = true;
     try {
       final repository = ref.read(jobRepositoryProvider);
-      
       await repository.applyForJob(
         jobseekerEmail: jobseekerInfo.email,
         jobseekerName: jobseekerInfo.name,
