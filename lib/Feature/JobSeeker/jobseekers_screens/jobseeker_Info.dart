@@ -40,6 +40,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
   void initState() {
     super.initState();
     // Use Future.microtask to delay the initialization after build
+
     Future.microtask(() {
       _loadExistingInfo();
     });
@@ -103,59 +104,105 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
       dateOfBirthController.text = formattedDate;
     }
   }
-
-  //select resume
   Future<void> _uploadResume() async {
-    try {
-      setState(() {
-        _isUploadingResume = true;
-      });
-      final pdfService = ref.read(pdfUploadServiceProvider);
-      // Pick PDF file
-      final File? pdfFile = await pdfService.pickPdf();
-      if (pdfFile == null) return;
-      setState(() {
-        _selectedResume = pdfFile;
-      });
-      // Show uploading message
-      // ignore: use_build_context_synchronously
-      _showSnackBar(context: context, text: 'Uploading resume...',);
-      // Get current user info
-      final currentEmail = ref.read(currentUserProvider);
-      final name = nameController.text.isNotEmpty
-          ? nameController.text
-          : 'unknown';
-      // Upload to Firebase Storage
-      final downloadUrl = await pdfService.uploadPdf(
-        pdfFile,
-        currentEmail,
-        name,
-        ref
+  try {
+    setState(() {
+      _isUploadingResume = true;
+    });
+
+    final pdfService = ref.read(pdfUploadServiceProvider);
+    
+    // Pick PDF file
+    final File? pdfFile = await pdfService.pickPdf();
+    if (pdfFile == null) {
+      _showSnackBar(
+        // ignore: use_build_context_synchronously
+        context: context, 
+        text: 'No file selected',
+        textColor: Colors.orange,
       );
-      final fileName = pdfService.getFileNameFromPath(pdfFile.path);
-      // Update resume field with download URL
-      resumeController.text = downloadUrl;
-      // Show success message
+      return;
+    }
+
+    // Check file size (max 10MB)
+    final fileSize = pdfFile.lengthSync();
+    if (fileSize > 10 * 1024 * 1024) {
       _showSnackBar(
         // ignore: use_build_context_synchronously
         context: context,
-        text: 'Resume uploaded successfully!',
-      );
-      log('Resume uploaded: $downloadUrl');
-    } catch (e) {
-      _showSnackBar(
-        // ignore: use_build_context_synchronously
-        context: context,
-        text: 'Failed to upload resume try again please',
+        text: 'File size too large. Maximum 10MB allowed.',
         textColor: Colors.red,
       );
-    } finally {
-      setState(() {
-        _isUploadingResume = false;
-      });
+      return;
     }
-  }
 
+    setState(() {
+      _selectedResume = pdfFile;
+    });
+
+    // Show uploading message
+    _showSnackBar(
+      // ignore: use_build_context_synchronously
+      context: context, 
+      text: 'Uploading resume...',
+      textColor: Colors.blue,
+    );
+
+    // Get current user info
+    final currentEmail = ref.read(currentUserProvider);
+    if (currentEmail.isEmpty) {
+      _showSnackBar(
+        // ignore: use_build_context_synchronously
+        context: context,
+        text: 'User not logged in',
+        textColor: Colors.red,
+      );
+      return;
+    }
+
+    final name = nameController.text.isNotEmpty
+        ? nameController.text
+        : 'Unknown User';
+
+    // Upload to Firebase Storage
+    final downloadUrl = await pdfService.uploadPdf(
+      pdfFile,
+      currentEmail,
+      name,
+    );
+
+    final fileName = pdfService.getFileNameFromPath(pdfFile.path);
+    final fileSizeFormatted = getFileSize(pdfFile);
+ 
+    // Update resume field with download URL
+    resumeController.text = downloadUrl;
+
+    // Show success message with file info
+    _showSnackBar(
+      // ignore: use_build_context_synchronously
+      context: context,
+      text: '✅ Resume uploaded successfully!\n$fileName ($fileSizeFormatted)',
+      textColor: Colors.green,
+    );
+
+    log('Resume uploaded: $downloadUrl');
+    log('File name: $fileName');
+    log('File size: $fileSizeFormatted');
+
+  } catch (e) {
+    log('Upload error: $e');
+    _showSnackBar(
+      // ignore: use_build_context_synchronously
+      context: context,
+      text: 'Failed to upload resume: ${e.toString()}',
+      textColor: Colors.red,
+    );
+  } finally {
+    setState(() {
+      _isUploadingResume = false;
+    });
+  }
+}
   @override
   Widget build(BuildContext context) {
     final jobseekerState = ref.watch(jobseekerProvider);
