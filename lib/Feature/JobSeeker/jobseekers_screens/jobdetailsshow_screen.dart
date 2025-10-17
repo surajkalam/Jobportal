@@ -45,7 +45,7 @@ class JobDetailsScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.faintbackblue,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
@@ -727,59 +727,6 @@ class JobDetailsScreen extends ConsumerWidget {
     ),
   );
 }
-// void _submitApplication(BuildContext context, JobModel job, JobseekerModel jobseekerInfo, WidgetRef ref) async {
-//   try {
-//     final jobRepository = JobRepository();
-//     // Check if already applied
-//     final hasApplied = await jobRepository.hasAppliedForJob(
-//       jobseekerInfo.email, 
-//       job.id,
-//       job.recruiterEmail // Make sure JobModel has recruiterEmail field
-//     );
-    
-//     if (hasApplied) {
-//       _showSnackBar(
-//         // ignore: use_build_context_synchronously
-//         context: context,
-//         text: 'You have already applied for this position!',
-//         textColor: Colors.orange,
-//       );
-//       // ignore: use_build_context_synchronously
-//       Navigator.pop(context);
-//       return;
-//     }
-    
-//     // Submit application
-//     await jobRepository.applyForJob(
-//       jobseekerEmail: jobseekerInfo.email,
-//       jobseekerName: jobseekerInfo.name,
-//       jobId: job.id,
-//       recruiterEmail: job.recruiterEmail, // Make sure JobModel has this field
-//       jobTitle: job.designation,
-//       resumeUrl: jobseekerInfo.resumeUrl,
-//       coverLetter: '', // You can add a cover letter field later
-//     );
-    
-//     // ignore: use_build_context_synchronously
-//     Navigator.pop(context);
-//     _showSnackBar(
-//       // ignore: use_build_context_synchronously
-//       context: context,
-//       text: 'Application submitted successfully!',
-//       textColor: Colors.green,
-//     );
-    
-//   } catch (e) {
-//     // ignore: use_build_context_synchronously
-//     Navigator.pop(context);
-//     _showSnackBar(
-//       // ignore: use_build_context_synchronously
-//       context: context,
-//       text: 'Failed to submit application: $e',
-//       textColor: Colors.red,
-//     );
-//   }
-// }
 void _submitApplication(BuildContext context, JobModel job, JobseekerModel jobseekerInfo, WidgetRef ref) async {
   try {
     final isUpdating = ref.read(applicationUpdateProvider);
@@ -788,7 +735,7 @@ void _submitApplication(BuildContext context, JobModel job, JobseekerModel jobse
     // Check if already applied
     final repository = ref.read(jobRepositoryProvider);
     final hasApplied = await repository.hasAppliedForJob(
-      jobseekerInfo.email, 
+      jobseekerInfo.email,
       job.id,
       job.recruiterEmail
     );

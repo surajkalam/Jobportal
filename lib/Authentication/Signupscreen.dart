@@ -580,6 +580,7 @@
 //     );
 //   }
 // }
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -1092,6 +1093,31 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 //   ),
                 // ),
                 // Signup Button
+                SizedBox(height:height*0.03),
+                Padding(
+                padding: EdgeInsets.only(bottom: height*0.03, top: height*0.03),
+                child: RichText(
+                  text: TextSpan(
+                    style: GoogleFonts.poppins(
+                      fontSize: width * 0.035,
+                      color: colorScheme.primary,
+                    ),
+                    children: [
+                      const TextSpan(text: "You haven't account? "),
+                      TextSpan(
+                        text: "Login",
+                        style: GoogleFonts.poppins(
+                          color: colorScheme.secondaryFixed,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => _navigateToSignup(context),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -1133,7 +1159,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       ),
     );
   }
-
+void _navigateToSignup( BuildContext context) {
+   context.go('/login');
+  }
   void _showSnackBar({
     required BuildContext context,
     required String text,

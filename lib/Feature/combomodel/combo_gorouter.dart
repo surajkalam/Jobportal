@@ -84,19 +84,17 @@ class JobPortalAppRouter {
           return SignupScreen(option: option);
         },
       ),
+       GoRoute(
+        path: '/job-nav',
+        builder: (context, state) => JobseekerNavbar(),
+      ),
       GoRoute(
         path: '/jobseeker-info',
         builder: (context, state) => JobseekerInfo(),
       ),
-      GoRoute(
-        path: '/recuiter-info',
-        builder: (context, state) => RecuiterInfo(),
-      ),
 
-      GoRoute(
-        path: '/job-nav',
-        builder: (context, state) => JobseekerNavbar(),
-      ),
+      //Recuiter router
+
       GoRoute(
         path: '/recuiter-nav',
         builder: (context, state) => RecruiterNavbar(),
@@ -114,14 +112,21 @@ class JobPortalAppRouter {
         },
       ),
       GoRoute(
+        path: '/recuiter-info',
+        builder: (context, state) => RecuiterInfo(),
+      ),
+      GoRoute(
         path: '/uploaddetail-job',
         builder: (context, state) {
           return JobuploaddetailScreen();
         },
       ),
-
+      // GoRoute(
+      //   path: '/application-detail',
+      //   builder: (context, state) => ApplicationDetailScreen(),
+      // ),
     ],
     errorBuilder: (context, state) =>
-        Scaffold(body: Center(child: Text('Page not found: ${state.error}'),),),
+        Scaffold(body: Center(child: Text('Page not found: ${state.error}'))),
   );
 }

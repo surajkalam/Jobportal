@@ -67,6 +67,7 @@ class ResumeViewerScreen extends StatelessWidget {
       final Uri url = Uri.parse(resumeUrl);
       if (await launchUrl(url, mode: LaunchMode.externalApplication)) {
         _showSnackBar(
+          // ignore: use_build_context_synchronously
           context: context,
           text: 'Resume download started',
           textColor: Colors.deepOrange,
@@ -74,6 +75,7 @@ class ResumeViewerScreen extends StatelessWidget {
       }
     } catch (e) {
       _showSnackBar(
+        // ignore: use_build_context_synchronously
         context: context,
         text: 'Failed to download resume: $e',
         textColor: Colors.red,

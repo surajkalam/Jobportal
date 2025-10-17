@@ -32,7 +32,6 @@ final applicationStatsProvider = Provider.autoDispose<ApplicationStats>((ref) {
       final pending = applications.where((app) => app['status'] == 'pending').length;
       final shortlisted = applications.where((app) => app['status'] == 'shortlisted').length;
       final rejected = applications.where((app) => app['status'] == 'rejected').length;
-      
       return ApplicationStats(
         total: total,
         pending: pending,

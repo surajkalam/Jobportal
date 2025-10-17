@@ -13,7 +13,7 @@ class AppliedJobsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('My Applications'),
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.faintbackblue,
         elevation: 0,
       ),
       body: Column(

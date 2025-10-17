@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:jobapp/Authentication/user_provider.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 import 'package:jobapp/core/util/image_pickerutil.dart';
 import 'dart:io';
@@ -546,7 +547,7 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
       String category = selectedIndex == 1 ? 'Airline' : 'Hospitality';
 
       final jobNotifier = ref.read(jobNotifierProvider.notifier);
-      final recruiterEmail = ref.read(currentrecuiterUserEmailProvider);
+      final recruiterEmail = ref.read(currentRecruiterUserEmailProvider);
       
       // Upload image
       String imageUrl = await jobNotifier.uploadImage(_selectedImage!);

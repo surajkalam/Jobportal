@@ -618,24 +618,6 @@ class FirebaseService {
     final now = DateTime.now();
     return now.difference(jobTime).inHours < 24;
   }
-
-  // New method to get applications for a specific job
-  // Stream<List<Map<String, dynamic>>> getApplicationsForJob(String recruiterEmail, String jobId) {
-  //   return _firestore
-  //       .collection('recruiters')
-  //       .doc(recruiterEmail)
-  //       .collection('jobs')
-  //       .doc(jobId)
-  //       .collection('applications')
-  //       .orderBy('appliedAt', descending: true)
-  //       .snapshots()
-  //       .map((snapshot) => snapshot.docs
-  //           .map((doc) => {
-  //                 'id': doc.id,
-  //                 ...doc.data(),
-  //               })
-  //           .toList());
-  // }
   // Get applications for a specific job
 Stream<List<ApplicationModel>> getApplicationsForJob(String recruiterEmail, String jobId) {
    log('=== FIRESTORE QUERY DEBUG ===');
@@ -673,22 +655,6 @@ Stream<List<ApplicationModel>> getApplicationsForJob(String recruiterEmail, Stri
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
   }
-
-  // Get applications for a specific job
-// Stream<List<ApplicationModel>> getApplicationsForJob(String recruiterEmail, String jobId) {
-//   return _firestore
-//       .collection('recruiters')
-//       .doc(recruiterEmail)
-//       .collection('jobs')
-//       .doc(jobId)
-//       .collection('applications')
-//       .orderBy('appliedAt', descending: true)
-//       .snapshots()
-//       .map((snapshot) => snapshot.docs
-//           .map((doc) => ApplicationModel.fromMap(doc.id, doc.data()))
-//           .toList());
-// }
-
 // Get all applications for recruiter (across all jobs)
 // Alternative method without collectionGroup query
 Stream<List<ApplicationModel>> getAllApplicationsForRecruiter(String recruiterEmail) {
@@ -813,6 +779,79 @@ Future<Map<String, int>> getApplicationStats(String recruiterEmail, String jobId
     return stats;
   } catch (e) {
     throw Exception('Failed to get application stats: $e');
+  }
+}
+// Delete application from both recruiter and jobseeker collections
+Future<void> deleteApplication({
+  required String recruiterEmail,
+  required String jobId,
+  required String applicationId,
+}) async {
+  try {
+    log('=== DELETING APPLICATION ===');
+    log('Recruiter Email: $recruiterEmail');
+    log('Job ID: $jobId');
+    log('Application ID: $applicationId');
+
+    // First, get the application data to find jobseeker email
+    final applicationDoc = await _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
+        .collection('jobs')
+        .doc(jobId)
+        .collection('applications')
+        .doc(applicationId)
+        .get();
+
+    if (!applicationDoc.exists) {
+      throw Exception('Application not found');
+    }
+
+    final applicationData = applicationDoc.data()!;
+    final jobseekerEmail = applicationData['jobseekerEmail'] as String?;
+    final jobTitle = applicationData['jobTitle'] as String?;
+
+    log('Jobseeker Email: $jobseekerEmail');
+    log('Job Title: $jobTitle');
+
+    // Delete from recruiter's applications collection
+    await _firestore
+        .collection('recruiters')
+        .doc(recruiterEmail)
+        .collection('jobs')
+        .doc(jobId)
+        .collection('applications')
+        .doc(applicationId)
+        .delete();
+
+    log('✅ Application deleted from recruiter collection');
+
+    // Also delete from jobseeker's applications collection if jobseekerEmail exists
+    if (jobseekerEmail != null && jobseekerEmail.isNotEmpty) {
+      try {
+        // Find the application in jobseeker's collection
+        final jobseekerApplications = await _firestore
+            .collection('jobseekers')
+            .doc(jobseekerEmail)
+            .collection('applications')
+            .where('job_id', isEqualTo: jobId)
+            .where('recruiter_email', isEqualTo: recruiterEmail)
+            .get();
+
+        for (final doc in jobseekerApplications.docs) {
+          await doc.reference.delete();
+          log('✅ Application deleted from jobseeker collection: ${doc.id}');
+        }
+      } catch (e) {
+        log('⚠️ Could not delete from jobseeker collection: $e');
+        // Continue even if jobseeker deletion fails
+      }
+    }
+
+    log('🎯 Application deletion completed successfully');
+  } catch (e) {
+    log('❌ Failed to delete application: $e');
+    throw Exception('Failed to delete application: $e');
   }
 }
 }

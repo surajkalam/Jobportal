@@ -9,6 +9,7 @@ import 'package:jobapp/Authentication/user_provider.dart';
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
 import 'package:jobapp/Feature/JobSeeker/service.dart/pdf_uploadservice.dart';
+import 'package:jobapp/core/util/appcolors.dart';
 import 'package:lottie/lottie.dart';
 
 class JobseekerInfo extends ConsumerStatefulWidget {
@@ -221,7 +222,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorScheme.onSecondary,
+         backgroundColor: AppColors.faintbackblue,
         title: Text(
           "Jobseeker information",
           style: textTheme.titleLarge?.copyWith(

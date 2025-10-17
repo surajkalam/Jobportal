@@ -4,18 +4,8 @@ import 'package:jobapp/Feature/JobSeeker/firebase_crud/jobaccess_repository.dart
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 
 final List<String> staticCategories = [
-  'Trainer',
-  'Wedding planner',
-  'Casino manager',
-  'Travel agent',
-  'Airline cabin crew',
-  'Event tour coordinator',
-  'Waiter / Waitress',
-  'Receptionist',
-  'Hotel manager',
-  'Reservation agent',
-  'Java',
-  'Flutter'
+  'Hospitality',
+  'Airline'
 ];
 final searchQueryProvider = StateProvider<String>((ref) => '');
 // Provider for selected job (to pass data between screens)

@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/resumeview_screen.dart';
+import 'package:jobapp/Feature/combomodel/resumeview_screen.dart';
 
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
@@ -33,7 +33,7 @@ class _ProfileInformationScreenState
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+         backgroundColor: AppColors.faintbackblue,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.black),

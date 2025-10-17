@@ -11,7 +11,7 @@ final currentScreenProvider = Provider<Widget>((ref) {
   final screens = [
     JobSeekerDashboard(),
     AppliedJobsScreen(),
-    JobseekerInfo(),
+    // JobseekerInfo(),
     JobseekerProfileScreen(),
   ];
   return screens[index];
@@ -39,6 +39,7 @@ class JobseekerNavbar extends ConsumerWidget {
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
+              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.3),
               spreadRadius: 0,
               blurRadius: 10,
@@ -70,18 +71,18 @@ class JobseekerNavbar extends ConsumerWidget {
                   activeIcon: Iconsax.briefcase5,
                   inactiveIcon: Iconsax.briefcase,
                 ),
+                // _buildNavItem(
+                //   context: context,
+                //   ref: ref,
+                //   index: 2,
+                //   currentIndex: currentIndex,
+                //   activeIcon: Iconsax.message5,
+                //   inactiveIcon: Iconsax.message,
+                // ),
                 _buildNavItem(
                   context: context,
                   ref: ref,
                   index: 2,
-                  currentIndex: currentIndex,
-                  activeIcon: Iconsax.message5,
-                  inactiveIcon: Iconsax.message,
-                ),
-                _buildNavItem(
-                  context: context,
-                  ref: ref,
-                  index: 3,
                   currentIndex: currentIndex,
                   activeIcon: Iconsax.profile_circle5,
                   inactiveIcon: Iconsax.profile_circle,

@@ -51,9 +51,9 @@ class _LoginpageState extends ConsumerState<LoginScreen> {
         if (authState.isLoggedIn) {
           context.go('/job-nav');
         } else {
-           WidgetsBinding.instance.addPostFrameCallback((_) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
             context.go('/jobseeker-info');
-           });
+          });
         }
 
       });
@@ -64,9 +64,9 @@ class _LoginpageState extends ConsumerState<LoginScreen> {
         if (authState.isLoggedIn) {
           context.go('/recuiter-nav');
         } else {
-           WidgetsBinding.instance.addPostFrameCallback((_) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
             context.go('/recruiter-info');
-           });
+          });
         }
       });
     }
@@ -88,6 +88,7 @@ class _LoginpageState extends ConsumerState<LoginScreen> {
       final userEmail = user.email ?? _emailOrMobileController.text.trim();
 
       _showSnackBar(
+        // ignore: use_build_context_synchronously
         context: context,
         text: 'Login successful! 👍',
         textColor: Colors.green.shade800,

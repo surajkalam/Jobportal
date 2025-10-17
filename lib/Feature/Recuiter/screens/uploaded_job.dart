@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:jobapp/Authentication/user_provider.dart';
 import 'package:jobapp/Feature/Recuiter/screens/applications_screen.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
+import 'package:jobapp/core/util/appcolors.dart';
 
 import '../provider/provider.dart';
 
@@ -35,7 +37,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
   }
 
   void _refreshRecentJobs() {
-    final recruiterEmail = ref.read(currentrecuiterUserEmailProvider);
+    final recruiterEmail = ref.read(currentRecruiterUserEmailProvider);
     if (recruiterEmail.isNotEmpty) {
       ref
           .read(recentJobsNotifierProvider(recruiterEmail).notifier)
@@ -45,7 +47,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
+    final recruiterEmail = ref.watch(currentRecruiterUserEmailProvider);
     final recentJobsAsync = ref.watch(recentJobsProvider);
     final totalJobsCount = ref.watch(totalJobsCountProvider);
     final activeJobsCount = ref.watch(activeJobsCountProvider);
@@ -70,7 +72,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Upload Jobs'),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: AppColors.faintbackblue,
         actions: [
           IconButton(
             icon: const Icon(Iconsax.refresh),
@@ -602,7 +604,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
   }
 
   void _refreshUrgentHiring(String jobId) {
-    final recruiterEmail = ref.read(currentrecuiterUserEmailProvider);
+    final recruiterEmail = ref.read(currentRecruiterUserEmailProvider);
     if (recruiterEmail.isNotEmpty) {
       ref.invalidate(urgentHiringProvider(jobId));
     }
@@ -658,7 +660,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
 
   //refresh recent jobs
   void _refreshJobStatus(String jobId) {
-    final recruiterEmail = ref.read(currentrecuiterUserEmailProvider);
+    final recruiterEmail = ref.read(currentRecruiterUserEmailProvider);
     if (recruiterEmail.isNotEmpty) {
       ref.invalidate(jobStatusProvider(jobId));
     }
@@ -686,21 +688,6 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  context.push('/job-details');
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
-                ),
-                child: const Text(
-                  'Upload Your First Job',
-                  style: TextStyle(fontSize: 12),
-                ),
-              ),
             ],
           ),
         ),

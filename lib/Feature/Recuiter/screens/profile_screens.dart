@@ -1,6 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:jobapp/Authentication/user_provider.dart';
+import 'package:jobapp/core/util/appcolors.dart';
 import '../provider/provider.dart';
 import '../recuiter_model/recuiter_model.dart';
 
@@ -15,14 +18,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    // Load recruiter data when screen starts
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadRecruiterData();
     });
   }
 
   void _loadRecruiterData() {
-    final email = ref.read(currentrecuiterUserEmailProvider);
+    final email = ref.read(currentRecruiterUserEmailProvider);
     if (email.isNotEmpty) {
       ref.read(recruiterDataProvider.notifier).getRecruiterByEmail(email);
     }
@@ -33,7 +35,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) => EditProfileBottomSheet(recruiter: recruiter),
     );
@@ -43,14 +45,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final recruiterAsync = ref.watch(recruiterDataProvider);
     final isLoading = ref.watch(loadingStateProvider);
+    final theme = Theme.of(context);
+    var  width=MediaQuery.of(context).size.width;
+    var height=MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Recruiter Profile'),
-        backgroundColor: Colors.orange,
+        title:Text(
+          'Recruiter Profile',
+          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+        ),
+        centerTitle: true ,
+        backgroundColor: AppColors.faintbackblue,
+        elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Iconsax.edit),
+            icon: const Icon(Iconsax.edit, size: 24),
             onPressed: () {
               recruiterAsync.when(
                 data: (recruiter) {
@@ -66,99 +76,167 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Colors.orange))
           : recruiterAsync.when(
-              data: (recruiter) => _buildProfileContent(recruiter),
-              loading: () => const Center(child: CircularProgressIndicator()),
+              data: (recruiter) => _buildProfileContent(recruiter,height,width),
+              loading: () => const Center(child: CircularProgressIndicator(color: Colors.orange)),
               error: (error, stackTrace) => _buildErrorWidget(error.toString()),
             ),
     );
   }
 
-  Widget _buildProfileContent(RecruiterModel? recruiter) {
+  Widget _buildProfileContent(RecruiterModel? recruiter  ,double height,double width) {
     if (recruiter == null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Iconsax.profile_delete, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            const Text('No profile data found'),
-            const SizedBox(height: 8),
-            ElevatedButton(
+            Icon(Iconsax.profile_delete, size: 60, color: Colors.grey[400]),
+            SizedBox(height: height*0.016),
+            Text(
+              'No profile data found',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+          SizedBox(height:height*0.016),
+            ElevatedButton.icon(
               onPressed: _loadRecruiterData,
-              child: const Text('Retry'),
+              icon: const Icon(Iconsax.refresh),
+              label: const Text('Retry'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
             ),
           ],
         ),
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          // Profile Header
-          _buildProfileHeader(recruiter),
-          const SizedBox(height: 20),
-          
-          // Profile Details Card
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  _buildProfileItem('Company Name', recruiter.companyName),
-                  _buildProfileItem('Contact Email', recruiter.email),
-                  _buildProfileItem('Phone', recruiter.contact),
-                  _buildProfileItem('Location', recruiter.location),
-                  _buildProfileItem('Designation', recruiter.designation),
-                  _buildProfileItem('Member Since', 
-                    '${recruiter.createdAt.day}/${recruiter.createdAt.month}/${recruiter.createdAt.year}'),
-                ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Profile Header
+            _buildProfileHeader(recruiter,height,width),
+             SizedBox(height: 24),
+            // Profile Details Card
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Profile Details',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildProfileItem('Company Name', recruiter.companyName, Iconsax.building,width,height),
+                    const Divider(height: 24),
+                    _buildProfileItem('Contact Email', recruiter.email, Iconsax.message,width,height),
+                    const Divider(height: 24),
+                    _buildProfileItem('Phone', recruiter.contact, Iconsax.call,width,height),
+                    const Divider(height: 24),
+                    _buildProfileItem('Location', recruiter.location, Iconsax.location,width,height),
+                    const Divider(height: 24),
+                    _buildProfileItem('Designation', recruiter.designation, Iconsax.briefcase,width,height),
+                    const Divider(height: 24),
+                    _buildProfileItem(
+                      'Member Since',
+                      '${recruiter.createdAt.day}/${recruiter.createdAt.month}/${recruiter.createdAt.year}',
+                      Iconsax.calendar,
+                      width,height
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          
-          const SizedBox(height: 20),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildProfileHeader(RecruiterModel recruiter) {
-    return Column(
+  Widget _buildProfileHeader(RecruiterModel recruiter,double height,double width) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.orange[50],
+        borderRadius: BorderRadius.circular(16),
+      ),
+      padding:EdgeInsets.all(16),
+      child: Center(
+        child: Column(
+          children: [
+            CircleAvatar(
+              radius: 40,
+              backgroundColor: Colors.orange[100],
+              backgroundImage: recruiter.photoUrl.isNotEmpty 
+                  ? NetworkImage(recruiter.photoUrl) as ImageProvider
+                  : null,
+              child: recruiter.photoUrl.isEmpty
+                  ? const Icon(Iconsax.user, size: 40, color: Colors.orange)
+                  : null,
+            ),
+           SizedBox(height: height*0.014),
+            Text(
+              recruiter.name,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+            ),
+             SizedBox(height: height*0.006),
+            Text(
+              recruiter.email,
+              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileItem(String title, String value, IconData icon,double width,double height) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CircleAvatar(
-          radius: 50,
-          backgroundColor: Colors.orange[100],
-          backgroundImage: recruiter.photoUrl.isNotEmpty 
-              ? NetworkImage(recruiter.photoUrl) as ImageProvider
-              : null,
-          child: recruiter.photoUrl.isEmpty
-              ? const Icon(Iconsax.user, size: 40, color: Colors.orange)
-              : null,
+        Icon(icon, size: 18, color: Colors.orange[700]),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+            SizedBox(height:height*0.004),
+              Text(
+                value.isEmpty ? 'Not provided' : value,
+                style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 10),
-        Text(
-          recruiter.name,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        Text(recruiter.email),
       ],
-    );
-  }
-
-  Widget _buildProfileItem(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(value.isEmpty ? 'Not provided' : value),
-        ],
-      ),
     );
   }
 
@@ -167,14 +245,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Iconsax.warning_2, size: 64, color: Colors.red),
+          Icon(Iconsax.warning_2, size: 80, color: Colors.red[400]),
           const SizedBox(height: 16),
-          const Text('Error loading profile', style: TextStyle(color: Colors.red)),
-          Text(error, textAlign: TextAlign.center),
+          Text(
+            'Error loading profile',
+            style: TextStyle(fontSize: 18, color: Colors.red[400]),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            error,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+          ),
           const SizedBox(height: 16),
-          ElevatedButton(
+          ElevatedButton.icon(
             onPressed: _loadRecruiterData,
-            child: const Text('Retry'),
+            icon: const Icon(Iconsax.refresh),
+            label: const Text('Retry'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
           ),
         ],
       ),
@@ -182,7 +275,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 }
 
-// Edit Profile Bottom Sheet
 class EditProfileBottomSheet extends ConsumerStatefulWidget {
   final RecruiterModel recruiter;
 
@@ -203,7 +295,6 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
   @override
   void initState() {
     super.initState();
-    // Initialize controllers with current values
     _nameController = TextEditingController(text: widget.recruiter.name);
     _contactController = TextEditingController(text: widget.recruiter.contact);
     _companyController = TextEditingController(text: widget.recruiter.companyName);
@@ -226,7 +317,6 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
       try {
         ref.read(loadingStateProvider.notifier).state = true;
 
-        // Create updated recruiter model
         final updatedRecruiter = widget.recruiter.copyWith(
           name: _nameController.text,
           contact: _contactController.text,
@@ -236,29 +326,21 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
           updatedAt: DateTime.now(),
         );
 
-        // Update in Firebase
         await ref.read(recruiterDataProvider.notifier).saveRecruiter(updatedRecruiter);
 
-        // Close bottom sheet
         if (mounted) {
           Navigator.pop(context);
           _showSnackBar(
             context: context,
-            text: 'Profile updated successfully! 👍',
+            text: 'Profile updated successfully! 🎉',
             textColor: Colors.green,
           );
         }
       } catch (e) {
         if (mounted) {
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     content: Text('Error updating profile: $e'),
-          //     backgroundColor: Colors.red,
-          //   ),
-          // );
           _showSnackBar(
             context: context,
-            text: 'Error updating profile 👎 try again',
+            text: 'Error updating profile 😔 Try again',
             textColor: Colors.red,
           );
         }
@@ -271,13 +353,17 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(loadingStateProvider);
+    var height=MediaQuery.of(context).size.height;
+    var width=MediaQuery.of(context).size.width;
 
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
+        left: 20,
+        right: 20,
+        top: 20,
       ),
-      child: Container(
-        padding: const EdgeInsets.all(20),
+      child: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Column(
@@ -287,26 +373,31 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Edit Profile',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
                   ),
                   IconButton(
-                    icon: const Icon(Iconsax.close_circle),
+                    icon: Icon(Iconsax.close_circle, color: Colors.grey[600]),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              
+               SizedBox(height:height*0.024),
               _buildTextField(_nameController, 'Full Name', Iconsax.user),
+              const SizedBox(height: 16),
               _buildTextField(_contactController, 'Contact Number', Iconsax.call),
+              const SizedBox(height: 16),
               _buildTextField(_companyController, 'Company Name', Iconsax.building),
+              const SizedBox(height: 16),
               _buildTextField(_designationController, 'Designation', Iconsax.briefcase),
+              const SizedBox(height: 16),
               _buildTextField(_locationController, 'Location', Iconsax.location),
-              
-              const SizedBox(height: 20),
-              
+              SizedBox(height: height*0.03),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -314,17 +405,27 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding:  EdgeInsets.symmetric(vertical: 08),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 2,
+                  fixedSize: Size(width, height*0.003)
                   ),
                   child: isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      ?  SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
                         )
-                      : const Text('Update Profile'),
+                      : const Text(
+                          'Update Profile',
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                        ),
                 ),
               ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -333,48 +434,65 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
   }
 
   Widget _buildTextField(TextEditingController controller, String label, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+    return TextFormField(
+      controller: controller,
+      cursorHeight: 15,
+      style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: AppColors.black),
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: Colors.orange[700]),
+        labelStyle: TextStyle(fontSize: 12,color: Colors.grey),
+        hintStyle:TextStyle(fontSize: 12,color: Colors.grey), 
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey[300]!),
         ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter $label';
-          }
-          return null;
-        },
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.orange[700]!, width: 2),
+        ),
+        fillColor: Colors.grey[50],
+        filled: true,
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter $label';
+        }
+        return null;
+      },
     );
   }
+
   void _showSnackBar({
     required BuildContext context,
     required String text,
     Color backgroundColor = Colors.white,
-    Color textColor = Colors.green,
+    required Color textColor,
     Duration duration = const Duration(seconds: 3),
     SnackBarBehavior behavior = SnackBarBehavior.floating,
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(text, 
-        style: TextStyle(
-          color: textColor,
-          fontSize: 10,
-        fontWeight: FontWeight.w500),
-        textAlign: TextAlign.center,
+        content: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
         ),
         backgroundColor: backgroundColor,
         duration: duration,
         behavior: behavior,
-        margin: EdgeInsets.all(12),
+        margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: textColor),
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: textColor.withOpacity(0.3)),
         ),
       ),
     );

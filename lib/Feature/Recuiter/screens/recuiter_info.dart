@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jobapp/Authentication/user_provider.dart';
 import 'package:jobapp/Feature/Recuiter/provider/requiterinfo_provider.dart';
+import 'package:jobapp/core/util/appcolors.dart';
 import '../provider/provider.dart';
 import '../recuiter_model/recuiter_model.dart';
 
@@ -42,7 +44,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorScheme.onSecondary,
+        backgroundColor: AppColors.faintbackblue,
         title: Text(
           "Recruiter information",
           style: textTheme.titleLarge?.copyWith(
@@ -371,7 +373,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
 
       // Save to Firestore using provider
       await ref.read(recruiterDataProvider.notifier).saveRecruiter(recruiter);
-      ref.read(currentrecuiterUserEmailProvider.notifier).state = emailController.text;
+      ref.read(currentRecruiterUserEmailProvider.notifier).state = emailController.text;
       // ignore: use_build_context_synchronously
       _showSnackBar(context: context, text:' Recruiter information submitted successfully! 👍',textColor: Colors.green);
       // ignore: use_build_context_synchronously

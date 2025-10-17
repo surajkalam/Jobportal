@@ -16,7 +16,7 @@ class _RecruiterNavbarState extends State<RecruiterNavbar> {
   final List<Widget> _pages = [
     HomeScreen(),
     UploadJobsScreen(),
-    ProfileScreen(),
+    ApplicationDetailScreen(),
     ProfileScreen(),
   ];
 
@@ -46,7 +46,7 @@ class _RecruiterNavbarState extends State<RecruiterNavbar> {
             label: "Upload Jobs",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Iconsax.document_text),
+          icon: Icon(Icons.people),
             label: "Applications",
           ),
           BottomNavigationBarItem(

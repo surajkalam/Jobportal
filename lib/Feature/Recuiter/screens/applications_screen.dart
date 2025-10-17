@@ -1,8 +1,8 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jobapp/Authentication/user_provider.dart';
 import 'package:jobapp/Feature/Recuiter/provider/application_provider.dart';
-import 'package:jobapp/Feature/Recuiter/provider/requiterinfo_provider.dart';
 import 'package:jobapp/Feature/combomodel/application_model.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 import 'package:jobapp/core/util/appcolors.dart';
@@ -32,7 +32,7 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    final recruiterEmail = ref.watch(currentrecuiterUserEmailProvider);
+    final recruiterEmail = ref.watch(currentRecruiterUserEmailProvider);
 
     log('=== BUILD DEBUG ===');
     log('Recruiter Email in build: $recruiterEmail');
