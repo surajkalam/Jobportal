@@ -191,7 +191,7 @@ class _ProfileInformationScreenState
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         // ignore: deprecated_member_use
-        border: Border.all(color: AppColors.grey.withOpacity(0.3)),
+        border: Border.all(color: AppColors.grey.withValues(alpha: 0.3)),
         color: AppColors.white,
       ),
       child: Padding(
@@ -309,7 +309,7 @@ class _ProfileInformationScreenState
                   backgroundColor: AppColors.white,
                   foregroundColor: AppColors.darkblue,
                   // ignore: deprecated_member_use
-                  side: BorderSide(color: AppColors.darkblue.withOpacity(0.6)),
+                  side: BorderSide(color: AppColors.darkblue.withValues(alpha: 0.6)),
                   padding: EdgeInsets.symmetric(vertical: 8),
                 ),
               ),

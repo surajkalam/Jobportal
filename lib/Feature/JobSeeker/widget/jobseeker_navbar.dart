@@ -40,7 +40,7 @@ class JobseekerNavbar extends ConsumerWidget {
           boxShadow: [
             BoxShadow(
               // ignore: deprecated_member_use
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               spreadRadius: 0,
               blurRadius: 10,
               offset: Offset(0, 5),
@@ -120,7 +120,7 @@ class JobseekerNavbar extends ConsumerWidget {
           child: Icon(
             isActive ? activeIcon : inactiveIcon,
             size: 24,
-            color: isActive ? Colors.white : Colors.white.withOpacity(0.5),
+            color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.5),
           ),
         ),
       ),

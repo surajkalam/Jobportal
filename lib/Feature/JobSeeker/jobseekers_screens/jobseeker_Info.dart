@@ -402,7 +402,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                         decoration: BoxDecoration(
                           border: Border.all(
                             // ignore: deprecated_member_use
-                            color: Colors.grey.withOpacity(0.5),
+                            color: Colors.grey.withValues(alpha: 0.5),
                           ),
                           borderRadius: BorderRadius.circular(12),
                           color: Color.fromRGBO(223, 226, 230, 1),
@@ -545,11 +545,11 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
             text: 'Profile submitted successfully 👍 ',
           );
           log('Jobseeker Profile Saved to Firebase:');
-          log('Email: $currentEmail');
-          log('Name: ${nameController.text}');
-          log('Resume URL: ${resumeController.text}');
+          // log('Email: $currentEmail');
+          // log('Name: ${nameController.text}');
+          // log('Resume URL: ${resumeController.text}');
           // ignore: use_build_context_synchronously
-          context.go('/job-nav');
+          context.go('/login');
         }
       } catch (e) {
         _showSnackBar(

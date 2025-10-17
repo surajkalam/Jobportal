@@ -51,7 +51,7 @@ class _CheckLoginSignupScreenState extends ConsumerState<CheckLoginSignupScreen>
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               // ignore: deprecated_member_use
-              Colors.black.withOpacity(0.3), // Optional: Add overlay for better text visibility
+              Colors.black.withValues(alpha: 0.3), // Optional: Add overlay for better text visibility
               BlendMode.darken,
             ),
           ),
@@ -70,12 +70,12 @@ class _CheckLoginSignupScreenState extends ConsumerState<CheckLoginSignupScreen>
                     width: width * 0.8,
                     decoration: BoxDecoration(
                       // ignore: deprecated_member_use
-                      color: whiteColor.withOpacity(0.9), // Added opacity for better blend
+                      color: whiteColor.withValues(alpha: 0.9), // Added opacity for better blend
                       borderRadius: BorderRadius.circular(width * 0.05),
                       boxShadow: [
                         BoxShadow(
                           // ignore: deprecated_member_use
-                          color: Colors.black.withOpacity(0.2), // Increased opacity
+                          color: Colors.black.withValues(alpha: 0.2), // Increased opacity
                           spreadRadius: 1,
                           blurRadius: 6,
                           offset: const Offset(1, 2),
@@ -166,7 +166,7 @@ class _CheckLoginSignupScreenState extends ConsumerState<CheckLoginSignupScreen>
                           boxShadow: [
                             BoxShadow(
                               // ignore: deprecated_member_use
-                              color: Colors.black.withOpacity(0.3), // Increased opacity
+                              color: Colors.black.withValues(alpha: 0.3), // Increased opacity
                               spreadRadius: 2,
                               blurRadius: 8,
                               offset: const Offset(2, 3),
@@ -194,13 +194,13 @@ class _CheckLoginSignupScreenState extends ConsumerState<CheckLoginSignupScreen>
                         width: width * 0.5,
                         decoration: BoxDecoration(
                           // ignore: deprecated_member_use
-                          color: whiteColor.withOpacity(0.9), // Added opacity
+                          color: whiteColor.withValues(alpha: 0.9), // Added opacity
                           border: Border.all(color: selectedBlue, width: 2),
                           borderRadius: BorderRadius.circular(width * 0.02),
                           boxShadow: [
                             BoxShadow(
                               // ignore: deprecated_member_use
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               spreadRadius: 1,
                               blurRadius: 6,
                               offset: const Offset(1, 2),

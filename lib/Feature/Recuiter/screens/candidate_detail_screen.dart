@@ -147,7 +147,7 @@ class _ApplicationDetailScreenState extends ConsumerState<ApplicationDetailScree
                 style: TextStyle(
                   fontSize: 08,
                   fontWeight: FontWeight.w500,
-                  color: color.withOpacity(0.8),
+                  color: color.withValues(alpha: 0.8),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,
@@ -194,7 +194,7 @@ class _ApplicationDetailScreenState extends ConsumerState<ApplicationDetailScree
           height: height * 0.04,
           decoration: BoxDecoration(
             // ignore: deprecated_member_use
-            color: isSelected ? color : color.withOpacity(0.1),
+            color: isSelected ? color : color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: isSelected ? color : Colors.grey[300]!,

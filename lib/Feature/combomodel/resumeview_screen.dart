@@ -127,8 +127,8 @@ class ResumeViewerScreen extends StatelessWidget {
                 padding: EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.grey.withOpacity(0.3)),
-                  color: AppColors.verylightblue.withOpacity(0.1),
+                  border: Border.all(color: AppColors.grey.withValues(alpha: 0.3)),
+                  color: AppColors.verylightblue.withValues(alpha: 0.1),
                 ),
                 child: Column(
                   children: [
@@ -253,8 +253,8 @@ class ResumeViewerScreen extends StatelessWidget {
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  color: AppColors.verylightblue.withOpacity(0.1),
-                  border: Border.all(color: AppColors.grey.withOpacity(0.2)),
+                  color: AppColors.verylightblue.withValues(alpha: 0.1),
+                  border: Border.all(color: AppColors.grey.withValues(alpha: 0.2)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

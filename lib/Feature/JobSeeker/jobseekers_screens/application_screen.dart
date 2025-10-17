@@ -39,7 +39,7 @@ class AppliedJobsScreen extends ConsumerWidget {
         boxShadow: [
           BoxShadow(
             // ignore: deprecated_member_use
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -64,7 +64,7 @@ class AppliedJobsScreen extends ConsumerWidget {
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
             // ignore: deprecated_member_use
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Text(
@@ -247,19 +247,19 @@ class AppliedJobsScreen extends ConsumerWidget {
     switch (status) {
       case 'shortlisted':
         // ignore: deprecated_member_use
-        backgroundColor = Colors.green.withOpacity(0.1);
+        backgroundColor = Colors.green.withValues(alpha: 0.1);
         textColor = Colors.green;
         statusText = 'Shortlisted';
         break;
       case 'rejected':
         // ignore: deprecated_member_use
-        backgroundColor = Colors.red.withOpacity(0.1);
+        backgroundColor = Colors.red.withValues(alpha: 0.1);
         textColor = Colors.red;
         statusText = 'Rejected';
         break;
       default:
         // ignore: deprecated_member_use
-        backgroundColor = Colors.orange.withOpacity(0.1);
+        backgroundColor = Colors.orange.withValues(alpha: 0.1);
         textColor = Colors.orange;
         statusText = 'Pending';
     }
@@ -269,7 +269,7 @@ class AppliedJobsScreen extends ConsumerWidget {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(20),
         // ignore: deprecated_member_use
-        border: Border.all(color: textColor.withOpacity(0.3)),
+        border: Border.all(color: textColor.withValues(alpha: 0.3)),
       ),
       child: Text(
         statusText,

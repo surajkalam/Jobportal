@@ -136,7 +136,7 @@ class _LoginpageState extends ConsumerState<LoginScreen> {
                       ),
                       decoration: BoxDecoration(
                         // ignore: deprecated_member_use
-                        color: colorScheme.primary.withOpacity(0.1),
+                        color: colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -179,36 +179,36 @@ class _LoginpageState extends ConsumerState<LoginScreen> {
                           labelText: "Enter email",
                           labelStyle: textTheme.bodySmall?.copyWith(
                             fontSize: 11,
-                            color: AppColors.grey.withOpacity(0.8),
+                            color: AppColors.grey.withValues(alpha: 0.8),
                           ),
                           hintText: 'Email..',
                           hintStyle: textTheme.bodySmall?.copyWith(
                             fontSize: 12,
-                            color: AppColors.grey.withOpacity(0.6),
+                            color: AppColors.grey.withValues(alpha: 0.6),
                           ),
                           filled: true,
                           fillColor: AppColors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: AppColors.grey.withOpacity(0.5),
+                              color: AppColors.grey.withValues(alpha: 0.5),
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: AppColors.grey.withOpacity(0.5),
+                              color: AppColors.grey.withValues(alpha: 0.5),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: AppColors.grey.withOpacity(0.8),
+                              color: AppColors.grey.withValues(alpha: 0.8),
                             ),
                           ),
                           prefixIcon: Icon(
                             Icons.person,
-                            color: AppColors.grey.withOpacity(0.7),
+                            color: AppColors.grey.withValues(alpha: 0.7),
                           ),
                         ),
                         validator: (value) {
@@ -241,40 +241,40 @@ class _LoginpageState extends ConsumerState<LoginScreen> {
                           labelStyle: textTheme.bodySmall?.copyWith(
                             fontSize: 11,
                             // ignore: deprecated_member_use
-                            color: AppColors.grey.withOpacity(0.8),
+                            color: AppColors.grey.withValues(alpha: 0.8),
                           ),
                           hintText: 'Password',
                           hintStyle: textTheme.bodySmall?.copyWith(
                             fontSize: 12,
                             // ignore: deprecated_member_use
-                            color: AppColors.grey.withOpacity(0.6),
+                            color: AppColors.grey.withValues(alpha: 0.6),
                           ),
                           filled: true,
                           fillColor: AppColors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: AppColors.grey.withOpacity(0.5),
+                              color: AppColors.grey.withValues(alpha: 0.5),
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: AppColors.grey.withOpacity(0.5),
+                              color: AppColors.grey.withValues(alpha: 0.5),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: AppColors.grey.withOpacity(0.8),
+                              color: AppColors.grey.withValues(alpha: 0.8),
                             ),
                           ),
                           prefixIcon: Icon(
                             Icons.lock,
-                            color: AppColors.grey.withOpacity(0.7),
+                            color: AppColors.grey.withValues(alpha: 0.7),
                           ),
                           suffixIcon: IconButton(
-                            color: AppColors.grey.withOpacity(0.7),
+                            color: AppColors.grey.withValues(alpha: 0.7),
                             icon: Icon(
                               _obscurePassword
                                   ? Icons.visibility_off
@@ -314,7 +314,7 @@ class _LoginpageState extends ConsumerState<LoginScreen> {
                             "Forgot Password?",
                             style: GoogleFonts.poppins(
                               fontSize: width * 0.035,
-                              color: AppColors.grey.withOpacity(0.8),
+                              color: AppColors.grey.withValues(alpha: 0.8),
                               fontWeight: FontWeight.w500,
                               decoration: TextDecoration.underline,
                             ),

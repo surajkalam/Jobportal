@@ -65,7 +65,7 @@ class JobDetailsScreen extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(50),
                 border: Border.all(
                   // ignore: deprecated_member_use
-                  color: AppColors.darkGrey.withOpacity(0.2),
+                  color: AppColors.darkGrey.withValues(alpha: 0.2),
                   width: 1.5,
                 ),
               ),
@@ -217,7 +217,7 @@ class JobDetailsScreen extends ConsumerWidget {
                 //     decoration: BoxDecoration(
                 //       color: Colors.red[50],
                 //       borderRadius: BorderRadius.circular(6),
-                //       border: Border.all(color: Colors.red.withOpacity(0.3)),
+                //       border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
                 //     ),
                 //     child: Text(
                 //       'URGENT',
@@ -268,7 +268,7 @@ class JobDetailsScreen extends ConsumerWidget {
               color: Colors.red[50],
               borderRadius: BorderRadius.circular(10),
               // ignore: deprecated_member_use
-              border: Border.all(color: Colors.red.withOpacity(0.3)),
+              border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -295,9 +295,9 @@ class JobDetailsScreen extends ConsumerWidget {
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         // ignore: deprecated_member_use
-        color: AppColors.lightblue.withOpacity(0.3),
+        color: AppColors.lightblue.withValues(alpha: 0.3),
         // ignore: deprecated_member_use
-        border: Border.all(color: AppColors.grey.withOpacity(0.3)),
+        border: Border.all(color: AppColors.grey.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -320,9 +320,9 @@ class JobDetailsScreen extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         // ignore: deprecated_member_use
-        border: Border.all(color: AppColors.grey.withOpacity(0.3)),
+        border: Border.all(color: AppColors.grey.withValues(alpha: 0.3)),
         // ignore: deprecated_member_use
-        color: AppColors.verylightblue.withOpacity(0.3),
+        color: AppColors.verylightblue.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(25),
       ),
       child: Row(
@@ -354,7 +354,7 @@ class JobDetailsScreen extends ConsumerWidget {
             borderRadius: BorderRadius.circular(25),
             color: isSelected
                 ? AppColors.black
-                : AppColors.verylightblue.withOpacity(0.1),
+                : AppColors.verylightblue.withValues(alpha: 0.1),
           ),
           child: Center(
             child: Text(
@@ -389,10 +389,10 @@ class JobDetailsScreen extends ConsumerWidget {
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
             // ignore: deprecated_member_use
-            color: AppColors.verylightblue.withOpacity(0.1),
+            color: AppColors.verylightblue.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             // ignore: deprecated_member_use
-            border: Border.all(color: AppColors.grey.withOpacity(0.2)),
+            border: Border.all(color: AppColors.grey.withValues(alpha: 0.2)),
           ),
           child: Text(
             job.application.isNotEmpty 
@@ -436,10 +436,10 @@ class JobDetailsScreen extends ConsumerWidget {
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
             // ignore: deprecated_member_use
-            color: AppColors.verylightblue.withOpacity(0.1),
+            color: AppColors.verylightblue.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             // ignore: deprecated_member_use
-            border: Border.all(color: AppColors.grey.withOpacity(0.2)),
+            border: Border.all(color: AppColors.grey.withValues(alpha: 0.2)),
           ),
           child: Column(
             children: [
@@ -499,10 +499,10 @@ class JobDetailsScreen extends ConsumerWidget {
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
             // ignore: deprecated_member_use
-            color: AppColors.verylightblue.withOpacity(0.1),
+            color: AppColors.verylightblue.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             // ignore: deprecated_member_use
-            border: Border.all(color: AppColors.grey.withOpacity(0.2)),
+            border: Border.all(color: AppColors.grey.withValues(alpha: 0.2)),
           ),
           child: Column(
             children: [
@@ -585,7 +585,7 @@ class JobDetailsScreen extends ConsumerWidget {
         decoration: BoxDecoration(
           border: Border.all(
             // ignore: deprecated_member_use
-            color: AppColors.black.withOpacity( 0.2),
+            color: AppColors.black.withValues(alpha:  0.2),
             width: 1.5,
           ),
           gradient: LinearGradient(
@@ -604,7 +604,7 @@ class JobDetailsScreen extends ConsumerWidget {
           boxShadow: [
             BoxShadow(
               // ignore: deprecated_member_use
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: Offset(0, 2),
             ),

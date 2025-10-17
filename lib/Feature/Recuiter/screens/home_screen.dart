@@ -36,10 +36,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final totalJobs = getTotalJobs(ref);
     final activeJobs = getActiveJobsCount(ref);
-    // final totalApplications = ref.watch(homeTotalApplicationsProvider);
-    // final shortlistedApplications = ref.watch(homeShortlistedApplicationsProvider);
-    // final pendingApplications = ref.watch(homePendingApplicationsProvider);
-    // final recentApplications = ref.watch(recentApplicationsProvider);
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     final totalApplicationsAsync = ref.watch(homeTotalApplicationsProvider);
@@ -297,7 +293,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       margin: EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: _getStatusColor(application.status).withOpacity(0.1),
+          backgroundColor: _getStatusColor(application.status).withValues(alpha: 0.1),
           child: Icon(
             _getStatusIcon(application.status),
             color: _getStatusColor(application.status),
@@ -315,7 +311,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         trailing: Container(
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: _getStatusColor(application.status).withOpacity(0.1),
+            color: _getStatusColor(application.status).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -367,7 +363,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 24),

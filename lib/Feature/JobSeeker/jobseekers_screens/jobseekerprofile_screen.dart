@@ -77,7 +77,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
         border: Border.all(color: AppColors.grey),
         gradient: LinearGradient(
           // ignore: deprecated_member_use
-          colors: [AppColors.darkblue.withOpacity(0.6), AppColors.darkblue],
+          colors: [AppColors.darkblue.withValues(alpha: 0.6), AppColors.darkblue],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           stops: [0.1, 0.6],
@@ -179,7 +179,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
           Divider(
             height: height * 0.01,
             // ignore: deprecated_member_use
-            color: AppColors.white.withOpacity(0.5),
+            color: AppColors.white.withValues(alpha: 0.5),
           ),
           Row(
             children: [
@@ -212,7 +212,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: AppColors.white),
           // ignore: deprecated_member_use
-          color: AppColors.white.withOpacity(0.1),
+          color: AppColors.white.withValues(alpha: 0.1),
         ),
         child: Center(
           child: Padding(
@@ -289,7 +289,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       ),
                     ),
                     // ignore: deprecated_member_use
-                    Divider(color: AppColors.grey.withOpacity(0.3)),
+                    Divider(color: AppColors.grey.withValues(alpha: 0.3)),
 
                     // Row 2: Email - NO ACTION
                     _buildAccountRow(
@@ -303,7 +303,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       height: height,
                     ),
                     // ignore: deprecated_member_use
-                    Divider(color: AppColors.grey.withOpacity(0.3)),
+                    Divider(color: AppColors.grey.withValues(alpha: 0.3)),
 
                     // Row 3: Age - NO ACTION
                     _buildAccountRow(
@@ -318,7 +318,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       height: height,
                     ),
                     // ignore: deprecated_member_use
-                    Divider(color: AppColors.grey.withOpacity(0.3)),
+                    Divider(color: AppColors.grey.withValues(alpha: 0.3)),
 
                     // Row 4: Profession - NO ACTION
                     _buildAccountRow(
@@ -332,7 +332,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       height: height,
                     ),
                     // ignore: deprecated_member_use
-                    Divider(color: AppColors.grey.withOpacity(0.3)),
+                    Divider(color: AppColors.grey.withValues(alpha: 0.3)),
 
                     // Row 5: Logout - WITH ACTION
                     GestureDetector(
@@ -457,7 +457,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               borderRadius: BorderRadius.circular(70),
               border: Border.all(color: AppColors.grey),
               // ignore: deprecated_member_use
-              color: AppColors.white.withOpacity(0.9),
+              color: AppColors.white.withValues(alpha: 0.9),
             ),
             child: Center(
               child: Icon(

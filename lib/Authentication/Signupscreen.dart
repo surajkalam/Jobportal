@@ -154,7 +154,7 @@
 //                         ),
 //                         decoration: BoxDecoration(
 //                           // ignore: deprecated_member_use
-//                           color: colorScheme.primary.withOpacity(0.1),
+//                           color: colorScheme.primary.withValues(alpha: 0.1),
 //                           borderRadius: BorderRadius.circular(20),
 //                         ),
 //                         child: Text(
@@ -202,20 +202,20 @@
 //                   showCursor: true,
 //                   // textInputAction: TextInputAction.newline,
 //                   // ignore: deprecated_member_use
-//                   cursorColor:AppColors.black.withOpacity(0.6),
+//                   cursorColor:AppColors.black.withValues(alpha: 0.6),
 //                   cursorHeight:15,
 //                   decoration: InputDecoration(
 //                     labelText: "E-mail",
 //                     labelStyle: textTheme.bodySmall?.copyWith(
 //                       fontSize: 11,
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.black.withOpacity(0.6),
+//                       color: AppColors.black.withValues(alpha: 0.6),
 //                     ),
 //                     hintText: "Enter your email",
 //                     hintStyle: TextStyle(
 //                       fontSize: 12,
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.black.withOpacity(0.6),
+//                       color: AppColors.black.withValues(alpha: 0.6),
 //                     ),
 //                     filled: true,
 //                     fillColor: AppColors.white,
@@ -223,27 +223,27 @@
 //                       borderRadius: BorderRadius.circular(12),
 //                       borderSide: BorderSide(
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.5),
+//                         color: AppColors.grey.withValues(alpha: 0.5),
 //                       ),
 //                     ),
 //                     enabledBorder: OutlineInputBorder(
 //                       borderRadius: BorderRadius.circular(12),
 //                       borderSide: BorderSide(
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.5),
+//                         color: AppColors.grey.withValues(alpha: 0.5),
 //                       ),
 //                     ),
 //                     focusedBorder: OutlineInputBorder(
 //                       borderRadius: BorderRadius.circular(12),
 //                       borderSide: BorderSide(
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.8),
+//                         color: AppColors.grey.withValues(alpha: 0.8),
 //                       ),
 //                     ),
 //                     prefixIcon: Icon(
 //                       Icons.email,
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.grey.withOpacity(0.7),
+//                       color: AppColors.grey.withValues(alpha: 0.7),
 //                     ),
 //                   ),
 //                   validator: (value) {
@@ -272,13 +272,13 @@
 //                     labelStyle: textTheme.bodySmall?.copyWith(
 //                       fontSize: 11,
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.black.withOpacity(0.6),
+//                       color: AppColors.black.withValues(alpha: 0.6),
 //                     ),
 //                     hintText: "Enter your mobile number",
 //                     hintStyle: TextStyle(
 //                       fontSize: 12,
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.black.withOpacity(0.6),
+//                       color: AppColors.black.withValues(alpha: 0.6),
 //                     ),
 //                     filled: true,
 //                     fillColor: AppColors.white,
@@ -286,27 +286,27 @@
 //                       borderRadius: BorderRadius.circular(12),
 //                       borderSide: BorderSide(
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.5),
+//                         color: AppColors.grey.withValues(alpha: 0.5),
 //                       ),
 //                     ),
 //                     enabledBorder: OutlineInputBorder(
 //                       borderRadius: BorderRadius.circular(12),
 //                       borderSide: BorderSide(
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.5),
+//                         color: AppColors.grey.withValues(alpha: 0.5),
 //                       ),
 //                     ),
 //                     focusedBorder: OutlineInputBorder(
 //                       borderRadius: BorderRadius.circular(12),
 //                       borderSide: BorderSide(
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.8),
+//                         color: AppColors.grey.withValues(alpha: 0.8),
 //                       ),
 //                     ),
 //                     prefixIcon: Icon(
 //                       Icons.phone,
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.grey.withOpacity(0.7),
+//                       color: AppColors.grey.withValues(alpha: 0.7),
 //                     ),
 //                     counterText: "",
 //                   ),
@@ -331,13 +331,13 @@
 //                     labelStyle: textTheme.bodySmall?.copyWith(
 //                       fontSize: 11,
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.black.withOpacity(0.6),
+//                       color: AppColors.black.withValues(alpha: 0.6),
 //                     ),
 //                     hintText: "Enter your password",
 //                     hintStyle: TextStyle(
 //                       fontSize: 12,
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.black.withOpacity(0.6),
+//                       color: AppColors.black.withValues(alpha: 0.6),
 //                     ),
 //                     filled: true,
 //                     fillColor: AppColors.white,
@@ -345,27 +345,27 @@
 //                       borderRadius: BorderRadius.circular(12),
 //                       borderSide: BorderSide(
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.5),
+//                         color: AppColors.grey.withValues(alpha: 0.5),
 //                       ),
 //                     ),
 //                     enabledBorder: OutlineInputBorder(
 //                       borderRadius: BorderRadius.circular(12),
 //                       borderSide: BorderSide(
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.5),
+//                         color: AppColors.grey.withValues(alpha: 0.5),
 //                       ),
 //                     ),
 //                     focusedBorder: OutlineInputBorder(
 //                       borderRadius: BorderRadius.circular(12),
 //                       borderSide: BorderSide(
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.8),
+//                         color: AppColors.grey.withValues(alpha: 0.8),
 //                       ),
 //                     ),
 //                     prefixIcon: Icon(
 //                       Icons.lock,
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.grey.withOpacity(0.7),
+//                       color: AppColors.grey.withValues(alpha: 0.7),
 //                     ),
 //                     suffixIcon: IconButton(
 //                       icon: Icon(
@@ -373,7 +373,7 @@
 //                             ? Icons.visibility_off
 //                             : Icons.visibility,
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.7),
+//                         color: AppColors.grey.withValues(alpha: 0.7),
 //                       ),
 //                       onPressed: () {
 //                         setState(() {
@@ -403,13 +403,13 @@
 //                     labelStyle: textTheme.bodySmall?.copyWith(
 //                       fontSize: 11,
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.black.withOpacity(0.6),
+//                       color: AppColors.black.withValues(alpha: 0.6),
 //                     ),
 //                     hintText: "Confirm your password",
 //                     hintStyle: TextStyle(
 //                       fontSize: 12,
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.black.withOpacity(0.6),
+//                       color: AppColors.black.withValues(alpha: 0.6),
 //                     ),
 //                     filled: true,
 //                     fillColor: AppColors.white,
@@ -417,27 +417,27 @@
 //                       borderRadius: BorderRadius.circular(12),
 //                       borderSide: BorderSide(
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.5),
+//                         color: AppColors.grey.withValues(alpha: 0.5),
 //                       ),
 //                     ),
 //                     enabledBorder: OutlineInputBorder(
 //                       borderRadius: BorderRadius.circular(12),
 //                       borderSide: BorderSide(
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.5),
+//                         color: AppColors.grey.withValues(alpha: 0.5),
 //                       ),
 //                     ),
 //                     focusedBorder: OutlineInputBorder(
 //                       borderRadius: BorderRadius.circular(12),
 //                       borderSide: BorderSide(
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.8),
+//                         color: AppColors.grey.withValues(alpha: 0.8),
 //                       ),
 //                     ),
 //                     prefixIcon: Icon(
 //                       Icons.lock,
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.grey.withOpacity(0.7),
+//                       color: AppColors.grey.withValues(alpha: 0.7),
 //                     ),
 //                     suffixIcon: IconButton(
 //                       icon: Icon(
@@ -445,7 +445,7 @@
 //                             ? Icons.visibility_off
 //                             : Icons.visibility,
 //                         // ignore: deprecated_member_use
-//                         color: AppColors.grey.withOpacity(0.7),
+//                         color: AppColors.grey.withValues(alpha: 0.7),
 //                       ),
 //                       onPressed: () {
 //                         setState(() {
@@ -622,9 +622,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (userType == UserType.jobseeker) {
-        context.go('/job-nav');
+        context.go('/jobseeker-info');
       } else {
-        context.go('/recuiter-nav');
+        context.go('/recuiter-info');
       }
     });
   }
@@ -673,28 +673,28 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     }
 
     final authNotifier = ref.read(authStateProvider.notifier);
-    
     final user = await authNotifier.signUpWithEmailAndPassword(
       email: _emailOrMobileController.text.trim(),
       password: _passwordController.text,
       phoneNumber: _phoneController.text,
     );
-
     if (user != null) {
       _showSnackBar(
+        // ignore: use_build_context_synchronously
         context: context,
         text: '✅ Signup successful! 👍',
         textColor: Colors.green,
       );
-      
+      _navigateBasedOnUserType();
       // Navigate to login screen after successful signup
       // ignore: use_build_context_synchronously
-      context.goNamed('login');
+      // context.goNamed('login');
     } else {
       // Error is already handled in the auth state
       final error = ref.read(authStateProvider).error;
       if (error != null) {
         _showSnackBar(
+          // ignore: use_build_context_synchronously
           context: context,
           text: error,
           textColor: Colors.red,
@@ -761,7 +761,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           vertical: height * 0.005,
                         ),
                         decoration: BoxDecoration(
-                          color: colorScheme.primary.withOpacity(0.1),
+                          color: colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -807,42 +807,42 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   controller: _emailOrMobileController,
                   keyboardType: TextInputType.emailAddress,
                   showCursor: true,
-                  cursorColor: AppColors.black.withOpacity(0.6),
+                  cursorColor: AppColors.black.withValues(alpha: 0.6),
                   cursorHeight: 15,
                   decoration: InputDecoration(
                     labelText: "E-mail",
                     labelStyle: textTheme.bodySmall?.copyWith(
                       fontSize: 11,
-                      color: AppColors.black.withOpacity(0.6),
+                      color: AppColors.black.withValues(alpha: 0.6),
                     ),
                     hintText: "Enter your email",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: AppColors.black.withOpacity(0.6),
+                      color: AppColors.black.withValues(alpha: 0.6),
                     ),
                     filled: true,
                     fillColor: AppColors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: AppColors.grey.withOpacity(0.5),
+                        color: AppColors.grey.withValues(alpha: 0.5),
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: AppColors.grey.withOpacity(0.5),
+                        color: AppColors.grey.withValues(alpha: 0.5),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: AppColors.grey.withOpacity(0.8),
+                        color: AppColors.grey.withValues(alpha: 0.8),
                       ),
                     ),
                     prefixIcon: Icon(
                       Icons.email,
-                      color: AppColors.grey.withOpacity(0.7),
+                      color: AppColors.grey.withValues(alpha: 0.7),
                     ),
                   ),
                   validator: (value) {
@@ -870,36 +870,36 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     labelText: "Enter mobile number",
                     labelStyle: textTheme.bodySmall?.copyWith(
                       fontSize: 11,
-                      color: AppColors.black.withOpacity(0.6),
+                      color: AppColors.black.withValues(alpha: 0.6),
                     ),
                     hintText: "Enter your mobile number",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: AppColors.black.withOpacity(0.6),
+                      color: AppColors.black.withValues(alpha: 0.6),
                     ),
                     filled: true,
                     fillColor: AppColors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: AppColors.grey.withOpacity(0.5),
+                        color: AppColors.grey.withValues(alpha: 0.5),
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: AppColors.grey.withOpacity(0.5),
+                        color: AppColors.grey.withValues(alpha: 0.5),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: AppColors.grey.withOpacity(0.8),
+                        color: AppColors.grey.withValues(alpha: 0.8),
                       ),
                     ),
                     prefixIcon: Icon(
                       Icons.phone,
-                      color: AppColors.grey.withOpacity(0.7),
+                      color: AppColors.grey.withValues(alpha: 0.7),
                     ),
                     counterText: "",
                   ),
@@ -923,43 +923,43 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     labelText: "Password",
                     labelStyle: textTheme.bodySmall?.copyWith(
                       fontSize: 11,
-                      color: AppColors.black.withOpacity(0.6),
+                      color: AppColors.black.withValues(alpha: 0.6),
                     ),
                     hintText: "Enter your password",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: AppColors.black.withOpacity(0.6),
+                      color: AppColors.black.withValues(alpha: 0.6),
                     ),
                     filled: true,
                     fillColor: AppColors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: AppColors.grey.withOpacity(0.5),
+                        color: AppColors.grey.withValues(alpha: 0.5),
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: AppColors.grey.withOpacity(0.5),
+                        color: AppColors.grey.withValues(alpha: 0.5),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: AppColors.grey.withOpacity(0.8),
+                        color: AppColors.grey.withValues(alpha: 0.8),
                       ),
                     ),
                     prefixIcon: Icon(
                       Icons.lock,
-                      color: AppColors.grey.withOpacity(0.7),
+                      color: AppColors.grey.withValues(alpha: 0.7),
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: AppColors.grey.withOpacity(0.7),
+                        color: AppColors.grey.withValues(alpha: 0.7),
                       ),
                       onPressed: () {
                         setState(() {
@@ -989,13 +989,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     labelStyle: textTheme.bodySmall?.copyWith(
                       fontSize: 11,
                       // ignore: deprecated_member_use
-                      color: AppColors.black.withOpacity(0.6),
+                      color: AppColors.black.withValues(alpha: 0.6),
                     ),
                     hintText: "Confirm your password",
                     hintStyle: TextStyle(
                       fontSize: 12,
                       // ignore: deprecated_member_use
-                      color: AppColors.black.withOpacity(0.6),
+                      color: AppColors.black.withValues(alpha: 0.6),
                     ),
                     filled: true,
                     fillColor: AppColors.white,
@@ -1003,27 +1003,27 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
                         // ignore: deprecated_member_use
-                        color: AppColors.grey.withOpacity(0.5),
+                        color: AppColors.grey.withValues(alpha: 0.5),
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
                         // ignore: deprecated_member_use
-                        color: AppColors.grey.withOpacity(0.5),
+                        color: AppColors.grey.withValues(alpha: 0.5),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
                         // ignore: deprecated_member_use
-                        color: AppColors.grey.withOpacity(0.8),
+                        color: AppColors.grey.withValues(alpha: 0.8),
                       ),
                     ),
                     prefixIcon: Icon(
                       Icons.lock,
                       // ignore: deprecated_member_use
-                      color: AppColors.grey.withOpacity(0.7),
+                      color: AppColors.grey.withValues(alpha: 0.7),
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -1031,7 +1031,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             ? Icons.visibility_off
                             : Icons.visibility,
                         // ignore: deprecated_member_use
-                        color: AppColors.grey.withOpacity(0.7),
+                        color: AppColors.grey.withValues(alpha: 0.7),
                       ),
                       onPressed: () {
                         setState(() {

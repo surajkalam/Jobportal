@@ -80,7 +80,7 @@
 //                     ),
 //                     border: BoxBorder.all(
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.grey.withOpacity(0.6),
+//                       color: AppColors.grey.withValues(alpha: 0.6),
 //                       width: 1.5,
 //                     ),
 //                     color: Colors.transparent,
@@ -106,7 +106,7 @@
 //                     borderRadius: BorderRadius.circular(20),
 //                     border: Border.all(
 //                       // ignore: deprecated_member_use
-//                       color: AppColors.grey.withOpacity(0.6),
+//                       color: AppColors.grey.withValues(alpha: 0.6),
 //                       width: 1.5,
 //                     ),
 //                     color: Colors.transparent,
@@ -307,7 +307,7 @@
 //                   },
 //                   shape: StadiumBorder(
 //                     // ignore: deprecated_member_use
-//                     side: BorderSide(color: AppColors.grey.withOpacity(0.5)),
+//                     side: BorderSide(color: AppColors.grey.withValues(alpha: 0.5)),
 //                   ),
 //                   backgroundColor: isSelected
 //                       ? AppColors.white
@@ -400,11 +400,11 @@
 //           color: Colors.transparent,
 //           borderRadius: BorderRadius.circular(12),
 //           // ignore: deprecated_member_use
-//           border: Border.all(color: AppColors.grey.withOpacity(0.8), width: 01),
+//           border: Border.all(color: AppColors.grey.withValues(alpha: 0.8), width: 01),
 //           boxShadow: [
 //             BoxShadow(
 //               // ignore: deprecated_member_use
-//               color: Colors.grey.withOpacity(0.05),
+//               color: Colors.grey.withValues(alpha: 0.05),
 //               blurRadius: 2,
 //               offset: const Offset(0, 1),
 //             ),
@@ -419,13 +419,13 @@
 //                 borderRadius: BorderRadius.circular(12),
 //                 border: Border.all(
 //                   // ignore: deprecated_member_use
-//                   color: AppColors.grey.withOpacity(0.3),
+//                   color: AppColors.grey.withValues(alpha: 0.3),
 //                   width: 01,
 //                 ),
 //                 boxShadow: [
 //                   BoxShadow(
 //                     // ignore: deprecated_member_use
-//                     color: Colors.grey.withOpacity(0.05),
+//                     color: Colors.grey.withValues(alpha: 0.05),
 //                     blurRadius: 3,
 //                     offset: const Offset(0, 2),
 //                   ),
@@ -455,7 +455,7 @@
 //                               boxShadow: [
 //                                 BoxShadow(
 //                                   // ignore: deprecated_member_use
-//                                   color: Colors.grey.withOpacity(0.05),
+//                                   color: Colors.grey.withValues(alpha: 0.05),
 //                                   blurRadius: 2,
 //                                   offset: const Offset(0, 1),
 //                                 ),
@@ -531,7 +531,7 @@
 //                                   Icons.location_pin,
 //                                   size: 15,
 //                                   // ignore: deprecated_member_use
-//                                   color: AppColors.grey.withOpacity(0.8),
+//                                   color: AppColors.grey.withValues(alpha: 0.8),
 //                                 ),
 //                                 SizedBox(
 //                                   width: width*0.2,
@@ -601,7 +601,7 @@
 //                       boxShadow: [
 //                         BoxShadow(
 //                           // ignore: deprecated_member_use
-//                           color: Colors.grey.withOpacity(0.05),
+//                           color: Colors.grey.withValues(alpha: 0.05),
 //                           blurRadius: 2,
 //                           offset: Offset(0, 1),
 //                         ),
@@ -630,7 +630,7 @@
 //       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
 //       decoration: BoxDecoration(
 //         color: Colors.transparent,
-//         border: Border.all(color: AppColors.grey.withOpacity(0.3)),
+//         border: Border.all(color: AppColors.grey.withValues(alpha: 0.3)),
 //         borderRadius: BorderRadius.circular(6),
 //       ),
 //       child: Text(
@@ -756,7 +756,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                           topRight: Radius.circular(20),
                         ),
                         border: BoxBorder.all(
-                          color: AppColors.grey.withOpacity(0.6),
+                          color: AppColors.grey.withValues(alpha: 0.6),
                           width: 1.5,
                         ),
                         color: Colors.transparent,
@@ -781,7 +781,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: AppColors.grey.withOpacity(0.6),
+                          color: AppColors.grey.withValues(alpha: 0.6),
                           width: 1.5,
                         ),
                         color: Colors.transparent,
@@ -988,7 +988,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                     log('Selected category: $category');
                   },
                   shape: StadiumBorder(
-                    side: BorderSide(color: AppColors.grey.withOpacity(0.5)),
+                    side: BorderSide(color: AppColors.grey.withValues(alpha: 0.5)),
                   ),
                   backgroundColor: isSelected ? AppColors.lightGrey : Colors.white,
                   selectedColor: AppColors.lightGrey,
@@ -1129,10 +1129,10 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.grey.withOpacity(0.8), width: 01),
+          border: Border.all(color: AppColors.grey.withValues(alpha: 0.8), width: 01),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: Colors.grey.withValues(alpha: 0.05),
               blurRadius: 2,
               offset: const Offset(0, 1),
             ),
@@ -1146,12 +1146,12 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppColors.grey.withOpacity(0.3),
+                  color: AppColors.grey.withValues(alpha: 0.3),
                   width: 01,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.05),
+                    color: Colors.grey.withValues(alpha: 0.05),
                     blurRadius: 3,
                     offset: const Offset(0, 2),
                   ),
@@ -1180,7 +1180,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                               border: Border.all(color: AppColors.grey),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withOpacity(0.05),
+                                  color: Colors.grey.withValues(alpha: 0.05),
                                   blurRadius: 2,
                                   offset: const Offset(0, 1),
                                 ),
@@ -1255,7 +1255,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                                 Icon(
                                   Icons.location_pin,
                                   size: 15,
-                                  color: AppColors.grey.withOpacity(0.8),
+                                  color: AppColors.grey.withValues(alpha: 0.8),
                                 ),
                                 SizedBox(
                                   width: width*0.2,
@@ -1322,7 +1322,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                       borderRadius: BorderRadius.circular(4),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.05),
+                          color: Colors.grey.withValues(alpha: 0.05),
                           blurRadius: 2,
                           offset: Offset(0, 1),
                         ),
@@ -1351,7 +1351,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.transparent,
-        border: Border.all(color: AppColors.grey.withOpacity(0.3)),
+        border: Border.all(color: AppColors.grey.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(

@@ -682,7 +682,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
                   fontSize: 9,
                   fontWeight: FontWeight.w500,
                   // ignore: deprecated_member_use
-                  color: color.withOpacity(0.8),
+                  color: color.withValues(alpha: 0.8),
                 ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
