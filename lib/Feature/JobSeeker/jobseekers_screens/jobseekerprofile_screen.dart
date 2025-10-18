@@ -1,11 +1,14 @@
 // Updated JobseekerProfileScreen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/jobseekerprofile_information.dart';
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
 import 'package:jobapp/core/util/appcolors.dart';
+import 'package:jobapp/core/providers/theme_provider.dart';
+import 'package:jobapp/Authentication/auth_state.dart';
 
 class JobseekerProfileScreen extends ConsumerStatefulWidget {
   const JobseekerProfileScreen({super.key});
@@ -24,10 +27,46 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
     });
   }
 
+  void _toggleTheme() {
+    ref.read(themeModeProvider.notifier).toggleTheme();
+  }
+
+  void _logout() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Logout'),
+          content: Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                // Perform logout
+                await ref.read(authStateProvider.notifier).signOut();
+                // Navigate to login screen
+                if (mounted) {
+                  context.go('/'); // Adjust route as needed
+                }
+              },
+              child: Text('Logout'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final jobseekerState = ref.watch(jobseekerProvider);
     final jobseekerInfo = jobseekerState.jobseekerInfo;
+    final themeMode = ref.watch(themeModeProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
@@ -38,7 +77,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.faintbackblue, AppColors.white],
+              colors: [colorScheme.surfaceVariant, colorScheme.surface], // Changed from AppColors
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               stops: [0.04, 0.3],
@@ -48,15 +87,15 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(20),
-                child: buildstartingrow(height, width),
+                child: buildstartingrow(height, width, themeMode),
               ),
               SizedBox(height: height * 0.02),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: buildheadercontainer(height, width, jobseekerInfo),
+                child: buildheadercontainer(height, width, jobseekerInfo, colorScheme),
               ),
               SizedBox(height: height * 0.02),
-              buildacountsession(height, width, jobseekerInfo),
+              buildacountsession(height, width, jobseekerInfo, themeMode, colorScheme),
             ],
           ),
         ),
@@ -64,20 +103,54 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
     );
   }
 
+  Widget buildstartingrow(double height, double width, ThemeMode themeMode) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          "Profile",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        Row(
+          children: [
+            IconButton(
+              onPressed: _toggleTheme,
+              icon: Icon(
+                themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            IconButton(
+              onPressed: _logout,
+              icon: Icon(
+                Icons.logout,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget buildheadercontainer(
     double height,
     double width,
     JobseekerModel? jobseekerInfo,
+    ColorScheme colorScheme,
   ) {
     return Container(
       height: height * 0.2,
       width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.grey),
+        border: Border.all(color: colorScheme.outline), // Changed from AppColors.grey
         gradient: LinearGradient(
-          // ignore: deprecated_member_use
-          colors: [AppColors.darkblue.withValues(alpha: 0.6), AppColors.darkblue],
+          colors: [colorScheme.primary.withValues(alpha: 0.6), colorScheme.primary], // Changed from AppColors
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           stops: [0.1, 0.6],
@@ -97,9 +170,9 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                 child: Container(
                   padding: EdgeInsets.all(2),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: colorScheme.surface, // Changed from AppColors.white
                     borderRadius: BorderRadius.circular(50),
-                    border: Border.all(color: AppColors.darkblue),
+                    border: Border.all(color: colorScheme.primary), // Changed from AppColors.darkblue
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(50),
@@ -126,7 +199,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: AppColors.white,
+                        color: colorScheme.onPrimary, // Changed from AppColors.white
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -144,7 +217,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w400,
-                              color: AppColors.white,
+                              color: colorScheme.onPrimary, // Changed from AppColors.white
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -161,7 +234,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w400,
-                                  color: AppColors.white,
+                                  color: colorScheme.onPrimary, // Changed from AppColors.white
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -178,8 +251,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
           SizedBox(height: height * 0.03),
           Divider(
             height: height * 0.01,
-            // ignore: deprecated_member_use
-            color: AppColors.white.withValues(alpha: 0.5),
+            color: colorScheme.onPrimary.withValues(alpha: 0.5), // Changed from AppColors.white
           ),
           Row(
             children: [
@@ -189,6 +261,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                 jobseekerInfo?.email.isNotEmpty == true
                     ? jobseekerInfo!.email
                     : 'your@email.com',
+                colorScheme,
               ),
               buildemailheadercontainer(
                 height,
@@ -196,6 +269,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                 jobseekerInfo?.contact.isNotEmpty == true
                     ? jobseekerInfo!.contact
                     : 'Contact Number',
+                colorScheme,
               ),
             ],
           ),
@@ -204,15 +278,14 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
     );
   }
 
-  Widget buildemailheadercontainer(double height, double width, String text) {
+  Widget buildemailheadercontainer(double height, double width, String text, ColorScheme colorScheme) {
     return Padding(
       padding: EdgeInsets.only(top: height * 0.02, left: width * 0.02),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.white),
-          // ignore: deprecated_member_use
-          color: AppColors.white.withValues(alpha: 0.1),
+          border: Border.all(color: colorScheme.onPrimary), // Changed from AppColors.white
+          color: colorScheme.onPrimary.withValues(alpha: 0.1), // Changed from AppColors.white
         ),
         child: Center(
           child: Padding(
@@ -222,7 +295,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w400,
-                color: AppColors.white,
+                color: colorScheme.onPrimary, // Changed from AppColors.white
               ),
               overflow: TextOverflow.ellipsis,
             ),
@@ -236,14 +309,16 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
     double height,
     double width,
     JobseekerModel? jobseekerInfo,
+    ThemeMode themeMode,
+    ColorScheme colorScheme,
   ) {
     return Container(
       height: height * 0.78,
       width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: AppColors.white,
-        border: Border.all(color: AppColors.grey),
+        color: colorScheme.surface, // Changed from AppColors.white
+        border: Border.all(color: colorScheme.outline), // Changed from AppColors.grey
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -255,7 +330,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppColors.black,
+                color: colorScheme.onSurface, // Changed from AppColors.black
               ),
             ),
             SizedBox(height: height * 0.01),
@@ -263,7 +338,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 color: Colors.transparent,
-                border: Border.all(color: AppColors.grey),
+                border: Border.all(color: colorScheme.outline), // Changed from AppColors.grey
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -286,10 +361,10 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                         hasArrow: true,
                         width: width,
                         height: height,
+                        colorScheme: colorScheme,
                       ),
                     ),
-                    // ignore: deprecated_member_use
-                    Divider(color: AppColors.grey.withValues(alpha: 0.3)),
+                    Divider(color: colorScheme.outline.withValues(alpha: 0.3)), // Changed from AppColors.grey
 
                     // Row 2: Email - NO ACTION
                     _buildAccountRow(
@@ -301,9 +376,9 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       hasArrow: false, // No arrow for email
                       width: width,
                       height: height,
+                      colorScheme: colorScheme,
                     ),
-                    // ignore: deprecated_member_use
-                    Divider(color: AppColors.grey.withValues(alpha: 0.3)),
+                    Divider(color: colorScheme.outline.withValues(alpha: 0.3)), // Changed from AppColors.grey
 
                     // Row 3: Age - NO ACTION
                     _buildAccountRow(
@@ -316,9 +391,9 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       hasArrow: false,
                       width: width,
                       height: height,
+                      colorScheme: colorScheme,
                     ),
-                    // ignore: deprecated_member_use
-                    Divider(color: AppColors.grey.withValues(alpha: 0.3)),
+                    Divider(color: colorScheme.outline.withValues(alpha: 0.3)), // Changed from AppColors.grey
 
                     // Row 4: Profession - NO ACTION
                     _buildAccountRow(
@@ -330,11 +405,26 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       hasArrow: false, // No arrow for profession
                       width: width,
                       height: height,
+                      colorScheme: colorScheme,
                     ),
-                    // ignore: deprecated_member_use
-                    Divider(color: AppColors.grey.withValues(alpha: 0.3)),
+                    Divider(color: colorScheme.outline.withValues(alpha: 0.3)), // Changed from AppColors.grey
 
-                    // Row 5: Logout - WITH ACTION
+                    // Row 5: Theme Toggle
+                    GestureDetector(
+                      onTap: _toggleTheme,
+                      child: _buildAccountRow(
+                        icon: themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
+                        title: 'Theme',
+                        subtitle: themeMode == ThemeMode.dark ? 'Light Mode' : 'Dark Mode',
+                        hasArrow: true,
+                        width: width,
+                        height: height,
+                        colorScheme: colorScheme,
+                      ),
+                    ),
+                    Divider(color: colorScheme.outline.withValues(alpha: 0.3)), // Changed from AppColors.grey
+
+                    // Row 6: Logout - WITH ACTION
                     GestureDetector(
                       onTap: () {
                         _showLogoutDialog(context);
@@ -347,6 +437,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                         textColor: Colors.red,
                         width: width,
                         height: height,
+                        colorScheme: colorScheme,
                       ),
                     ),
                   ],
@@ -368,6 +459,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
     Color textColor = Colors.black,
     required double width,
     required double height,
+    required ColorScheme colorScheme,
   }) {
     return Container(
       padding: EdgeInsets.all(10),
@@ -390,7 +482,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
-                      color: textColor,
+                      color: textColor == Colors.red ? textColor : colorScheme.onSurface, // Changed from Colors.black
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -402,7 +494,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
                       fontSize: 09,
-                      color: AppColors.grey,
+                      color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -411,7 +503,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
           ),
           SizedBox(width: width * 0.01),
           if (hasArrow)
-            Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.grey),
+            Icon(Icons.arrow_forward_ios, size: 16, color: colorScheme.onSurfaceVariant), // Changed from AppColors.grey
         ],
       ),
     );
@@ -429,43 +521,16 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
             child: Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              // Add your logout logic here
+              // Perform logout
+              await ref.read(authStateProvider.notifier).signOut();
+              // Navigate to login screen
+              if (mounted) {
+                context.go('/'); // Adjust route as needed
+              }
             },
             child: Text('Logout', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildstartingrow(double height, double width) {
-    return Padding(
-      padding: EdgeInsets.only(top: height * 0.03),
-      child: Row(
-        children: [
-          Text(
-            'Profile',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-          Spacer(),
-          Container(
-            height: height * 0.05,
-            width: width * 0.11,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(70),
-              border: Border.all(color: AppColors.grey),
-              // ignore: deprecated_member_use
-              color: AppColors.white.withValues(alpha: 0.9),
-            ),
-            child: Center(
-              child: Icon(
-                Icons.share_outlined,
-                size: 20,
-                color: AppColors.black,
-              ),
-            ),
           ),
         ],
       ),

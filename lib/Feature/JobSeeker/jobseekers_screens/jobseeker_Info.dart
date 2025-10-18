@@ -1,16 +1,15 @@
-// ignore_for_file: file_names
-
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jobapp/Authentication/user_provider.dart';
-import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
-import 'package:jobapp/Feature/JobSeeker/service.dart/pdf_uploadservice.dart';
+import 'package:jobapp/core/services/local_storage_service.dart';
+import 'package:jobapp/Authentication/auth_state.dart';
+import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/core/util/appcolors.dart';
-import 'package:lottie/lottie.dart';
+import 'package:file_picker/file_picker.dart';
 
 class JobseekerInfo extends ConsumerStatefulWidget {
   const JobseekerInfo({super.key});
@@ -21,276 +20,107 @@ class JobseekerInfo extends ConsumerStatefulWidget {
 
 class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController contactController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController contactController = TextEditingController();
   final TextEditingController qualificationController = TextEditingController();
-  final TextEditingController jobdesignationController =
-      TextEditingController();
+  final TextEditingController jobdesignationController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController experienceController = TextEditingController();
   final TextEditingController dateOfBirthController = TextEditingController();
   final TextEditingController resumeController = TextEditingController();
 
-  // Form key for validation
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _isInitialized = false;
   File? _selectedResume;
-  bool _isUploadingResume = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  
+  // Store signup data passed from previous screen
+  String _signupEmail = '';
+  String _signupPassword = '';
+  String _signupPhone = '';
 
   @override
   void initState() {
     super.initState();
-    // Use Future.microtask to delay the initialization after build
-
-    Future.microtask(() {
-      _loadExistingInfo();
-    });
+    // Pre-fill email and phone from local storage
+    _loadSignupData();
+    _preloadUserData();
   }
 
-  Future<void> _loadExistingInfo() async {
-    if (_isInitialized) return;
+  Future<void> _loadSignupData() async {
+    // Get signup data passed from the previous screen
+    final extraData = GoRouterState.of(context).extra as Map<String, dynamic>?;
+    if (extraData != null) {
+      _signupEmail = extraData['email'] ?? '';
+      _signupPassword = extraData['password'] ?? '';
+      _signupPhone = extraData['phone'] ?? '';
+    }
+  }
 
+  Future<void> _preloadUserData() async {
     try {
-      await ref.read(jobseekerProvider.notifier).loadJobseekerInfo();
-
-      final state = ref.read(jobseekerProvider);
-      if (state.jobseekerInfo != null) {
-        final info = state.jobseekerInfo!;
-        nameController.text = info.name;
-        emailController.text = info.email;
-        contactController.text = info.contact;
-        qualificationController.text = info.qualification;
-        jobdesignationController.text = info.jobDesignation;
-        locationController.text = info.location;
-        experienceController.text = info.experience;
-        dateOfBirthController.text = info.dateOfBirth;
-        resumeController.text = info.resumeUrl;
+      // Pre-fill from signup data
+      if (_signupEmail.isNotEmpty) {
+        emailController.text = _signupEmail;
       } else {
+        // Try to get email from the provider
         final currentEmail = ref.read(currentUserProvider);
-        emailController.text = currentEmail;
+        if (currentEmail.isNotEmpty) {
+          emailController.text = currentEmail;
+        }
       }
-
-      _isInitialized = true;
+      
+      if (_signupPhone.isNotEmpty) {
+        contactController.text = _signupPhone;
+      }
     } catch (e) {
-      log('Error loading jobseeker info: $e');
-    }
-  }
-
-  //select date of birth
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Colors.blueAccent,
-              onPrimary: Colors.white,
-              onSurface: Colors.black,
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(foregroundColor: Colors.blueAccent),
-            ),
+      // Show error in snackbar instead of logging
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error pre-loading data: ${e.toString()}', 
+                style: TextStyle(color: Colors.white)),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
           ),
-          child: child!,
         );
-      },
-    );
-
-    if (picked != null) {
-      final formattedDate = "${picked.day}/${picked.month}/${picked.year}";
-      dateOfBirthController.text = formattedDate;
+      }
     }
   }
-  Future<void> _uploadResume() async {
-  try {
-    setState(() {
-      _isUploadingResume = true;
-    });
 
-    final pdfService = ref.read(pdfUploadServiceProvider);
-    
-    // Pick PDF file
-    final File? pdfFile = await pdfService.pickPdf();
-    if (pdfFile == null) {
-      _showSnackBar(
-        // ignore: use_build_context_synchronously
-        context: context, 
-        text: 'No file selected',
-        textColor: Colors.orange,
-      );
-      return;
-    }
-
-    // Check file size (max 10MB)
-    final fileSize = pdfFile.lengthSync();
-    if (fileSize > 10 * 1024 * 1024) {
-      _showSnackBar(
-        // ignore: use_build_context_synchronously
-        context: context,
-        text: 'File size too large. Maximum 10MB allowed.',
-        textColor: Colors.red,
-      );
-      return;
-    }
-
-    setState(() {
-      _selectedResume = pdfFile;
-    });
-
-    // Show uploading message
-    _showSnackBar(
-      // ignore: use_build_context_synchronously
-      context: context, 
-      text: 'Uploading resume...',
-      textColor: Colors.blue,
-    );
-
-    // Get current user info
-    final currentEmail = ref.read(currentUserProvider);
-    if (currentEmail.isEmpty) {
-      _showSnackBar(
-        // ignore: use_build_context_synchronously
-        context: context,
-        text: 'User not logged in',
-        textColor: Colors.red,
-      );
-      return;
-    }
-
-    final name = nameController.text.isNotEmpty
-        ? nameController.text
-        : 'Unknown User';
-
-    // Upload to Firebase Storage
-    final downloadUrl = await pdfService.uploadPdf(
-      pdfFile,
-      currentEmail,
-      name,
-    );
-
-    final fileName = pdfService.getFileNameFromPath(pdfFile.path);
-    final fileSizeFormatted = getFileSize(pdfFile);
- 
-    // Update resume field with download URL
-    resumeController.text = downloadUrl;
-
-    // Show success message with file info
-    _showSnackBar(
-      // ignore: use_build_context_synchronously
-      context: context,
-      text: '✅ Resume uploaded successfully!\n$fileName ($fileSizeFormatted)',
-      textColor: Colors.green,
-    );
-
-    log('Resume uploaded: $downloadUrl');
-    log('File name: $fileName');
-    log('File size: $fileSizeFormatted');
-
-  } catch (e) {
-    log('Upload error: $e');
-    _showSnackBar(
-      // ignore: use_build_context_synchronously
-      context: context,
-      text: 'Failed to upload resume: ${e.toString()}',
-      textColor: Colors.red,
-    );
-  } finally {
-    setState(() {
-      _isUploadingResume = false;
-    });
-  }
-}
   @override
   Widget build(BuildContext context) {
-    final jobseekerState = ref.watch(jobseekerProvider);
-    final currentEmail = ref.watch(
-      currentUserProvider,
-    ); // Watch instead of read
+    log('welcome in JobseekerInfo fill form');
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    // Initialize email controller with current email
-    if (emailController.text.isEmpty) {
-      emailController.text = currentEmail;
-    }
-
     return Scaffold(
       appBar: AppBar(
-         backgroundColor: AppColors.faintbackblue,
+        backgroundColor: colorScheme.surface, // Changed from AppColors.faintbackblue
         title: Text(
           "Jobseeker information",
           style: textTheme.titleLarge?.copyWith(
-            color: colorScheme.primaryFixedDim,
+            color: colorScheme.onSurface, // Changed from colorScheme.primaryFixedDim
           ),
         ),
       ),
       body: Form(
         key: _formKey,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-            physics:BouncingScrollPhysics(),
-            padding:  EdgeInsets.only(bottom: height*0.1),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: height * 0.01,
-              horizontal: width * 0.01,
-            ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: height * 0.01,
+            horizontal: width * 0.01,
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
             child: Column(
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: width * 0.03,
-                    vertical: height * 0.02,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: (){
-                          _showWelcomeDialog('suraj');
-                        },
-                        child: Text(
-                          'Complete Your Profile',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.blueAccent,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: height * 0.01),
-                      Text(
-                        'Please fill in all the required information to create your professional profile. This will help employers find you and match you with suitable job opportunities.',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      SizedBox(height: height * 0.01),
-                      Text(
-                        'Fields marked with * are required.',
-                        style: TextStyle(
-                          fontSize: 09,
-                          color: Colors.red,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: height * 0.01),
                 textformfield(
                   height,
                   width,
                   nameController,
-                  'Full name',
+                  'full name',
                   icon: const Icon(Icons.person_2_outlined),
                   isRequired: true,
                 ),
@@ -302,8 +132,6 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                   icon: const Icon(Icons.mail_outline),
                   isRequired: true,
                   isEmail: true,
-                  readOnly:
-                      true,
                 ),
                 textformfield(
                   height,
@@ -319,15 +147,15 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                   width,
                   qualificationController,
                   'Qualification',
-                  icon: Icon(Icons.school),
+                  icon: const Icon(Icons.school_outlined),
                   isRequired: true,
                 ),
                 textformfield(
                   height,
                   width,
                   jobdesignationController,
-                  'Designation',
-                  icon: const Icon(Icons.domain),
+                  'Job Designation',
+                  icon: const Icon(Icons.work_history_outlined),
                   isRequired: true,
                 ),
                 textformfield(
@@ -336,161 +164,43 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                   locationController,
                   'Location',
                   icon: const Icon(Icons.location_pin),
-                  maxline: 3,
                   isRequired: true,
                 ),
                 textformfield(
                   height,
                   width,
                   experienceController,
-                  'Experience (years)',
-                  icon: const Icon(Icons.work_history),
-                   isRequired: true,
+                  'Experience',
+                  icon: const Icon(Icons.business_center_outlined),
+                  isRequired: true,
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: width * 0.02,
-                    vertical: height * 0.015,
-                  ),
-                  child: TextFormField(
-                    controller: dateOfBirthController,
-                    style: TextStyle(fontSize: 11),
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      labelText: 'Date of Birth *',
-                      labelStyle: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      prefixIcon: Icon(Icons.calendar_today),
-                      suffixIcon: Icon(Icons.arrow_drop_down),
-                      filled: true,
-                      fillColor: Color.fromRGBO(223, 226, 230, 1),
-                    ),
-                    onTap: _selectDate,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select date of birth';
-                      }
-                      return null;
-                    },
-                  ),
+                textformfield(
+                  height,
+                  width,
+                  dateOfBirthController,
+                  'Date of Birth (DD/MM/YYYY)',
+                  icon: const Icon(Icons.calendar_month_outlined),
+                  isRequired: true,
+                  isDate: true,
                 ),
-
-                // Resume Upload Field
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: width * 0.02,
-                    vertical: height * 0.015,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Resume *',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[700],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            // ignore: deprecated_member_use
-                            color: Colors.grey.withValues(alpha: 0.5),
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          color: Color.fromRGBO(223, 226, 230, 1),
-                        ),
-                        child: ListTile(
-                          leading: Icon(
-                            Icons.attach_file,
-                            color: _selectedResume != null
-                                ? Colors.green
-                                : Colors.grey,
-                          ),
-                        title: _selectedResume != null
-                              ? Text(
-                                  'Resume Selected',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )
-                              : Text(
-                                  'Tap to upload PDF resume',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                          subtitle: _selectedResume != null
-                              ? Text(
-                                  'File: ${_selectedResume!.path.split('/').last}',
-                                  style: TextStyle(fontSize: 10),
-                                )
-                              : null,
-                          trailing: _isUploadingResume
-                              ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Icon(Icons.upload),
-                          onTap: _uploadResume,
-                        ),
-                      ),
-                      if (resumeController.text.isNotEmpty)
-                        Padding(
-                          padding: EdgeInsets.only(top: 4),
-                          child: Text(
-                            'Resume URL: ${resumeController.text}',
-                            style: TextStyle(fontSize: 9, color: Colors.blue),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-
-                // Error message
-                if (jobseekerState.error != null)
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: height * 0.01),
-                    child: Text(
-                      jobseekerState.error!,
-                      style: TextStyle(color: Colors.red, fontSize: 14),
-                    ),
-                  ),
+                _buildResumePickerSection(height, width, colorScheme),
                 SizedBox(height: height * 0.03),
-                // Submit button
-                jobseekerState.isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : Center(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                              vertical: width * 0.03,
-                              horizontal: height * 0.09,
-                            ),
-                            backgroundColor: colorScheme.secondaryFixed,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: _submitForm,
-                          child:  Text("Submit Profile"),
-                        ),
-                      ),
-                   SizedBox(height: height * 0.02),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      vertical: width * 0.03,
+                      horizontal: height * 0.09,
+                    ),
+                    backgroundColor: colorScheme.tertiary, // Changed from colorScheme.secondaryFixed
+                    foregroundColor: colorScheme.onTertiary, // Added foreground color
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: _submitForm,
+                  child: const Text("Submit"),
+                ),
+                SizedBox(height: height * 0.02),
               ],
             ),
           ),
@@ -498,6 +208,132 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
       ),
     );
   }
+
+  Widget _buildResumePickerSection(double height, double width, ColorScheme colorScheme) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: height * 0.02,
+        horizontal: width * 0.02,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Upload Resume *',
+            style: TextStyle(
+              fontSize: 11,
+              color: colorScheme.onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
+            ),
+          ),
+          SizedBox(height: height * 0.01),
+          Container(
+            height: height * 0.08,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: colorScheme.surface, // Changed from AppColors.white
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+              ),
+            ),
+            child: _selectedResume == null
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.upload_file_outlined,
+                          color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
+                        ),
+                        onPressed: _pickResume,
+                      ),
+                      Text(
+                        'Upload Resume',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colorScheme.onSurfaceVariant.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+                        ),
+                      ),
+                    ],
+                  )
+                : Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            _selectedResume!.path.split('/').last,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: colorScheme.onSurface, // Changed from AppColors.black
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.close,
+                          size: 20,
+                          color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey
+                        ),
+                        onPressed: _clearResume,
+                      ),
+                    ],
+                  ),
+          ),
+          if (_selectedResume != null)
+            Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text(
+                'Size: ${getFileSize(_selectedResume!)}',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickResume() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+      );
+
+      if (result != null) {
+        setState(() {
+          _selectedResume = File(result.files.single.path!);
+          resumeController.text = _selectedResume!.path;
+        });
+      }
+    } catch (e) {
+      // Show error in snackbar instead of logging
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error picking resume: ${e.toString()}', 
+                style: TextStyle(color: Colors.white)),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  void _clearResume() {
+    setState(() {
+      _selectedResume = null;
+      resumeController.text = '';
+    });
+  }
+
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       if (resumeController.text.isEmpty) {
@@ -509,7 +345,36 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
         return;
       }
       try {
-        final currentEmail = ref.read(currentUserProvider);
+        // First, perform Firebase authentication
+        final authNotifier = ref.read(authStateProvider.notifier);
+        final user = await authNotifier.signUpWithEmailAndPassword(
+          email: _signupEmail.isNotEmpty ? _signupEmail : emailController.text.trim(),
+          password: _signupPassword.isNotEmpty ? _signupPassword : 'defaultPassword123', // Fallback password
+          phoneNumber: _signupPhone.isNotEmpty ? _signupPhone : contactController.text,
+        );
+        
+        if (user == null) {
+          // Authentication failed
+          final error = ref.read(authStateProvider).error;
+          if (error != null && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(error, style: TextStyle(color: Colors.white)),
+                backgroundColor: Colors.red,
+                duration: Duration(seconds: 3),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+          return;
+        }
+        
+        // Update the current user provider with the authenticated user's email
+        ref.read(currentUserProvider.notifier).state = user.email ?? '';
+        
+        // Save user phone to local storage
+        await LocalStorageService().setUserPhone(_signupPhone.isNotEmpty ? _signupPhone : contactController.text);
+        
         // Create JobseekerModel object
         final jobseekerInfo = JobseekerModel(
           id: 'PRO_${DateTime.now().millisecondsSinceEpoch}',
@@ -522,246 +387,166 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           experience: experienceController.text,
           dateOfBirth: dateOfBirthController.text,
           resumeUrl: resumeController.text,
-          resumeFileName: _selectedResume?.path.split('/').last ?? '',
           createdAt: DateTime.now(),
         );
-        await ref
-            .read(jobseekerProvider.notifier)
-            .saveJobseekerInfo(jobseekerInfo);
-        final currentState = ref.read(jobseekerProvider);
-        if (currentState.success) {
-          nameController.clear();
-          emailController.clear();
-          contactController.clear();
-          qualificationController.clear();
-          jobdesignationController.clear();
-          locationController.clear();
-          experienceController.clear();
-          dateOfBirthController.clear();
-          resumeController.clear();
+
+        // Save jobseeker info
+        await ref.read(jobseekerProvider.notifier).saveJobseekerInfo(jobseekerInfo);
+
+        if (mounted) {
           _showSnackBar(
-            // ignore: use_build_context_synchronously
             context: context,
-            text: 'Profile submitted successfully 👍 ',
+            text: '✅ Profile submitted successfully!',
+            textColor: Colors.green,
           );
-          log('Jobseeker Profile Saved to Firebase:');
-          // log('Email: $currentEmail');
-          // log('Name: ${nameController.text}');
-          // log('Resume URL: ${resumeController.text}');
-          // ignore: use_build_context_synchronously
-          context.go('/login');
+
+          // Navigate to jobseeker home after successful submission
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.go('/job-nav');
+          });
         }
       } catch (e) {
-        _showSnackBar(
-          // ignore: use_build_context_synchronously
-          context: context,
-          text: 'try again something went wrong ',
-          textColor: Colors.red,
-        );
+        if (mounted) {
+          _showSnackBar(
+            context: context,
+            text: 'Failed to submit profile: ${e.toString()}',
+            textColor: Colors.red,
+          );
+        }
       }
-    } else {
-      _showSnackBar(
-        context: context,
-        text: 'Please fill all required fields correctly.',
-        textColor: Colors.red,
-      );
     }
   }
-
-//   Future<String> _generateJobseekerId() async {
-//   final snapshot = await FirebaseFirestore.instance.collection('jobseekers').get();
-//   final nextId = snapshot.docs.length + 1;
-//   return 'jobseeker_id:$nextId';
-// }
+  
+  void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    required Color textColor,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text, style: TextStyle(color: textColor)),
+        backgroundColor: Theme.of(context).colorScheme.inverseSurface, // Changed from Colors.white
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+  
+  // Helper function to format file size
+  String getFileSize(File file) {
+    final bytes = file.lengthSync();
+    if (bytes < 1024) {
+      return '$bytes B';
+    } else if (bytes < 1024 * 1024) {
+      return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    } else {
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
+  }
+  
+  // Helper function to create text form fields
   Widget textformfield(
     double height,
     double width,
     TextEditingController controller,
-    String label, {
-    Icon? icon,
-    int? maxline,
+    String hinttext, {
+    Widget? icon,
     bool isRequired = false,
     bool isEmail = false,
     bool isPhone = false,
-    bool isNumber = false,
-    bool readOnly = false,
+    bool isDate = false,
+    int maxline = 1,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    
     return Padding(
       padding: EdgeInsets.symmetric(
+        vertical: height * 0.02,
         horizontal: width * 0.02,
-        vertical: height * 0.008,
       ),
       child: TextFormField(
         controller: controller,
-        readOnly: readOnly,
-        style: TextStyle(fontSize: 11),
-        keyboardType: isEmail
-            ? TextInputType.emailAddress
-            : isPhone || isNumber
+        maxLines: maxline,
+        keyboardType: isPhone
             ? TextInputType.phone
-            : TextInputType.text,
-        maxLines: maxline ?? 1,
+            : isEmail
+                ? TextInputType.emailAddress
+                : TextInputType.text,
         decoration: InputDecoration(
-          labelText: label + (isRequired ? ' *' : ''),
+          labelText: isRequired ? '$hinttext *' : hinttext,
           labelStyle: TextStyle(
             fontSize: 11,
-            fontWeight: FontWeight.w400,
+            color: colorScheme.onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
           ),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)
+          hintText: 'Enter $hinttext',
+          hintStyle: TextStyle(
+            fontSize: 12,
+            color: colorScheme.onSurfaceVariant.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
           ),
-          prefixIcon: icon,
           filled: true,
-          fillColor: readOnly
-              ? Color.fromRGBO(240, 240, 240, 1)
-              : Color.fromRGBO(223, 226, 230, 1),
+          fillColor: colorScheme.surface, // Changed from AppColors.white
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: colorScheme.primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
+            ),
+          ),
+          prefixIcon: icon != null ? IconTheme.merge(
+            data: IconThemeData(color: colorScheme.onSurfaceVariant), // Changed from AppColors.grey.withValues(alpha: 0.7)
+            child: icon,
+          ) : null,
         ),
         validator: (value) {
           if (isRequired && (value == null || value.isEmpty)) {
-            return 'Please enter $label';
+            return 'Please enter $hinttext';
           }
           if (isEmail && value != null && value.isNotEmpty) {
-            final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+            final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$');
             if (!emailRegex.hasMatch(value)) {
-              return 'Please enter a valid email address';
+              return 'Please enter a valid email';
             }
           }
           if (isPhone && value != null && value.isNotEmpty) {
-            final phoneRegex = RegExp(r'^[0-9]{10}$');
-            if (!phoneRegex.hasMatch(value)) {
+            if (value.length != 10) {
               return 'Please enter a valid 10-digit phone number';
             }
           }
-          if (isNumber && value != null && value.isNotEmpty) {
-            if (double.tryParse(value) == null) {
-              return 'Please enter a valid number';
+          if (isDate && value != null && value.isNotEmpty) {
+            final dateRegex = RegExp(r'^\d{2}/\d{2}/\d{4}$');
+            if (!dateRegex.hasMatch(value)) {
+              return 'Please enter date in DD/MM/YYYY format';
+            }
+            // Additional validation for valid date
+            final parts = value.split('/');
+            final day = int.tryParse(parts[0]) ?? 0;
+            final month = int.tryParse(parts[1]) ?? 0;
+            final year = int.tryParse(parts[2]) ?? 0;
+            
+            if (day < 1 || day > 31) {
+              return 'Please enter a valid day (1-31)';
+            }
+            if (month < 1 || month > 12) {
+              return 'Please enter a valid month (1-12)';
+            }
+            if (year < 1900 || year > DateTime.now().year) {
+              return 'Please enter a valid year';
             }
           }
           return null;
         },
-      ),
-    );
-  }
-  @override
-  void dispose() {
-    nameController.dispose();
-    contactController.dispose();
-    emailController.dispose();
-    qualificationController.dispose();
-    jobdesignationController.dispose();
-    locationController.dispose();
-    experienceController.dispose();
-    dateOfBirthController.dispose();
-    resumeController.dispose();
-    super.dispose();
-  }
-void _showWelcomeDialog(String userName) {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          constraints: const BoxConstraints(
-            maxWidth: 300,
-            minWidth: 280,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Lottie Animation
-              SizedBox(
-                height: 120, // Medium size
-                width: 120,
-                child: Lottie.asset(
-                  'asset/icons/Rocket Launch.json',
-                  fit: BoxFit.contain,
-                ),
-              ),
-              SizedBox(height: 20),
-              // Welcome Text
-              Text(
-                'Welcome, $userName!',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black87,
-                ),
-              ),
-              SizedBox(height: 12),
-              // Description Text
-              Text(
-                'Your profile is now live, and recruiters are waiting to discover you!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[700],
-                  height: 1.4,
-                ),
-              ),
-              SizedBox(height: 24),
-              // Explore Jobs Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); 
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 2,
-                  ),
-                  child: const Text(
-                    'Explore Jobs',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
-void _showSnackBar({
-    required BuildContext context,
-    required String text,
-    Color backgroundColor = Colors.white,
-    Color textColor = Colors.green,
-    Duration duration = const Duration(seconds: 3),
-    SnackBarBehavior behavior = SnackBarBehavior.floating,
-  }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(text, 
-        style: TextStyle(
-          color: textColor,
-          fontSize: 10,
-        fontWeight: FontWeight.w500),
-        textAlign: TextAlign.center,
-        ),
-        backgroundColor: backgroundColor,
-        duration: duration,
-        behavior: behavior,
-        margin: EdgeInsets.all(12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: textColor),
-        ),
       ),
     );
   }

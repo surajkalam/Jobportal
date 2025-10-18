@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:jobapp/core/services/local_storage_service.dart';
 
 final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
   return AuthStateNotifier();
@@ -40,11 +41,14 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final LocalStorageService _localStorage = LocalStorageService();
 
   // Check current user on app start
   void _checkCurrentUser() {
     final currentUser = _auth.currentUser;
-    if (currentUser != null) {
+    final isLoggedInLocally = _localStorage.isLoggedIn;
+    
+    if (currentUser != null && isLoggedInLocally) {
       state = state.copyWith(
         user: currentUser,
         isLoggedIn: true,
@@ -67,6 +71,10 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       );
 
       await userCredential.user?.updateDisplayName(phoneNumber);
+      
+      // Save user data to local storage
+      await _localStorage.setUserEmail(email);
+      await _localStorage.setLoggedIn(true);
       
       state = state.copyWith(
         user: userCredential.user, 
@@ -115,6 +123,10 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         password: password,
       );
       
+      // Save user data to local storage
+      await _localStorage.setUserEmail(email);
+      await _localStorage.setLoggedIn(true);
+      
       state = state.copyWith(
         user: userCredential.user,
         isLoading: false,
@@ -153,6 +165,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   Future<void> signOut() async {
     try {
       await _auth.signOut();
+      // Clear user data from local storage
+      await _localStorage.clearAllUserData();
       state = state.copyWith(user: null, isLoggedIn: false);
     } catch (e) {
       state = state.copyWith(error: 'Failed to sign out.');
@@ -166,7 +180,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
   // Check if user is logged in
   bool isLoggedIn() {
-    return _auth.currentUser != null;
+    return _auth.currentUser != null && _localStorage.isLoggedIn;
   }
 
   // Clear error

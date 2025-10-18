@@ -9,8 +9,18 @@ class OnboardingScreen2 extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var height=MediaQuery.of(context).size.height;
     var width=MediaQuery.of(context).size.width;
+    
+    // Safely access theme colors with fallbacks
+    ColorScheme? colorScheme;
+    try {
+      colorScheme = Theme.of(context).colorScheme;
+    } catch (e) {
+      // Fallback to default colors if theme is not available
+      colorScheme = ColorScheme.light();
+    }
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: width*0.028),
@@ -35,7 +45,7 @@ class OnboardingScreen2 extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF1F1F39),
+                  color: colorScheme.onSurface,
                   height: 1.3,
                 ),
               ),
@@ -45,7 +55,7 @@ class OnboardingScreen2 extends ConsumerWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF858597),
+                  color: colorScheme.onSurfaceVariant,
                   height: 1.5,
                 ),
               ),
@@ -57,7 +67,7 @@ class OnboardingScreen2 extends ConsumerWidget {
                     width: width*0.016,
                     height: height*0.008,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE0E0E0),
+                      color: colorScheme.outline,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -66,7 +76,7 @@ class OnboardingScreen2 extends ConsumerWidget {
                     width: width*0.04,
                     height: height*0.01,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF00A884),
+                      color: colorScheme.primary,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -75,7 +85,7 @@ class OnboardingScreen2 extends ConsumerWidget {
                     width: width*0.024,
                     height: height*0.01,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE0E0E0),
+                      color: colorScheme.outline,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -84,12 +94,13 @@ class OnboardingScreen2 extends ConsumerWidget {
                    width: width*0.024,
                     height: height*0.01,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE0E0E0),
+                      color: colorScheme.outline,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                 ],
               ),
+              // SizedBox(height: height * 0.08), // Replaced Spacer with SizedBox
               Spacer(),
               SizedBox(
                 width: double.infinity,
@@ -99,7 +110,8 @@ class OnboardingScreen2 extends ConsumerWidget {
                     context.push('/on-board3');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00A884),
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -110,25 +122,11 @@ class OnboardingScreen2 extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
-               SizedBox(height: height*0.016),
-              // TextButton(
-              //   onPressed: () {
-              //      Navigator.push(context, MaterialPageRoute(builder: (context)=>OnboardingScreen3()));
-              //   },
-              //   child: const Text(
-              //     'Skip',
-              //     style: TextStyle(
-              //       fontSize: 16,
-              //       color: Color(0xFF858597),
-              //     ),
-              //   ),
-              // ),
-              // const SizedBox(height: 40),
+              SizedBox(height: height*0.016),
             ],
           ),
         ),

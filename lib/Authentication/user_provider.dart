@@ -2,11 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:jobapp/Authentication/provider.dart';
+import 'package:jobapp/core/services/local_storage_service.dart';
 import 'auth_state.dart';
 
 // Current user email providers
-final currentUserProvider = StateProvider<String>((ref) => '');
-final currentRecruiterUserEmailProvider = StateProvider<String>((ref) => '');
+final currentUserProvider = StateProvider<String>((ref) {
+  // Initialize with email from shared preferences if available
+  try {
+    final localStorage = LocalStorageService();
+    return localStorage.userEmail ?? '';
+  } catch (e) {
+    // If localStorage is not initialized, return empty string
+    return '';
+  }
+});
+
+final currentRecruiterUserEmailProvider = StateProvider<String>((ref) {
+  // Initialize with email from shared preferences if available
+  try {
+    final localStorage = LocalStorageService();
+    return localStorage.userEmail ?? '';
+  } catch (e) {
+    // If localStorage is not initialized, return empty string
+    return '';
+  }
+});
 
 // Fixed auth state listener provider
 final authListenerProvider = Provider<void>((ref) {

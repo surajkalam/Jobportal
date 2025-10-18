@@ -12,6 +12,7 @@ import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 final jobseekerIdProvider = Provider<String>((ref) {
   return ref.read(currentUserProvider);
 });
+
 // Jobseeker Firebase Service Provider
 final jobseekerFirebaseServiceProvider = Provider<JobseekerFirebaseService>((
   ref,
@@ -56,7 +57,13 @@ class JobseekerNotifier extends StateNotifier<JobseekerState> {
   JobseekerNotifier(this._firebaseService, this._ref)
     : super(const JobseekerState());
 
-  String get _currentUserEmail => _ref.read(currentUserProvider);
+  String get _currentUserEmail {
+    final email = _ref.read(currentUserProvider);
+    if (email.isEmpty) {
+      throw Exception('User email is not available. Please log in first.');
+    }
+    return email;
+  }
 
   Future<void> loadJobseekerInfo() async {
     try {

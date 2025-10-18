@@ -9,8 +9,18 @@ class OnboardingScreen4 extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+    
+    // Safely access theme colors with fallbacks
+    ColorScheme? colorScheme;
+    try {
+      colorScheme = Theme.of(context).colorScheme;
+    } catch (e) {
+      // Fallback to default colors if theme is not available
+      colorScheme = ColorScheme.light();
+    }
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: width * 0.028),
@@ -35,7 +45,7 @@ class OnboardingScreen4 extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF1F1F39),
+                  color: colorScheme.onSurface,
                   height: 1.3,
                 ),
               ),
@@ -45,7 +55,7 @@ class OnboardingScreen4 extends ConsumerWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF858597),
+                  color: colorScheme.onSurfaceVariant,
                   height: 1.5,
                 ),
               ),
@@ -57,7 +67,7 @@ class OnboardingScreen4 extends ConsumerWidget {
                     width: width * 0.02,
                     height: height * 0.01,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE0E0E0),
+                      color: colorScheme.outline,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -66,7 +76,7 @@ class OnboardingScreen4 extends ConsumerWidget {
                     width: width * 0.02,
                     height: height * 0.01,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE0E0E0),
+                      color: colorScheme.outline,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -75,7 +85,7 @@ class OnboardingScreen4 extends ConsumerWidget {
                     width: width * 0.02,
                     height: height * 0.01,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE0E0E0),
+                      color: colorScheme.outline,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -84,7 +94,7 @@ class OnboardingScreen4 extends ConsumerWidget {
                     width: width * 0.05,
                     height: height * 0.01,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF00A884),
+                      color: colorScheme.primary,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -99,7 +109,8 @@ class OnboardingScreen4 extends ConsumerWidget {
                     context.push('/check-login');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00A884),
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -113,11 +124,10 @@ class OnboardingScreen4 extends ConsumerWidget {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: Colors.white,
                         ),
                       ),
                       SizedBox(width: width * 0.01),
-                      Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                      Icon(Icons.arrow_forward, size: 20),
                     ],
                   ),
                 ),

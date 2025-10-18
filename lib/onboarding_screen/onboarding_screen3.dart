@@ -8,8 +8,18 @@ class OnboardingScreen3 extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var height=MediaQuery.of(context).size.height;
     var width=MediaQuery.of(context).size.width;
+    
+    // Safely access theme colors with fallbacks
+    ColorScheme? colorScheme;
+    try {
+      colorScheme = Theme.of(context).colorScheme;
+    } catch (e) {
+      // Fallback to default colors if theme is not available
+      colorScheme = ColorScheme.light();
+    }
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: width*0.028),
@@ -20,14 +30,14 @@ class OnboardingScreen3 extends ConsumerWidget {
                 width: width*0.65,
                 height: height*0.3,
                 decoration: BoxDecoration(
-                  color:  Color(0xFFE8F5F2),
+                  color: colorScheme.surfaceVariant,
                   shape: BoxShape.circle,
                 ),
                 child: Center(
                   child: Icon(
                     Icons.people_outline,
                     size: 80,
-                    color: const Color(0xFF00A884),
+                    color: colorScheme.primary,
                   ),
                 ),
               ),
@@ -38,7 +48,7 @@ class OnboardingScreen3 extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF1F1F39),
+                  color: colorScheme.onSurface,
                   height: 1.3,
                 ),
               ),
@@ -48,7 +58,6 @@ class OnboardingScreen3 extends ConsumerWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF858597),
                   height: 1.5,
                 ),
               ),
@@ -60,7 +69,7 @@ class OnboardingScreen3 extends ConsumerWidget {
                     width: width*0.02,
                     height: height*0.01,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE0E0E0),
+                      color: colorScheme.outline,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -69,7 +78,7 @@ class OnboardingScreen3 extends ConsumerWidget {
                    width: width*0.02,
                     height: height*0.01,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE0E0E0),
+                      color: colorScheme.outline,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -78,22 +87,22 @@ class OnboardingScreen3 extends ConsumerWidget {
                     width: width*0.05,
                     height: height*0.01,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF00A884),
+                      color: colorScheme.primary,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Container(
-                     width: width*0.02,
+                    width: width*0.02,
                     height: height*0.01,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE0E0E0),
+                      color: colorScheme.outline,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                 ],
               ),
-               Spacer(),
+              Spacer(),
               SizedBox(
                 width: double.infinity,
                 height: height*0.056,
@@ -102,7 +111,8 @@ class OnboardingScreen3 extends ConsumerWidget {
                     context.push('/on-board4');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00A884),
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -113,25 +123,11 @@ class OnboardingScreen3 extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              // TextButton(
-              //   onPressed: () {
-              //     Navigator.push(context, MaterialPageRoute(builder: (context)=>OnboardingScreen4()));
-              //   },
-              //   child: const Text(
-              //     'Skip',
-              //     style: TextStyle(
-              //       fontSize: 16,
-              //       color: Color(0xFF858597),
-              //     ),
-              //   ),
-              // ),
-              // const SizedBox(height: 40),
+              SizedBox(height: height*0.016)
             ],
           ),
         ),

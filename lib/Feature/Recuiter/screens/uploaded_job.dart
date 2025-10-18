@@ -63,11 +63,17 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     // log('Recent Jobs hasError: ${recentJobsAsync.hasError}');
     // log('Recent Jobs isLoading: ${recentJobsAsync.isLoading}');
     // log('Recent Jobs hasValue: ${recentJobsAsync.hasValue}');
-    if (recentJobsAsync.hasError) {
-      log('Recent Jobs Error: ${recentJobsAsync.error}');
-      log('Recent Jobs Stack: ${recentJobsAsync.stackTrace}');
+    if (recentJobsAsync.hasError && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading recent jobs: ${recentJobsAsync.error}', 
+              style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
-    log('==================');
 
     return Scaffold(
       appBar: AppBar(
@@ -454,20 +460,28 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                 overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 2),
-              Row(
+                  Row(
                 children: [
                   Icon(Iconsax.location, size: 10, color: Colors.grey[600]),
                   SizedBox(width: 2),
-                  Text(
-                    job.location,
-                    style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.25,
+                    child: Text(
+                      job.location,
+                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   SizedBox(width: 6),
                   Icon(Iconsax.category, size: 10, color: Colors.grey[600]),
                   SizedBox(width: 2),
-                  Text(
-                    job.category,
-                    style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.18,
+                    child: Text(
+                      job.category,
+                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               ),

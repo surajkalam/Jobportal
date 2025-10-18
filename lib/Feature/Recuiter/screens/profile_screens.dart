@@ -1,9 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:jobapp/Authentication/user_provider.dart';
 import 'package:jobapp/core/util/appcolors.dart';
+import 'package:jobapp/core/providers/theme_provider.dart';
+import 'package:jobapp/Authentication/auth_state.dart';
 import '../provider/provider.dart';
 import '../recuiter_model/recuiter_model.dart';
 
@@ -41,11 +43,47 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  void _toggleTheme() {
+    ref.read(themeModeProvider.notifier).toggleTheme();
+  }
+
+  void _logout() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Logout'),
+          content: Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                // Perform logout
+                await ref.read(authStateProvider.notifier).signOut();
+                // Navigate to login screen
+                if (mounted) {
+                  context.go('/'); // Adjust route as needed
+                }
+              },
+              child: Text('Logout'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final recruiterAsync = ref.watch(recruiterDataProvider);
     final isLoading = ref.watch(loadingStateProvider);
     final theme = Theme.of(context);
+    final themeMode = ref.watch(themeModeProvider);
+    final colorScheme = Theme.of(context).colorScheme;
     var  width=MediaQuery.of(context).size.width;
     var height=MediaQuery.of(context).size.height;
 
@@ -56,9 +94,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
         ),
         centerTitle: true ,
-        backgroundColor: AppColors.faintbackblue,
+        backgroundColor: colorScheme.surface, // Changed from AppColors.faintbackblue
         elevation: 0,
         actions: [
+          IconButton(
+            icon: Icon(themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode),
+            onPressed: _toggleTheme,
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _logout,
+          ),
           IconButton(
             icon: const Icon(Iconsax.edit, size: 24),
             onPressed: () {
@@ -78,24 +124,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator(color: Colors.orange))
           : recruiterAsync.when(
-              data: (recruiter) => _buildProfileContent(recruiter,height,width),
+              data: (recruiter) => _buildProfileContent(recruiter,height,width,colorScheme),
               loading: () => const Center(child: CircularProgressIndicator(color: Colors.orange)),
-              error: (error, stackTrace) => _buildErrorWidget(error.toString()),
+              error: (error, stackTrace) => _buildErrorWidget(error.toString(),colorScheme),
             ),
     );
   }
 
-  Widget _buildProfileContent(RecruiterModel? recruiter  ,double height,double width) {
+  Widget _buildProfileContent(RecruiterModel? recruiter  ,double height,double width, ColorScheme colorScheme) {
     if (recruiter == null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Iconsax.profile_delete, size: 60, color: Colors.grey[400]),
+            Icon(Iconsax.profile_delete, size: 60, color: colorScheme.onSurfaceVariant), // Changed from Colors.grey[400]
             SizedBox(height: height*0.016),
             Text(
               'No profile data found',
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant), // Changed from Colors.grey[600]
             ),
           SizedBox(height:height*0.016),
             ElevatedButton.icon(
@@ -103,8 +149,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               icon: const Icon(Iconsax.refresh),
               label: const Text('Retry'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
+                backgroundColor: colorScheme.primary, // Changed from Colors.orange
+                foregroundColor: colorScheme.onPrimary, // Added foreground color
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
@@ -121,7 +167,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Profile Header
-            _buildProfileHeader(recruiter,height,width),
+            _buildProfileHeader(recruiter,height,width,colorScheme),
              SizedBox(height: 24),
             // Profile Details Card
             Card(
@@ -137,25 +183,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey[800],
+                        color: colorScheme.onSurface, // Changed from Colors.grey[800]
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildProfileItem('Company Name', recruiter.companyName, Iconsax.building,width,height),
+                    _buildProfileItem('Company Name', recruiter.companyName, Iconsax.building,width,height,colorScheme),
                     const Divider(height: 24),
-                    _buildProfileItem('Contact Email', recruiter.email, Iconsax.message,width,height),
+                    _buildProfileItem('Contact Email', recruiter.email, Iconsax.message,width,height,colorScheme),
                     const Divider(height: 24),
-                    _buildProfileItem('Phone', recruiter.contact, Iconsax.call,width,height),
+                    _buildProfileItem('Phone', recruiter.contact, Iconsax.call,width,height,colorScheme),
                     const Divider(height: 24),
-                    _buildProfileItem('Location', recruiter.location, Iconsax.location,width,height),
+                    _buildProfileItem('Location', recruiter.location, Iconsax.location,width,height,colorScheme),
                     const Divider(height: 24),
-                    _buildProfileItem('Designation', recruiter.designation, Iconsax.briefcase,width,height),
+                    _buildProfileItem('Designation', recruiter.designation, Iconsax.briefcase,width,height,colorScheme),
                     const Divider(height: 24),
                     _buildProfileItem(
                       'Member Since',
                       '${recruiter.createdAt.day}/${recruiter.createdAt.month}/${recruiter.createdAt.year}',
                       Iconsax.calendar,
-                      width,height
+                      width,height,
+                      colorScheme
                     ),
                   ],
                 ),
@@ -167,11 +214,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileHeader(RecruiterModel recruiter,double height,double width) {
+  Widget _buildProfileHeader(RecruiterModel recruiter,double height,double width, ColorScheme colorScheme) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.orange[50],
+        color: colorScheme.surfaceVariant, // Changed from Colors.orange[50]
         borderRadius: BorderRadius.circular(16),
       ),
       padding:EdgeInsets.all(16),
@@ -180,7 +227,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundColor: Colors.orange[100],
+              backgroundColor: colorScheme.surface, // Changed from Colors.orange[100]
               backgroundImage: recruiter.photoUrl.isNotEmpty 
                   ? NetworkImage(recruiter.photoUrl) as ImageProvider
                   : null,
@@ -194,13 +241,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Colors.black87,
+                color: colorScheme.onSurface, // Changed from Colors.black87
               ),
             ),
              SizedBox(height: height*0.006),
             Text(
               recruiter.email,
-              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant), // Changed from Colors.grey[600]
             ),
           ],
         ),
@@ -208,11 +255,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileItem(String title, String value, IconData icon,double width,double height) {
+  Widget _buildProfileItem(String title, String value, IconData icon,double width,double height, ColorScheme colorScheme) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: Colors.orange[700]),
+        Icon(icon, size: 18, color: colorScheme.primary), // Changed from Colors.orange[700]
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -223,13 +270,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: colorScheme.onSurface, // Changed from Colors.black87
                 ),
               ),
             SizedBox(height:height*0.004),
               Text(
                 value.isEmpty ? 'Not provided' : value,
-                style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant), // Changed from Colors.grey[600]
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -240,7 +287,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildErrorWidget(String error) {
+  Widget _buildErrorWidget(String error, ColorScheme colorScheme) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -255,7 +302,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           Text(
             error,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant), // Changed from Colors.grey[600]
           ),
           const SizedBox(height: 16),
           ElevatedButton.icon(
@@ -263,8 +310,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             icon: const Icon(Iconsax.refresh),
             label: const Text('Retry'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              foregroundColor: Colors.white,
+              backgroundColor: colorScheme.primary, // Changed from Colors.orange
+              foregroundColor: colorScheme.onPrimary, // Added foreground color
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
@@ -355,6 +402,7 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
     final isLoading = ref.watch(loadingStateProvider);
     var height=MediaQuery.of(context).size.height;
     var width=MediaQuery.of(context).size.width;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -378,33 +426,33 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: colorScheme.onSurface, // Changed from Colors.black87
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Iconsax.close_circle, color: Colors.grey[600]),
+                    icon: Icon(Iconsax.close_circle, color: colorScheme.onSurfaceVariant), // Changed from Colors.grey[600]
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),
                SizedBox(height:height*0.024),
-              _buildTextField(_nameController, 'Full Name', Iconsax.user),
+              _buildTextField(_nameController, 'Full Name', Iconsax.user, colorScheme),
               const SizedBox(height: 16),
-              _buildTextField(_contactController, 'Contact Number', Iconsax.call),
+              _buildTextField(_contactController, 'Contact Number', Iconsax.call, colorScheme),
               const SizedBox(height: 16),
-              _buildTextField(_companyController, 'Company Name', Iconsax.building),
+              _buildTextField(_companyController, 'Company Name', Iconsax.building, colorScheme),
               const SizedBox(height: 16),
-              _buildTextField(_designationController, 'Designation', Iconsax.briefcase),
+              _buildTextField(_designationController, 'Designation', Iconsax.briefcase, colorScheme),
               const SizedBox(height: 16),
-              _buildTextField(_locationController, 'Location', Iconsax.location),
+              _buildTextField(_locationController, 'Location', Iconsax.location, colorScheme),
               SizedBox(height: height*0.03),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: isLoading ? null : _updateProfile,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    foregroundColor: Colors.white,
+                    backgroundColor: colorScheme.primary, // Changed from Colors.orange
+                    foregroundColor: colorScheme.onPrimary, // Added foreground color
                     padding:  EdgeInsets.symmetric(vertical: 08),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     elevation: 2,
@@ -416,7 +464,7 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
                           width: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            color: colorScheme.onPrimary, // Changed from Colors.white
                           ),
                         )
                       : const Text(
@@ -433,29 +481,29 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon) {
+  Widget _buildTextField(TextEditingController controller, String label, IconData icon, ColorScheme colorScheme) {
     return TextFormField(
       controller: controller,
       cursorHeight: 15,
-      style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: AppColors.black),
+      style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: colorScheme.onSurface), // Changed from AppColors.black
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: Colors.orange[700]),
-        labelStyle: TextStyle(fontSize: 12,color: Colors.grey),
-        hintStyle:TextStyle(fontSize: 12,color: Colors.grey), 
+        prefixIcon: Icon(icon, color: colorScheme.primary), // Changed from Colors.orange[700]
+        labelStyle: TextStyle(fontSize: 12,color: colorScheme.onSurfaceVariant), // Changed from Colors.grey
+        hintStyle:TextStyle(fontSize: 12,color: colorScheme.onSurfaceVariant), // Changed from Colors.grey
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: BorderSide(color: colorScheme.outline), // Changed from Colors.grey[300]!
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: BorderSide(color: colorScheme.outline), // Changed from Colors.grey[300]!
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.orange[700]!, width: 2),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2), // Changed from Colors.orange[700]!
         ),
-        fillColor: Colors.grey[50],
+        fillColor: colorScheme.surface, // Changed from Colors.grey[50]
         filled: true,
       ),
       validator: (value) {
@@ -475,6 +523,8 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
     Duration duration = const Duration(seconds: 3),
     SnackBarBehavior behavior = SnackBarBehavior.floating,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -486,7 +536,7 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
           ),
           textAlign: TextAlign.center,
         ),
-        backgroundColor: backgroundColor,
+        backgroundColor: colorScheme.inverseSurface, // Changed from backgroundColor
         duration: duration,
         behavior: behavior,
         margin: const EdgeInsets.all(16),

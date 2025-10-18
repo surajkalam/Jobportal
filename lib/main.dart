@@ -7,6 +7,10 @@ import 'package:jobapp/Feature/combomodel/combo_gorouter.dart';
 import 'package:jobapp/core/material_theme.dart';
 import 'package:jobapp/core/typography.dart';
 import 'package:jobapp/firebase_options.dart';
+import 'package:jobapp/core/services/local_storage_service.dart';
+import 'package:jobapp/core/providers/theme_provider.dart';
+import 'package:jobapp/Authentication/user_provider.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -16,6 +20,8 @@ void main() async {
   // ignore: deprecated_member_use
   androidProvider: AndroidProvider.playIntegrity,
 );
+  // Initialize local storage service
+  await LocalStorageService().init();
   log('message: Firebase Initialized');
   runApp(const ProviderScope(child: MainApp()));
 }
@@ -32,14 +38,28 @@ class _MainAppState extends ConsumerState<MainApp> {
   void initState() {
     super.initState();
   }
+  
   @override
   Widget build(BuildContext context) {
+    // Watch the auth listener provider to ensure it's active
+    ref.watch(authListenerProvider);
+    
     final materialTheme = MaterialTheme(textTheme);
+    
+    // Safely watch theme mode provider with fallback
+    ThemeMode themeMode;
+    try {
+      themeMode = ref.watch(themeModeProvider);
+    } catch (e) {
+      // Fallback to system theme if provider is not available
+      themeMode = ThemeMode.system;
+    }
+    
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: materialTheme.light(),
       darkTheme: materialTheme.dark(),
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routerConfig: JobPortalAppRouter.router,
     );
   }

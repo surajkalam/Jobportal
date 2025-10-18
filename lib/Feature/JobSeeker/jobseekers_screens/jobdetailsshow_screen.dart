@@ -156,7 +156,7 @@ class JobDetailsScreen extends ConsumerWidget {
               ),
             ),
           ),
-          SizedBox(width: width * 0.02),
+          SizedBox(width: width * 0.03),
           Expanded(
             child: Row(
               children: [
@@ -173,7 +173,7 @@ class JobDetailsScreen extends ConsumerWidget {
                             fontWeight: FontWeight.w400,
                             height: 1.3
                           ),
-                          maxLines: 2,
+                          maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -210,24 +210,6 @@ class JobDetailsScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                // Show Urgent Hiring Badge
-                // if (job.isUrgentHiring)
-                //   Container(
-                //     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                //     decoration: BoxDecoration(
-                //       color: Colors.red[50],
-                //       borderRadius: BorderRadius.circular(6),
-                //       border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
-                //     ),
-                //     child: Text(
-                //       'URGENT',
-                //       style: TextStyle(
-                //         color: Colors.red,
-                //         fontSize: 10,
-                //         fontWeight: FontWeight.w600,
-                //       ),
-                //     ),
-                //   ),
               ],
             ),
           ),
@@ -242,9 +224,8 @@ class JobDetailsScreen extends ConsumerWidget {
       runSpacing: 8,
       children: [
         // Job Type
-        // if (job.jobType.isNotEmpty)
-        //   jdcontainer(job.jobType, width, height),
-        
+        if (job.jobType.isNotEmpty)
+          jdcontainer(job.jobType, width, height),
         // Location
         jdcontainer(job.location.isNotEmpty ? job.location : 'Location not specified', width, height),
         

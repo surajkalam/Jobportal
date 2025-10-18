@@ -9,6 +9,8 @@ import 'package:jobapp/Feature/Recuiter/provider/requiterinfo_provider.dart';
 import 'package:jobapp/core/util/appcolors.dart';
 import '../provider/provider.dart';
 import '../recuiter_model/recuiter_model.dart';
+import 'package:jobapp/core/services/local_storage_service.dart';
+import 'package:jobapp/Authentication/auth_state.dart'; // Added import
 
 class RecuiterInfo extends ConsumerStatefulWidget {
   const RecuiterInfo({super.key});
@@ -29,6 +31,61 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
   File? _selectedImage;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
+  
+  // Store signup data passed from previous screen
+  String _signupEmail = '';
+  String _signupPassword = '';
+  String _signupPhone = '';
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-fill email and phone from local storage
+    _loadSignupData();
+    _preloadUserData();
+  }
+
+  Future<void> _loadSignupData() async {
+    // Get signup data passed from the previous screen
+    final extraData = GoRouterState.of(context).extra as Map<String, dynamic>?;
+    if (extraData != null) {
+      _signupEmail = extraData['email'] ?? '';
+      _signupPassword = extraData['password'] ?? '';
+      _signupPhone = extraData['phone'] ?? '';
+    }
+  }
+
+  Future<void> _preloadUserData() async {
+    try {
+      // Pre-fill from signup data
+      if (_signupEmail.isNotEmpty) {
+        emailController.text = _signupEmail;
+      } else {
+        // Try to get email from the provider
+        final currentEmail = ref.read(currentRecruiterUserEmailProvider);
+        if (currentEmail.isNotEmpty) {
+          emailController.text = currentEmail;
+        }
+      }
+      
+      if (_signupPhone.isNotEmpty) {
+        contactController.text = _signupPhone;
+      }
+    } catch (e) {
+      // Show error in snackbar instead of logging
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error pre-loading data: ${e.toString()}', 
+                style: TextStyle(color: Colors.white)),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +101,11 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.faintbackblue,
+        backgroundColor: colorScheme.surface, // Changed from AppColors.faintbackblue
         title: Text(
           "Recruiter information",
           style: textTheme.titleLarge?.copyWith(
-            color: colorScheme.primaryFixedDim,
+            color: colorScheme.onSurface, // Changed from colorScheme.primaryFixedDim
           ),
         ),
       ),
@@ -129,7 +186,8 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
                         vertical: width * 0.03,
                         horizontal: height * 0.09,
                       ),
-                      backgroundColor: colorScheme.secondaryFixed,
+                      backgroundColor: colorScheme.tertiary, // Changed from colorScheme.secondaryFixed
+                      foregroundColor: colorScheme.onTertiary, // Added foreground color
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -155,373 +213,322 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
         vertical: height * 0.02,
         horizontal: width * 0.02,
       ),
-      child: GestureDetector(
-        onTap: _showImageSourceDialog,
-        child: Container(
-          height: height * 0.2,
-          width: width * 0.35,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(width * 0.02),
-            color: Color.fromRGBO(223, 226, 230, 1),
-            border: Border.all(
-              color: _selectedImage != null 
-                  ? Colors.green 
-                  : colorScheme.shadow, 
-              width: 2
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Upload Photo *',
+            style: TextStyle(
+              fontSize: 11,
+              color: colorScheme.onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
             ),
           ),
-          child: Stack(
-            children: [
-              // Image or placeholder
-              _selectedImage != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(width * 0.02),
-                      child: Image.file(
-                        _selectedImage!,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return _buildPlaceholder(height, width);
-                        },
+          SizedBox(height: height * 0.01),
+          Container(
+            height: height * 0.15,
+            width: width * 0.3,
+            decoration: BoxDecoration(
+              color: colorScheme.surface, // Changed from AppColors.white
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+              ),
+            ),
+            child: _selectedImage == null
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.add_a_photo_outlined,
+                          color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
+                        ),
+                        onPressed: _showImageSourceDialog,
                       ),
-                    )
-                  : _buildPlaceholder(height, width),
-
-              // Clear button (only shown when image is selected)
-              if (_selectedImage != null)
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: GestureDetector(
-                    onTap: _clearImage,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black54,
-                        shape: BoxShape.circle,
+                      Text(
+                        'Upload Photo',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: colorScheme.onSurfaceVariant.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+                        ),
                       ),
-                      padding: EdgeInsets.all(6),
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.white,
-                        size: 16,
+                    ],
+                  )
+                : Stack(
+                    children: [
+                      Positioned.fill(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.file(
+                            _selectedImage!,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        top: 5,
+                        right: 5,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              size: 15,
+                              color: Colors.white,
+                            ),
+                            onPressed: _clearImage,
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-            ],
           ),
-        ),
+          if (_selectedImage != null)
+            Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text(
+                'Selected: ${_selectedImage!.path.split('/').last}',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
 
-  Widget _buildPlaceholder(double height, double width) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.image_outlined, 
-          size: width * 0.08,
-          color: Colors.grey[600],
-        ),
-        SizedBox(height: height * 0.01),
-        Text(
-          'Recruiter Photo',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: width * 0.03,
-            color: Colors.grey[600],
+  void _showImageSourceDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Camera'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+            ],
           ),
-        ),
-        SizedBox(height: height * 0.005),
-        Text(
-          'Tap to select image',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: width * 0.025,
-            color: Colors.grey[500],
-            fontStyle: FontStyle.italic,
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 
   Future<void> _pickImage(ImageSource source) async {
-  try {
-    final XFile? image = await _picker.pickImage(
-      source: source,
-      maxWidth: 800,
-      maxHeight: 800,
-      imageQuality: 85,
-    );
-    
-    if (image != null) {
-      setState(() {
-        _selectedImage = File(image.path);
-      });
-      // Set the photo controller text with the image path
-      photoController.text = image.path;
-      // Debug: Check if file exists
-      bool fileExists = await _selectedImage!.exists();
-      log('File exists: $fileExists');
-      log('File path: ${_selectedImage!.path}');
-      log('File size: ${await _selectedImage!.length()} bytes');
-      // Show success message
-      _showSnackBar(
-        // ignore: use_build_context_synchronously
-        context: context,
-        text: 'Photo selected successfully !👍',
-        textColor: Colors.green,
-      );
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      // Show error in snackbar instead of logging
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error picking image: ${e.toString()}', 
+                style: TextStyle(color: Colors.white)),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
-  } catch (e) {
-    log('Error picking image: $e');
-    _showSnackBar(
-      // ignore: use_build_context_synchronously
-      context: context,
-      text: 'Error picking image. check image is not corrupted',
-      textColor: Colors.red,
-    );
-  }
-}
-  Future<void> _showImageSourceDialog( ) async {
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Choose Image Source'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: Icon(Icons.photo_library),
-              title: Text('Gallery'),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.gallery);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.camera_alt),
-              title: Text('Camera'),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.camera);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   void _clearImage() {
-  setState(() {
-    _selectedImage = null;
-  });
-  photoController.clear();
-  _showSnackBar(
-    context: context,
-    text: 'Photo cleared',
-    textColor: Colors.deepOrange,
-  );
-}
-
-  void _submitForm() {
-  // Check if image is required but not selected
-  if (_selectedImage == null) {
-    _showSnackBar(
-      context: context,
-      text: 'Please select a recruiter photo.',
-      textColor: Colors.red,
-    );
-    return;
+    setState(() {
+      _selectedImage = null;
+    });
   }
-  
-  if (_formKey.currentState!.validate()) {
-    _saveRecruiterInfo();
-  } else {
-    _showSnackBar(
-      context: context,
-      text: 'Please fill all required fields correctly.',
-      textColor: Colors.red,
-    );
-  }
-}
 
-  void _saveRecruiterInfo() async {
-    ref.read(loadingStateProvider.notifier).state = true;
-    try {
-      String photoUrl = '';
-      // First upload image if selected
-      if (_selectedImage != null) {
-        photoUrl = await _uploadImageToStorage();
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        // First, perform Firebase authentication
+        final authNotifier = ref.read(authStateProvider.notifier);
+        final user = await authNotifier.signUpWithEmailAndPassword(
+          email: _signupEmail.isNotEmpty ? _signupEmail : emailController.text.trim(),
+          password: _signupPassword.isNotEmpty ? _signupPassword : 'defaultPassword123', // Fallback password
+          phoneNumber: _signupPhone.isNotEmpty ? _signupPhone : contactController.text,
+        );
+        
+        if (user == null) {
+          // Authentication failed
+          final error = ref.read(authStateProvider).error;
+          if (error != null && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(error, style: TextStyle(color: Colors.white)),
+                backgroundColor: Colors.red,
+                duration: Duration(seconds: 3),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+          return;
+        }
+        
+        // Update the current user provider with the authenticated user's email
+        ref.read(currentRecruiterUserEmailProvider.notifier).state = user.email ?? '';
+        
+        // Save user phone to local storage
+        await LocalStorageService().setUserPhone(_signupPhone.isNotEmpty ? _signupPhone : contactController.text);
+        
+        // Create RecruiterModel object
+        final recruiterInfo = RecruiterModel(
+          id: 'REC_${DateTime.now().millisecondsSinceEpoch}',
+          name: nameController.text,
+          email: emailController.text,
+          contact: contactController.text,
+          companyName: companyController.text,
+          designation: designationController.text,
+          location: locationController.text,
+          photoUrl: photoController.text,
+          createdAt: DateTime.now(),
+        );
+
+        // Save recruiter info
+        await ref.read(recruiterDataProvider.notifier).saveRecruiter(recruiterInfo);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('✅ Profile submitted successfully!',
+                  style: TextStyle(color: Colors.white)),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+
+          // Navigate to recruiter home after successful submission
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.go('/recuiter-nav');
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to submit profile: ${e.toString()}', 
+                  style: TextStyle(color: Colors.white)),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
       }
-      // Create recruiter model
-      final recruiter = RecruiterModel(
-        id: 'REQ_${DateTime.now().millisecondsSinceEpoch}',
-        name: nameController.text,
-        email: emailController.text,
-        contact: contactController.text,
-        companyName: companyController.text,
-        designation: designationController.text,
-        location: locationController.text,
-        photoUrl: photoUrl,
-        createdAt: DateTime.now(),
-      );
-
-      // Save to Firestore using provider
-      await ref.read(recruiterDataProvider.notifier).saveRecruiter(recruiter);
-      ref.read(currentRecruiterUserEmailProvider.notifier).state = emailController.text;
-      // ignore: use_build_context_synchronously
-      _showSnackBar(context: context, text:' Recruiter information submitted successfully! 👍',textColor: Colors.green);
-      // ignore: use_build_context_synchronously
-        context.go('/navbar');
-      // _navigateToDashboard();
-      // WidgetsBinding.instance.addPostFrameCallback((_) {
-      //  context.go('/navbar');
-      // });
-    } catch (e) {
-      // ignore: use_build_context_synchronously
-      _showSnackBar(context: context, text:' Error saving recruiter information check all fields ',textColor: Colors.red);
-      log('Error saving recruiter: $e');
-    } finally {
-      ref.read(loadingStateProvider.notifier).state = false;
     }
   }
 
-  Future<String> _uploadImageToStorage() async {
-  if (_selectedImage == null) return '';
-
-  try {
-    // Double-check that the file exists before uploading
-    bool fileExists = await _selectedImage!.exists();
-    if (!fileExists) {
-      throw Exception('Selected image file does not exist. Please select the image again.');
-    }
-    
-    final firebaseService = ref.read(firebaseRecruiterServiceProvider);
-    return await firebaseService.uploadImage(_selectedImage!, emailController.text);
-  } catch (e) {
-    throw Exception('Image upload failed: $e');
-  }
-}
-
-  // void _navigateToDashboard() {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //    context.go('/');
-  //   });
-  // }
-
-  // void _showSuccessSnackBar(String message) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       margin: EdgeInsets.all(16),
-  //       content: Text(message),
-  //       backgroundColor: Colors.green,
-  //       duration: Duration(seconds: 3),
-  //       behavior: SnackBarBehavior.floating,
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(12),
-  //       ),
-  //     ),
-  //   );
-  // }
+  // Helper function to create text form fields
   Widget textformfield(
     double height,
     double width,
     TextEditingController controller,
-    String label, {
-    Icon? icon,
-    int? maxline,
+    String hinttext, {
+    Widget? icon,
     bool isRequired = false,
     bool isEmail = false,
     bool isPhone = false,
+    int maxline = 1,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    
     return Padding(
       padding: EdgeInsets.symmetric(
+        vertical: height * 0.02,
         horizontal: width * 0.02,
-        vertical: height * 0.015,
       ),
       child: TextFormField(
         controller: controller,
-        keyboardType: isEmail
-            ? TextInputType.emailAddress
-            : isPhone
-                ? TextInputType.phone
+        maxLines: maxline,
+        keyboardType: isPhone
+            ? TextInputType.phone
+            : isEmail
+                ? TextInputType.emailAddress
                 : TextInputType.text,
-        maxLines: maxline ?? 1,
         decoration: InputDecoration(
-          labelText: label + (isRequired ? ' *' : ''),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          prefixIcon: icon,
+          labelText: isRequired ? '$hinttext *' : hinttext,
+          labelStyle: TextStyle(
+            fontSize: 11,
+            color: colorScheme.onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
+          ),
+          hintText: 'Enter $hinttext',
+          hintStyle: TextStyle(
+            fontSize: 12,
+            color: colorScheme.onSurfaceVariant.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+          ),
           filled: true,
-          fillColor: Color.fromRGBO(223, 226, 230, 1),
+          fillColor: colorScheme.surface, // Changed from AppColors.white
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: colorScheme.primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
+            ),
+          ),
+          prefixIcon: icon != null ? IconTheme.merge(
+            data: IconThemeData(color: colorScheme.onSurfaceVariant), // Changed from AppColors.grey.withValues(alpha: 0.7)
+            child: icon,
+          ) : null,
         ),
         validator: (value) {
           if (isRequired && (value == null || value.isEmpty)) {
-            return 'Please enter $label';
+            return 'Please enter $hinttext';
           }
-
           if (isEmail && value != null && value.isNotEmpty) {
-            final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+            final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$');
             if (!emailRegex.hasMatch(value)) {
-              return 'Please enter a valid email address';
+              return 'Please enter a valid email';
             }
           }
-
-          if (isPhone && value != null && value.isNotEmpty && value.length <= 10  &&    RegExp(r'^[0-9]+$').hasMatch(value) && value[0] != '0' && value[0] != '1') {
-            final phoneRegex = RegExp(r'^[0-9]{10}$');
-            if (!phoneRegex.hasMatch(value)) {
+          if (isPhone && value != null && value.isNotEmpty) {
+            if (value.length != 10) {
               return 'Please enter a valid 10-digit phone number';
             }
           }
-
           return null;
         },
       ),
     );
   }
-
-  void _showSnackBar({
-    required BuildContext context,
-    required String text,
-    Color backgroundColor = Colors.white,
-    Color textColor = Colors.green,
-    Duration duration = const Duration(seconds: 3),
-    SnackBarBehavior behavior = SnackBarBehavior.floating,
-  }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(text, 
-        style: TextStyle(
-          color: textColor,
-          fontSize: 10,
-        fontWeight: FontWeight.w500),
-        textAlign: TextAlign.center,
-        ),
-        backgroundColor: backgroundColor,
-        duration: duration,
-        behavior: behavior,
-        margin: EdgeInsets.all(12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: textColor),
-        ),
-      ),
-    );
-  }
-  @override
-  void dispose() {
-    nameController.dispose();
-    contactController.dispose();
-    emailController.dispose();
-    companyController.dispose();
-    designationController.dispose();
-    locationController.dispose();
-    photoController.dispose();
-    super.dispose();
-  }
-
 }
