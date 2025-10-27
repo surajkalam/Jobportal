@@ -104,7 +104,7 @@ class OnboardingScreen2 extends ConsumerWidget {
               Spacer(),
               SizedBox(
                 width: double.infinity,
-                height: height*0.056,
+                height: height*0.062,
                 child: ElevatedButton(
                   onPressed: () {
                     context.push('/on-board3');
@@ -121,7 +121,7 @@ class OnboardingScreen2 extends ConsumerWidget {
                     'Next',
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

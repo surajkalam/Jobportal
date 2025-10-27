@@ -8,7 +8,8 @@ class MaterialTheme {
   static ColorScheme lightScheme() {
     return ColorScheme(
       brightness: Brightness.light,
-      primary: Color(0xFF1E293B), // Dark blue-gray (text-primary)
+      //primary: Color(0xFF1E293B), // Dark blue-gray (text-primary)
+      primary:Color(0xFF48A6A7),
       onPrimary: Color(0xFFF8FAFC), // Light gray (bg-primary)
       primaryContainer: Color(0xFFE2E8F0), // Light blue-gray (for containers)
       onPrimaryContainer: Color(0xFF0F172A), // Darker shade for text on containers
@@ -26,7 +27,7 @@ class MaterialTheme {
       onErrorContainer: Color(0xFFB91C1C), // Dark text on error containers
       surface: Color(0xFFFFFFFF), // White background (bg-secondary, bg-card)
       onSurface: Colors.black, // Black text on surface
-      surfaceVariant: Color(0xFFE2E8F0), // Light variant surface (border-color)
+      surfaceContainerHighest: Color(0xFFE2E8F0), // Light variant surface (border-color)
       onSurfaceVariant: Color(0xFF475569), // Medium-dark text on variant surfaces
       outline: Color(0xFFCBD5E1), // Border outline
       outlineVariant: Color(0xFFE2E8F0), // Variant outline
@@ -64,7 +65,7 @@ class MaterialTheme {
       onErrorContainer: Color(0xFFFECDD3), // Light text on error containers
       surface: Color(0xFF1E293B), // Dark blue-gray background (bg-secondary, bg-card)
       onSurface: Colors.white, // White text on surface
-      surfaceVariant: Color(0xFF334155), // Darker variant surface (border-color)
+      surfaceContainerHighest: Color(0xFF334155), // Darker variant surface (border-color)
       onSurfaceVariant: Color(0xFFCBD5E1), // Light text on variant surfaces
       outline: Color(0xFF475569), // Border outline
       outlineVariant: Color(0xFF334155), // Variant outline
@@ -152,6 +153,7 @@ class MaterialTheme {
         borderSide: BorderSide(color: colorScheme.error, width: 2),
       ),
       labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+      // ignore: deprecated_member_use
       hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withOpacity(0.7)),
     ),
     cardTheme: CardThemeData(

@@ -5,21 +5,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jobapp/Authentication/user_provider.dart';
-import 'package:jobapp/Feature/Recuiter/provider/requiterinfo_provider.dart';
-import 'package:jobapp/core/util/appcolors.dart';
-import '../provider/provider.dart';
+import 'package:jobapp/Feature/Recuiter/provider/provider.dart';
+
 import '../recuiter_model/recuiter_model.dart';
 import 'package:jobapp/core/services/local_storage_service.dart';
 import 'package:jobapp/Authentication/auth_state.dart'; // Added import
 
 class RecuiterInfo extends ConsumerStatefulWidget {
-  const RecuiterInfo({super.key});
+  final String email;
+  final String phone;
+  const RecuiterInfo({super.key, required this.email, required this.phone});
 
   @override
   ConsumerState<RecuiterInfo> createState() => _RecuiterInfoState();
 }
 
 class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
+  // final TextEditingController contactController = widget.phone != null ? TextEditingController(text: widget.phone) : TextEditingController();
+  // final TextEditingController emailController = widget.email != null ? TextEditingController(text: widget.email) : TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -31,7 +34,8 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
   File? _selectedImage;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
-  
+  bool _isImageUploading = false; // Add this flag
+
   // Store signup data passed from previous screen
   String _signupEmail = '';
   String _signupPassword = '';
@@ -40,9 +44,11 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
   @override
   void initState() {
     super.initState();
+    // Pre-fill email and phone passed from constructor
+    emailController.text = widget.email;
+    contactController.text = widget.phone;
     // Pre-fill email and phone from local storage
     _loadSignupData();
-    _preloadUserData();
   }
 
   Future<void> _loadSignupData() async {
@@ -52,38 +58,6 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
       _signupEmail = extraData['email'] ?? '';
       _signupPassword = extraData['password'] ?? '';
       _signupPhone = extraData['phone'] ?? '';
-    }
-  }
-
-  Future<void> _preloadUserData() async {
-    try {
-      // Pre-fill from signup data
-      if (_signupEmail.isNotEmpty) {
-        emailController.text = _signupEmail;
-      } else {
-        // Try to get email from the provider
-        final currentEmail = ref.read(currentRecruiterUserEmailProvider);
-        if (currentEmail.isNotEmpty) {
-          emailController.text = currentEmail;
-        }
-      }
-      
-      if (_signupPhone.isNotEmpty) {
-        contactController.text = _signupPhone;
-      }
-    } catch (e) {
-      // Show error in snackbar instead of logging
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error pre-loading data: ${e.toString()}', 
-                style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
     }
   }
 
@@ -101,11 +75,13 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorScheme.surface, // Changed from AppColors.faintbackblue
+        backgroundColor:
+            colorScheme.surface, // Changed from AppColors.faintbackblue
         title: Text(
           "Recruiter information",
           style: textTheme.titleLarge?.copyWith(
-            color: colorScheme.onSurface, // Changed from colorScheme.primaryFixedDim
+            color: colorScheme
+                .onSurface, // Changed from colorScheme.primaryFixedDim
           ),
         ),
       ),
@@ -177,7 +153,8 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
                 SizedBox(height: height * 0.03),
 
                 // Loading indicator and submit button
-                if (isLoading)
+                if (isLoading ||
+                    _isImageUploading) // Show loading when either is happening
                   CircularProgressIndicator()
                 else
                   ElevatedButton(
@@ -186,8 +163,10 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
                         vertical: width * 0.03,
                         horizontal: height * 0.09,
                       ),
-                      backgroundColor: colorScheme.tertiary, // Changed from colorScheme.secondaryFixed
-                      foregroundColor: colorScheme.onTertiary, // Added foreground color
+                      backgroundColor: colorScheme
+                          .tertiary, // Changed from colorScheme.secondaryFixed
+                      foregroundColor:
+                          colorScheme.onTertiary, // Added foreground color
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -207,7 +186,11 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
     );
   }
 
-  Widget _buildImagePickerSection(double height, double width, ColorScheme colorScheme) {
+  Widget _buildImagePickerSection(
+    double height,
+    double width,
+    ColorScheme colorScheme,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: height * 0.02,
@@ -220,7 +203,8 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
             'Upload Photo *',
             style: TextStyle(
               fontSize: 11,
-              color: colorScheme.onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
+              color: colorScheme
+                  .onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
             ),
           ),
           SizedBox(height: height * 0.01),
@@ -231,7 +215,8 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
               color: colorScheme.surface, // Changed from AppColors.white
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+                color: colorScheme
+                    .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
               ),
             ),
             child: _selectedImage == null
@@ -241,7 +226,8 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
                       IconButton(
                         icon: Icon(
                           Icons.add_a_photo_outlined,
-                          color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
+                          color: colorScheme
+                              .onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
                         ),
                         onPressed: _showImageSourceDialog,
                       ),
@@ -249,7 +235,9 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
                         'Upload Photo',
                         style: TextStyle(
                           fontSize: 10,
-                          color: colorScheme.onSurfaceVariant.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+                          color: colorScheme.onSurfaceVariant.withOpacity(
+                            0.6,
+                          ), // Changed from AppColors.black.withValues(alpha: 0.6)
                         ),
                       ),
                     ],
@@ -259,10 +247,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
                       Positioned.fill(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.file(
-                            _selectedImage!,
-                            fit: BoxFit.cover,
-                          ),
+                          child: Image.file(_selectedImage!, fit: BoxFit.cover),
                         ),
                       ),
                       Positioned(
@@ -295,7 +280,8 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
                 'Selected: ${_selectedImage!.path.split('/').last}',
                 style: TextStyle(
                   fontSize: 10,
-                  color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey
+                  color: colorScheme
+                      .onSurfaceVariant, // Changed from AppColors.grey
                 ),
               ),
             ),
@@ -342,6 +328,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
       if (pickedFile != null) {
         setState(() {
           _selectedImage = File(pickedFile.path);
+          // Don't upload immediately, just store the file for later upload during submission
         });
       }
     } catch (e) {
@@ -349,8 +336,10 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error picking image: ${e.toString()}', 
-                style: TextStyle(color: Colors.white)),
+            content: Text(
+              'Error picking image: ${e.toString()}',
+              style: TextStyle(color: Colors.white),
+            ),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 3),
             behavior: SnackBarBehavior.floating,
@@ -372,11 +361,17 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
         // First, perform Firebase authentication
         final authNotifier = ref.read(authStateProvider.notifier);
         final user = await authNotifier.signUpWithEmailAndPassword(
-          email: _signupEmail.isNotEmpty ? _signupEmail : emailController.text.trim(),
-          password: _signupPassword.isNotEmpty ? _signupPassword : 'defaultPassword123', // Fallback password
-          phoneNumber: _signupPhone.isNotEmpty ? _signupPhone : contactController.text,
+          email: _signupEmail.isNotEmpty
+              ? _signupEmail
+              : emailController.text.trim(),
+          password: _signupPassword.isNotEmpty
+              ? _signupPassword
+              : 'defaultPassword123', // Fallback password
+          phoneNumber: _signupPhone.isNotEmpty
+              ? _signupPhone
+              : contactController.text,
         );
-        
+
         if (user == null) {
           // Authentication failed
           final error = ref.read(authStateProvider).error;
@@ -392,13 +387,57 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
           }
           return;
         }
-        
+
         // Update the current user provider with the authenticated user's email
-        ref.read(currentRecruiterUserEmailProvider.notifier).state = user.email ?? '';
-        
+        ref.read(currentRecruiterUserEmailProvider.notifier).state =
+            user.email ?? '';
+
         // Save user phone to local storage
-        await LocalStorageService().setUserPhone(_signupPhone.isNotEmpty ? _signupPhone : contactController.text);
-        
+        await LocalStorageService().setUserPhone(
+          _signupPhone.isNotEmpty ? _signupPhone : contactController.text,
+        );
+
+        // Upload image if selected (only during submission)
+        String photoUrl = '';
+        if (_selectedImage != null) {
+          setState(() {
+            _isImageUploading = true;
+          });
+
+          try {
+            final email = _signupEmail.isNotEmpty
+                ? _signupEmail
+                : emailController.text.trim();
+            if (email.isEmpty) {
+              throw Exception('Email is required to upload image');
+            }
+
+            final recruiterService = ref.read(firebaseRecruiterServiceProvider);
+            photoUrl = await recruiterService.uploadImage(
+              _selectedImage!,
+              email,
+            );
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Failed to upload image: ${e.toString()}',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Colors.red,
+                  duration: Duration(seconds: 3),
+                ),
+              );
+            }
+            // Continue with submission even if image upload fails
+          } finally {
+            setState(() {
+              _isImageUploading = false;
+            });
+          }
+        }
+
         // Create RecruiterModel object
         final recruiterInfo = RecruiterModel(
           id: 'REC_${DateTime.now().millisecondsSinceEpoch}',
@@ -408,18 +447,22 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
           companyName: companyController.text,
           designation: designationController.text,
           location: locationController.text,
-          photoUrl: photoController.text,
+          photoUrl: photoUrl, // Use the uploaded image URL or empty string
           createdAt: DateTime.now(),
         );
 
         // Save recruiter info
-        await ref.read(recruiterDataProvider.notifier).saveRecruiter(recruiterInfo);
+        await ref
+            .read(recruiterDataProvider.notifier)
+            .saveRecruiter(recruiterInfo);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('✅ Profile submitted successfully!',
-                  style: TextStyle(color: Colors.white)),
+              content: Text(
+                '✅ Profile submitted successfully!',
+                style: TextStyle(color: Colors.white),
+              ),
               backgroundColor: Colors.green,
               duration: Duration(seconds: 2),
               behavior: SnackBarBehavior.floating,
@@ -435,8 +478,10 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to submit profile: ${e.toString()}', 
-                  style: TextStyle(color: Colors.white)),
+              content: Text(
+                'Failed to submit profile: ${e.toString()}',
+                style: TextStyle(color: Colors.white),
+              ),
               backgroundColor: Colors.red,
               duration: Duration(seconds: 3),
               behavior: SnackBarBehavior.floating,
@@ -461,7 +506,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
   }) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    
+
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: height * 0.02,
@@ -473,43 +518,53 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
         keyboardType: isPhone
             ? TextInputType.phone
             : isEmail
-                ? TextInputType.emailAddress
-                : TextInputType.text,
+            ? TextInputType.emailAddress
+            : TextInputType.text,
         decoration: InputDecoration(
           labelText: isRequired ? '$hinttext *' : hinttext,
           labelStyle: TextStyle(
             fontSize: 11,
-            color: colorScheme.onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
+            color: colorScheme
+                .onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
           ),
           hintText: 'Enter $hinttext',
           hintStyle: TextStyle(
             fontSize: 12,
-            color: colorScheme.onSurfaceVariant.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+            color: colorScheme.onSurfaceVariant.withOpacity(
+              0.6,
+            ), // Changed from AppColors.black.withValues(alpha: 0.6)
           ),
           filled: true,
           fillColor: colorScheme.surface, // Changed from AppColors.white
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+              color: colorScheme
+                  .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+              color: colorScheme
+                  .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: colorScheme.primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
+              color: colorScheme
+                  .primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
             ),
           ),
-          prefixIcon: icon != null ? IconTheme.merge(
-            data: IconThemeData(color: colorScheme.onSurfaceVariant), // Changed from AppColors.grey.withValues(alpha: 0.7)
-            child: icon,
-          ) : null,
+          prefixIcon: icon != null
+              ? IconTheme.merge(
+                  data: IconThemeData(
+                    color: colorScheme.onSurfaceVariant,
+                  ), // Changed from AppColors.grey.withValues(alpha: 0.7)
+                  child: icon,
+                )
+              : null,
         ),
         validator: (value) {
           if (isRequired && (value == null || value.isEmpty)) {

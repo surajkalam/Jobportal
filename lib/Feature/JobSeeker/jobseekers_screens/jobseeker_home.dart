@@ -80,15 +80,15 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
         backgroundColor: colorScheme.surface,
         strokeWidth: 2.0,
         child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(), // Important for RefreshIndicator
+          physics: AlwaysScrollableScrollPhysics(),
           scrollDirection: Axis.vertical,
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [colorScheme.surface, colorScheme.surfaceVariant],
+                colors: [colorScheme.primary, colorScheme.surfaceContainerHighest],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                stops: [0.04, 0.3],
+                stops: [0.06, 0.4],
               ),
             ),
             child: Padding(
@@ -199,7 +199,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
             'Welcome back',
             style: TextStyle(
               fontSize: 15,
-              color: colorScheme.onSurface,
+              color: colorScheme.scrim,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -208,12 +208,12 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,
-              color: colorScheme.onSurface,
+              color: colorScheme.scrim,
             ),
           ),
           Text(
             'Let\'s get you hired for the job you deserve!',
-            style: TextStyle(fontSize: 10, color: colorScheme.onSurface),
+            style: TextStyle(fontSize: 10, color: colorScheme.scrim),
           ),
         ],
       ),
@@ -359,23 +359,25 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
 
   Widget _buildJobMatchHeader(ColorScheme colorScheme) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           'Job match with you',
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colorScheme.onSurface),
         ),
+        Spacer(),
         TextButton(
           onPressed: () {},
           child: Text(
             'See All',
             style: TextStyle(
-              fontSize: 11,
-              color: colorScheme.primary,
-              fontWeight: FontWeight.w400,
+              fontSize: 12,
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
+        Icon(Icons.arrow_drop_down,size: 18,color: colorScheme.onSurface,),
       ],
     );
   }
@@ -449,12 +451,12 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                   SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: _refreshData,
-                    child: Text('Refresh'),
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       backgroundColor: colorScheme.primary,
                       foregroundColor: colorScheme.onPrimary,
                     ),
+                    child: Text('Refresh'),
                   ),
                 ],
               ),
@@ -518,12 +520,12 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                 padding: EdgeInsets.all(10.0),
                 child: Column(
                   children: [
-                    Text('jobid :${job.id.toString()}',
-                      style: TextStyle(
-                        fontSize: 8,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
+                    // Text('jobid :${job.id.toString()}',
+                    //   style: TextStyle(
+                    //     fontSize: 8,
+                    //     color: colorScheme.onSurface,
+                    //   ),
+                    // ),
                     Row(
                       children: [
                         Padding(

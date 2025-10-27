@@ -15,6 +15,7 @@ class JobseekerModel {
   final String resumeFileName;
   final DateTime createdAt;
   final DateTime? updatedAt;
+   final String profileImageUrl; 
 
   JobseekerModel({
     this.id = '',
@@ -30,13 +31,24 @@ class JobseekerModel {
     this.resumeFileName = '',
     required this.createdAt,
     this.updatedAt,
+    this.profileImageUrl = '',
   });
    // Calculate age from dateOfBirth
   int get age {
     if (dateOfBirth.isEmpty) return 0;
     
     try {
-      final birthDate = DateTime.parse(dateOfBirth);
+      // Parse date in DD/MM/YYYY format
+      final parts = dateOfBirth.split('/');
+      if (parts.length != 3) return 0;
+      
+      final day = int.tryParse(parts[0]) ?? 0;
+      final month = int.tryParse(parts[1]) ?? 0;
+      final year = int.tryParse(parts[2]) ?? 0;
+      
+      if (day == 0 || month == 0 || year == 0) return 0;
+      
+      final birthDate = DateTime(year, month, day);
       final now = DateTime.now();
       int age = now.year - birthDate.year;
       
@@ -66,6 +78,7 @@ class JobseekerModel {
       'resumeFileName': resumeFileName,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
+       'profileImageUrl': profileImageUrl,
     };
   }
 
@@ -82,6 +95,7 @@ class JobseekerModel {
       dateOfBirth: map['dateOfBirth'] ?? '',
       resumeUrl: map['resumeUrl'] ?? '',
       resumeFileName: map['resumeFileName'] ?? '',
+        profileImageUrl: map['profileImageUrl'] ?? '',
       createdAt: map['createdAt'] != null 
           ? (map['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
@@ -105,6 +119,7 @@ class JobseekerModel {
     String? resumeFileName,
     DateTime? createdAt,
     DateTime? updatedAt,
+     String? profileImageUrl,
   }) {
     return JobseekerModel(
       id: id ?? this.id,
@@ -120,6 +135,7 @@ class JobseekerModel {
       resumeFileName: resumeFileName ?? this.resumeFileName,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
     );
   }
 }

@@ -321,14 +321,14 @@ class _ProfileInformationScreenState
                 icon: Icon(
                   hasResume ? Icons.visibility_outlined : Icons.upload,
                   size: 16,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurface,
                 ),
                 label: Text(
                   hasResume
                       // ? 'View ${jobseekerInfo.resumeFileName}'
                       ? 'View'
                       : 'Upload Resume',
-                  style: TextStyle(fontSize: 12, color: colorScheme.onPrimary),
+                  style: TextStyle(fontSize: 11, color: colorScheme.onSurface,  fontWeight: FontWeight.w700,),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colorScheme.surface,

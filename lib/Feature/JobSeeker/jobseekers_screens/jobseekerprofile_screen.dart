@@ -1,4 +1,6 @@
 // Updated JobseekerProfileScreen.dart
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +8,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/jobseekerprofile_information.dart';
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
-import 'package:jobapp/core/util/appcolors.dart';
 import 'package:jobapp/core/providers/theme_provider.dart';
 import 'package:jobapp/Authentication/auth_state.dart';
 
@@ -50,6 +51,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                 await ref.read(authStateProvider.notifier).signOut();
                 // Navigate to login screen
                 if (mounted) {
+                  // ignore: use_build_context_synchronously
                   context.go('/'); // Adjust route as needed
                 }
               },
@@ -60,24 +62,21 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
       },
     );
   }
-
   @override
   Widget build(BuildContext context) {
     final jobseekerState = ref.watch(jobseekerProvider);
     final jobseekerInfo = jobseekerState.jobseekerInfo;
     final themeMode = ref.watch(themeModeProvider);
     final colorScheme = Theme.of(context).colorScheme;
-
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [colorScheme.surfaceVariant, colorScheme.surface], // Changed from AppColors
+             colors: [colorScheme.primary, colorScheme.surfaceContainerHighest],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               stops: [0.04, 0.3],
@@ -138,146 +137,175 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
   }
 
   Widget buildheadercontainer(
-    double height,
-    double width,
-    JobseekerModel? jobseekerInfo,
-    ColorScheme colorScheme,
-  ) {
+  double height,
+  double width,
+  JobseekerModel? jobseekerInfo,
+  ColorScheme colorScheme,
+) {
+  // Handle null case first
+  if (jobseekerInfo == null) {
     return Container(
       height: height * 0.2,
       width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: colorScheme.outline), // Changed from AppColors.grey
+        border: Border.all(color: colorScheme.outline),
         gradient: LinearGradient(
-          colors: [colorScheme.primary.withValues(alpha: 0.6), colorScheme.primary], // Changed from AppColors
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          stops: [0.1, 0.6],
+          colors: [colorScheme.primary.withOpacity(0.04), colorScheme.primary.withOpacity(0.6)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: [0.06, 0.4],
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                  top: height * 0.024,
-                  left: width * 0.05,
-                  right: width * 0.06,
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface, // Changed from AppColors.white
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(color: colorScheme.primary), // Changed from AppColors.darkblue
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Image(
-                      image: NetworkImage(
-                        'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?cs=srgb&dl=pexels-chloe-1043471.jpg&fm=jpg',
-                      ),
-                      height: height * 0.063,
-                      width: width * 0.14,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(padding: EdgeInsets.only(top: height * 0.01)),
-                    Text(
-                      jobseekerInfo?.name.isNotEmpty == true
-                          ? jobseekerInfo!.name
-                          : 'Your Name',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: colorScheme.onPrimary, // Changed from AppColors.white
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: height * 0.008),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: width * 0.3,
-                          child: Text(
-                            jobseekerInfo?.jobDesignation.isNotEmpty == true
-                                ? jobseekerInfo!.jobDesignation
-                                : 'Designation',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              color: colorScheme.onPrimary, // Changed from AppColors.white
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        SizedBox(width: width * 0.04),
-                        SizedBox(
-                          width: width * 0.26,
-                          child: Column(
-                            children: [
-                              Text(
-                                jobseekerInfo?.location.isNotEmpty == true
-                                    ? jobseekerInfo!.location
-                                    : 'Location',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w400,
-                                  color: colorScheme.onPrimary, // Changed from AppColors.white
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: height * 0.03),
-          Divider(
-            height: height * 0.01,
-            color: colorScheme.onPrimary.withValues(alpha: 0.5), // Changed from AppColors.white
-          ),
-          Row(
-            children: [
-              buildemailheadercontainer(
-                height,
-                width,
-                jobseekerInfo?.email.isNotEmpty == true
-                    ? jobseekerInfo!.email
-                    : 'your@email.com',
-                colorScheme,
-              ),
-              buildemailheadercontainer(
-                height,
-                width,
-                jobseekerInfo?.contact.isNotEmpty == true
-                    ? jobseekerInfo!.contact
-                    : 'Contact Number',
-                colorScheme,
-              ),
-            ],
-          ),
-        ],
+      child: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }
 
+  return Container(
+    height: height * 0.2,
+    width: width,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: colorScheme.outline),
+      gradient: LinearGradient(
+        colors: [colorScheme.primary.withOpacity(0.04), colorScheme.primary.withOpacity(0.6)],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        stops: [0.06, 0.4],
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                top: height * 0.024,
+                left: width * 0.05,
+                right: width * 0.06,
+              ),
+              child: Container(
+                padding: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: colorScheme.surface,
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(color: colorScheme.primary),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: jobseekerInfo.profileImageUrl.isNotEmpty
+                      ? Image(
+                          image: NetworkImage(jobseekerInfo.profileImageUrl),
+                          height: height * 0.063,
+                          width: width * 0.14,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildProfilePlaceholder(height, width, colorScheme);
+                          },
+                        )
+                      : _buildProfilePlaceholder(height, width, colorScheme),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(padding: EdgeInsets.only(top: height * 0.01)),
+                  Text(
+                    jobseekerInfo.name.isNotEmpty ? jobseekerInfo.name : 'Your Name',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: colorScheme.onPrimary,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: height * 0.008),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: width * 0.3,
+                        child: Text(
+                          jobseekerInfo.jobDesignation.isNotEmpty ? jobseekerInfo.jobDesignation : 'Designation',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                            color: colorScheme.onPrimary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      SizedBox(width: width * 0.04),
+                      SizedBox(
+                        width: width * 0.26,
+                        child: Column(
+                          children: [
+                            Text(
+                              jobseekerInfo.location.isNotEmpty ? jobseekerInfo.location : 'Location',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                color: colorScheme.onPrimary,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: height * 0.03),
+        Divider(
+          height: height * 0.01,
+          color: colorScheme.onPrimary.withOpacity(0.5),
+        ),
+        Row(
+          children: [
+            buildemailheadercontainer(
+              height,
+              width,
+              jobseekerInfo.email.isNotEmpty ? jobseekerInfo.email : '',
+              colorScheme,
+            ),
+            buildemailheadercontainer(
+              height,
+              width,
+              jobseekerInfo.contact.isNotEmpty ? jobseekerInfo.contact : '',
+              colorScheme,
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+  
+  Widget _buildProfilePlaceholder(double height, double width, ColorScheme colorScheme) {
+  return Container(
+    height: height * 0.063,
+    width: width * 0.14,
+    decoration: BoxDecoration(
+      color: colorScheme.surfaceVariant,
+      shape: BoxShape.circle,
+    ),
+    child: Icon(
+      Icons.person,
+      size: height * 0.03,
+      color: colorScheme.onSurfaceVariant,
+    ),
+  );
+}
   Widget buildemailheadercontainer(double height, double width, String text, ColorScheme colorScheme) {
     return Padding(
       padding: EdgeInsets.only(top: height * 0.02, left: width * 0.02),
@@ -312,6 +340,26 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
     ThemeMode themeMode,
     ColorScheme colorScheme,
   ) {
+     if (jobseekerInfo == null) {
+    return Container(
+      height: height * 0.2,
+      width: width,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: colorScheme.outline),
+        gradient: LinearGradient(
+          // ignore: deprecated_member_use
+          colors: [colorScheme.primary.withOpacity(0.04), colorScheme.primary.withOpacity(0.6)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: [0.06, 0.4],
+        ),
+      ),
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
     return Container(
       height: height * 0.78,
       width: width,

@@ -104,11 +104,12 @@ class _OnboardingScreen1State extends State<OnboardingScreen1> {
             SizedBox(height: height * 0.05), // Replaced Spacer with SizedBox
             SizedBox(
               width: width-30,
-              height: height * 0.056,
+              height: height * 0.062,
               child: ElevatedButton(
                 onPressed: () async {
                   // Mark onboarding as completed
                   await LocalStorageService().setOnboardingCompleted(true);
+                  // ignore: use_build_context_synchronously
                   context.push('/on-board2');
                 },
                 style: ElevatedButton.styleFrom(
@@ -117,13 +118,13 @@ class _OnboardingScreen1State extends State<OnboardingScreen1> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  elevation: 0,
+                  elevation: 1,
                 ),
-                child: const Text(
+                child: Text(
                   'Next',
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),

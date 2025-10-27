@@ -1,16 +1,15 @@
 // routes/app_router.dart
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:jobapp/Authentication/Signupscreen.dart';
-import 'package:jobapp/Authentication/auth_state.dart';
 import 'package:jobapp/Authentication/checkloginsignup.dart';
 import 'package:jobapp/Authentication/loginscreen.dart';
-import 'package:jobapp/Authentication/provider.dart';
 import 'package:jobapp/Feature/JobSeeker/widget/jobseeker_navbar.dart';
 import 'package:jobapp/Feature/Recuiter/Widget/recuiternavbar.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
-
 import '../../onboarding_screen/onboarding_screen.dart';
 import '../JobSeeker/jobseekers_screens/jobseekers_screens.dart';
 import '../Recuiter/screens/screens.dart';
@@ -88,10 +87,6 @@ class JobPortalAppRouter {
         path: '/job-nav',
         builder: (context, state) => JobseekerNavbar(),
       ),
-      GoRoute(
-        path: '/jobseeker-info',
-        builder: (context, state) => JobseekerInfo(),
-      ),
 
       //Recuiter router
 
@@ -110,10 +105,6 @@ class JobPortalAppRouter {
           }
           return JobDetailsScreen(job: job);
         },
-      ),
-      GoRoute(
-        path: '/recuiter-info',
-        builder: (context, state) => RecuiterInfo(),
       ),
       GoRoute(
         path: '/uploaddetail-job',

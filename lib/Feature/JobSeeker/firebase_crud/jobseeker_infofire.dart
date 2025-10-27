@@ -1,6 +1,6 @@
 // jobseeker_firebase_service.dart
+import 'dart:developer';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
@@ -25,6 +25,7 @@ class JobseekerFirebaseService {
     try {
       final doc = await _firestore.collection('jobseekers').doc(email).get();
       if (doc.exists) {
+        log('Jobseeker info found: ${doc.data()}');
         return JobseekerModel.fromMap(doc.id, doc.data()!);
       }
       return null;
@@ -164,4 +165,55 @@ class JobseekerFirebaseService {
         return 'application/octet-stream';
     }
   }
+
+  // upload profile image
+Future<String> uploadProfileImage(File imageFile, String email) async {
+  try {
+    if (!await imageFile.exists()) {
+      throw Exception('Image file does not exist');
+    }
+
+    // Check file size (max 2MB for images)
+    final fileLength = await imageFile.length();
+    if (fileLength > 2 * 1024 * 1024) {
+      throw Exception('Image file is too large. Maximum size is 2MB');
+    }
+
+    // Get file extension and validate
+    final fileExtension = imageFile.path.split('.').last.toLowerCase();
+    if (!['jpg', 'jpeg', 'png', 'gif'].contains(fileExtension)) {
+      throw Exception('Invalid image type. Only JPG, JPEG, PNG, GIF are allowed');
+    }
+
+    String fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+    Reference storageRef = _storage.ref().child('jobseeker_images/$email/$fileName');
+    
+    final metadata = SettableMetadata(
+      contentType: _getImageMimeType(fileExtension),
+      customMetadata: {'uploaded-by': email},
+    );
+
+    UploadTask uploadTask = storageRef.putFile(imageFile, metadata);
+    TaskSnapshot snapshot = await uploadTask;
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
+  } catch (e) {
+    throw Exception('Failed to upload profile image: $e');
+  }
+}
+
+// Helper method for image MIME types
+String _getImageMimeType(String extension) {
+  switch (extension.toLowerCase()) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'gif':
+      return 'image/gif';
+    default:
+      return 'image/jpeg';
+  }
+}
 }

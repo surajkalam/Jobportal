@@ -9,6 +9,7 @@ import 'package:jobapp/Feature/JobSeeker/provider/application_provider.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 import 'package:jobapp/core/util/appcolors.dart';
+import 'package:share_plus/share_plus.dart';
 
 final selectedTabProvider = StateProvider<String>((ref) => 'description');
 
@@ -24,24 +25,12 @@ class JobDetailsScreen extends ConsumerWidget {
     final jobseekerState = ref.watch(jobseekerProvider);
     final jobseekerInfo = jobseekerState.jobseekerInfo;
     log('Jobseeker Info: $jobseekerInfo');
-   if(jobseekerInfo !=null){
-    log(jobseekerInfo.name);
-    log(jobseekerInfo.email);
-    log(jobseekerInfo.contact);
-    log(job.id);
-   }
-    // log('Job Data:');
-    // log('Company: ${job.companyName}');
-    // log('Designation: ${job.designation}');
-    // log('Location: ${job.location}');
-    // log('CTC: ${job.ctc}');
-    // log('Experience: ${job.experience}');
-    // log('Age Range: ${job.ageRange}');
-    // log('Benefits: ${job.benefits}');
-    // log('Description: ${job.application}');
-    // log('Requirements: ${job.requirements}');
-    // log('Urgent Hiring: ${job.isUrgentHiring}');
-    // log('Created At: ${job.createdAt}');
+  //  if(jobseekerInfo !=null){
+    // log(jobseekerInfo.name);
+    // log(jobseekerInfo.email);
+    // log(jobseekerInfo.contact);
+    // log(job.id);
+  //  }
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -76,7 +65,17 @@ class JobDetailsScreen extends ConsumerWidget {
                     color: AppColors.black,
                     size: 18,
                   ),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    try {
+                      _shareJobDetails(job);
+                    } catch (e) {
+                      log('Share error: $e');
+                      // Show error message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to share')),
+                      );
+                    }
+                  },
                 ),
               ),
             ),
@@ -127,6 +126,52 @@ class JobDetailsScreen extends ConsumerWidget {
       ),
     );
   }
+  void _shareJobDetails(JobModel job) {
+  // Build requirements list
+  final requirements = job.requirements.isNotEmpty 
+      ? job.requirements.split(',').map((req) => '• ${req.trim()}').join('\n')
+      : '• Good communication skills\n• Relevant experience\n• Positive attitude';
+
+  // Build benefits list
+  final benefits = job.benefits.isNotEmpty 
+      ? job.benefits.split('.').map((benefit) => '• ${benefit.trim()}').join('\n')
+      : '• Competitive salary\n• Growth opportunities\n• Friendly work environment';
+
+  final shareText = '''
+🌟 *JOB OPPORTUNITY ALERT* 🌟
+
+*Position:* ${job.designation.isNotEmpty ? job.designation : 'Multiple Positions'}
+*Company:* ${job.companyName.isNotEmpty ? job.companyName : 'Reputed Company'}
+*Location:* ${job.location.isNotEmpty ? job.location : 'Multiple Locations'}
+
+*Job Details:*
+💼 Type: ${job.jobType.isNotEmpty ? job.jobType : 'Full-time'}
+💰 Package: ${job.ctc.isNotEmpty ? job.ctc : 'Competitive Salary'}
+🎯 Experience: ${job.experience.isNotEmpty ? job.experience : '0-5 years'}
+👥 Age: ${job.ageRange.isNotEmpty ? job.ageRange : '18-35 years'}
+
+*Job Description:*
+${job.application.isNotEmpty ? job.application : 'Exciting opportunity with growth potential in a dynamic environment.'}
+
+*Requirements:*
+$requirements
+
+*Benefits:*
+$benefits
+
+${job.isUrgentHiring ? '🚨 *URGENT HIRING - IMMEDIATE JOINING* 🚨' : ''}
+
+Interested candidates can apply now!
+📧 Share with someone who might be interested!
+
+#JobOpportunity #Hiring #CareerGrowth
+  ''';
+
+  Share.share(
+    shareText,
+    subject: 'Job: ${job.designation} at ${job.companyName}',
+  );
+}
 
   Widget _buildCompanyHeader(double height, double width, JobModel job) {
     return Container(

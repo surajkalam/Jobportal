@@ -10,20 +10,31 @@ class AppliedJobsScreen extends ConsumerWidget {
   const AppliedJobsScreen({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+   ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text('My Applications'),
         backgroundColor: AppColors.faintbackblue,
         elevation: 0,
       ),
-      body: Column(
-        children: [
-          // Statistics Section
-          _buildStatisticsSection(ref),
-          SizedBox(height: 16),
-          // Applications List
-          Expanded(child: _buildApplicationsList(ref)),
-        ],
+      body: Container(
+        decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [colorScheme.primary, colorScheme.surfaceContainerHighest],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+               stops: [0.06, 0.4],
+              ),
+            ),
+        child: Column(
+          children: [
+            // Statistics Section
+            _buildStatisticsSection(ref),
+            SizedBox(height: 16),
+            // Applications List
+            Expanded(child: _buildApplicationsList(ref)),
+          ],
+        ),
       ),
     );
   }

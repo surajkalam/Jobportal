@@ -8,11 +8,12 @@ import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
 import 'package:jobapp/core/services/local_storage_service.dart';
 import 'package:jobapp/Authentication/auth_state.dart';
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
-import 'package:jobapp/core/util/appcolors.dart';
 import 'package:file_picker/file_picker.dart';
 
 class JobseekerInfo extends ConsumerStatefulWidget {
-  const JobseekerInfo({super.key});
+  final String email;
+  final String phone;
+  const JobseekerInfo({super.key, required this.email, required this.phone});
 
   @override
   ConsumerState<JobseekerInfo> createState() => _JobseekerInfoState();
@@ -20,10 +21,11 @@ class JobseekerInfo extends ConsumerStatefulWidget {
 
 class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController qualificationController = TextEditingController();
-  final TextEditingController jobdesignationController = TextEditingController();
+  final TextEditingController jobdesignationController =
+      TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController experienceController = TextEditingController();
   final TextEditingController dateOfBirthController = TextEditingController();
@@ -31,7 +33,10 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
 
   File? _selectedResume;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  
+  File? _selectedImage;
+  final String _profileImageUrl = '';
+  bool _isImageUploading = false;
+
   // Store signup data passed from previous screen
   String _signupEmail = '';
   String _signupPassword = '';
@@ -40,50 +45,32 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
   @override
   void initState() {
     super.initState();
+    // Pre-fill email and phone passed from constructor
+    emailController.text = widget.email;
+    contactController.text = widget.phone;
     // Pre-fill email and phone from local storage
     _loadSignupData();
-    _preloadUserData();
   }
 
   Future<void> _loadSignupData() async {
     // Get signup data passed from the previous screen
-    final extraData = GoRouterState.of(context).extra as Map<String, dynamic>?;
-    if (extraData != null) {
-      _signupEmail = extraData['email'] ?? '';
-      _signupPassword = extraData['password'] ?? '';
-      _signupPhone = extraData['phone'] ?? '';
-    }
-  }
-
-  Future<void> _preloadUserData() async {
     try {
-      // Pre-fill from signup data
-      if (_signupEmail.isNotEmpty) {
-        emailController.text = _signupEmail;
+      // Get signup data passed from the previous screen
+      final extraData =
+          GoRouterState.of(context).extra as Map<String, dynamic>?;
+      if (extraData != null) {
+        _signupEmail = extraData['email']?.toString() ?? '';
+        _signupPassword = extraData['password']?.toString() ?? '';
+        _signupPhone = extraData['phone']?.toString() ?? '';
+        debugPrint("🎯 Loaded signup data:");
+        debugPrint("   Email: $_signupEmail");
+        debugPrint("   Phone: $_signupPhone");
+        debugPrint("   Has Password: ${_signupPassword.isNotEmpty}");
       } else {
-        // Try to get email from the provider
-        final currentEmail = ref.read(currentUserProvider);
-        if (currentEmail.isNotEmpty) {
-          emailController.text = currentEmail;
-        }
-      }
-      
-      if (_signupPhone.isNotEmpty) {
-        contactController.text = _signupPhone;
+        debugPrint("ℹ️ No extra data found in route");
       }
     } catch (e) {
-      // Show error in snackbar instead of logging
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error pre-loading data: ${e.toString()}', 
-                style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      debugPrint("❌ Error in _loadSignupData: $e");
     }
   }
 
@@ -94,14 +81,16 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
     var height = MediaQuery.of(context).size.height;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-
+    //  debugPrint("🔄 Build method - Email: ${emailController.text}, Phone: ${contactController.text}");
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorScheme.surface, // Changed from AppColors.faintbackblue
+        backgroundColor:
+            colorScheme.surface, // Changed from AppColors.faintbackblue
         title: Text(
           "Jobseeker information",
           style: textTheme.titleLarge?.copyWith(
-            color: colorScheme.onSurface, // Changed from colorScheme.primaryFixedDim
+            color: colorScheme
+                .onSurface, // Changed from colorScheme.primaryFixedDim
           ),
         ),
       ),
@@ -116,6 +105,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
             scrollDirection: Axis.vertical,
             child: Column(
               children: [
+                _buildProfileImageSection(height, width, colorScheme),
                 textformfield(
                   height,
                   width,
@@ -191,8 +181,10 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                       vertical: width * 0.03,
                       horizontal: height * 0.09,
                     ),
-                    backgroundColor: colorScheme.tertiary, // Changed from colorScheme.secondaryFixed
-                    foregroundColor: colorScheme.onTertiary, // Added foreground color
+                    backgroundColor: colorScheme
+                        .tertiary, // Changed from colorScheme.secondaryFixed
+                    foregroundColor:
+                        colorScheme.onTertiary, // Added foreground color
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -209,7 +201,92 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
     );
   }
 
-  Widget _buildResumePickerSection(double height, double width, ColorScheme colorScheme) {
+  Widget _buildProfileImageSection(
+    double height,
+    double width,
+    ColorScheme colorScheme,
+  ) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: height * 0.02),
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                width: width * 0.25,
+                height: width * 0.25,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: colorScheme.outline, width: 2),
+                ),
+                child: _isImageUploading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: colorScheme.primary,
+                        ),
+                      )
+                    : _profileImageUrl.isNotEmpty
+                    ? CircleAvatar(
+                        backgroundImage: NetworkImage(_profileImageUrl),
+                        radius: width * 0.12,
+                      )
+                    : _selectedImage != null
+                    ? CircleAvatar(
+                        backgroundImage: FileImage(_selectedImage!),
+                        radius: width * 0.12,
+                      )
+                    : CircleAvatar(
+                        backgroundColor: colorScheme.surfaceContainerHighest,
+                        child: Icon(
+                          Icons.person,
+                          size: width * 0.1,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  width: width * 0.08,
+                  height: width * 0.08,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: colorScheme.surface, width: 2),
+                  ),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    icon: Icon(
+                      Icons.camera_alt,
+                      size: width * 0.04,
+                      color: colorScheme.onPrimary,
+                    ),
+                    onPressed: _isImageUploading ? null : _pickProfileImage,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: height * 0.01),
+          Text(
+            _isImageUploading
+                ? 'Uploading image...'
+                : _profileImageUrl.isNotEmpty
+                ? 'Profile image uploaded ✅'
+                : 'Add Profile Photo',
+            style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResumePickerSection(
+    double height,
+    double width,
+    ColorScheme colorScheme,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: height * 0.02,
@@ -222,7 +299,8 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
             'Upload Resume *',
             style: TextStyle(
               fontSize: 11,
-              color: colorScheme.onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
+              color: colorScheme
+                  .onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
             ),
           ),
           SizedBox(height: height * 0.01),
@@ -233,7 +311,8 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
               color: colorScheme.surface, // Changed from AppColors.white
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+                color: colorScheme
+                    .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
               ),
             ),
             child: _selectedResume == null
@@ -243,7 +322,8 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                       IconButton(
                         icon: Icon(
                           Icons.upload_file_outlined,
-                          color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
+                          color: colorScheme
+                              .onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
                         ),
                         onPressed: _pickResume,
                       ),
@@ -251,7 +331,9 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                         'Upload Resume',
                         style: TextStyle(
                           fontSize: 12,
-                          color: colorScheme.onSurfaceVariant.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+                          color: colorScheme.onSurfaceVariant.withOpacity(
+                            0.6,
+                          ), // Changed from AppColors.black.withValues(alpha: 0.6)
                         ),
                       ),
                     ],
@@ -265,7 +347,8 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                             _selectedResume!.path.split('/').last,
                             style: TextStyle(
                               fontSize: 12,
-                              color: colorScheme.onSurface, // Changed from AppColors.black
+                              color: colorScheme
+                                  .onSurface, // Changed from AppColors.black
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -275,7 +358,8 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                         icon: Icon(
                           Icons.close,
                           size: 20,
-                          color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey
+                          color: colorScheme
+                              .onSurfaceVariant, // Changed from AppColors.grey
                         ),
                         onPressed: _clearResume,
                       ),
@@ -289,7 +373,8 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                 'Size: ${getFileSize(_selectedResume!)}',
                 style: TextStyle(
                   fontSize: 10,
-                  color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey
+                  color: colorScheme
+                      .onSurfaceVariant, // Changed from AppColors.grey
                 ),
               ),
             ),
@@ -316,8 +401,10 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error picking resume: ${e.toString()}', 
-                style: TextStyle(color: Colors.white)),
+            content: Text(
+              'Error picking resume: ${e.toString()}',
+              style: TextStyle(color: Colors.white),
+            ),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 3),
             behavior: SnackBarBehavior.floating,
@@ -348,11 +435,17 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
         // First, perform Firebase authentication
         final authNotifier = ref.read(authStateProvider.notifier);
         final user = await authNotifier.signUpWithEmailAndPassword(
-          email: _signupEmail.isNotEmpty ? _signupEmail : emailController.text.trim(),
-          password: _signupPassword.isNotEmpty ? _signupPassword : 'defaultPassword123', // Fallback password
-          phoneNumber: _signupPhone.isNotEmpty ? _signupPhone : contactController.text,
+          email: _signupEmail.isNotEmpty
+              ? _signupEmail
+              : emailController.text.trim(),
+          password: _signupPassword.isNotEmpty
+              ? _signupPassword
+              : 'defaultPassword123', // Fallback password
+          phoneNumber: _signupPhone.isNotEmpty
+              ? _signupPhone
+              : contactController.text,
         );
-        
+
         if (user == null) {
           // Authentication failed
           final error = ref.read(authStateProvider).error;
@@ -368,13 +461,56 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           }
           return;
         }
-        
+
         // Update the current user provider with the authenticated user's email
         ref.read(currentUserProvider.notifier).state = user.email ?? '';
-        
+
         // Save user phone to local storage
-        await LocalStorageService().setUserPhone(_signupPhone.isNotEmpty ? _signupPhone : contactController.text);
-        
+        await LocalStorageService().setUserPhone(
+          _signupPhone.isNotEmpty ? _signupPhone : contactController.text,
+        );
+
+        // Upload profile image if selected (only during submission)
+        String profileImageUrl = '';
+        if (_selectedImage != null) {
+          setState(() {
+            _isImageUploading = true;
+          });
+
+          try {
+            final email = _signupEmail.isNotEmpty
+                ? _signupEmail
+                : emailController.text.trim();
+            if (email.isEmpty) {
+              throw Exception('Email is required to upload image');
+            }
+
+            final jobseekerService = ref.read(jobseekerFirebaseServiceProvider);
+            profileImageUrl = await jobseekerService.uploadProfileImage(
+              _selectedImage!,
+              email,
+            );
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Failed to upload profile image: ${e.toString()}',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Colors.red,
+                  duration: Duration(seconds: 3),
+                ),
+              );
+            }
+            // Continue with submission even if image upload fails
+          } finally {
+            setState(() {
+              _isImageUploading = false;
+            });
+          }
+        }
+
         // Create JobseekerModel object
         final jobseekerInfo = JobseekerModel(
           id: 'PRO_${DateTime.now().millisecondsSinceEpoch}',
@@ -386,12 +522,16 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           location: locationController.text,
           experience: experienceController.text,
           dateOfBirth: dateOfBirthController.text,
+          profileImageUrl:
+              profileImageUrl, // Use the uploaded image URL or empty string
           resumeUrl: resumeController.text,
           createdAt: DateTime.now(),
         );
 
         // Save jobseeker info
-        await ref.read(jobseekerProvider.notifier).saveJobseekerInfo(jobseekerInfo);
+        await ref
+            .read(jobseekerProvider.notifier)
+            .saveJobseekerInfo(jobseekerInfo);
 
         if (mounted) {
           _showSnackBar(
@@ -416,7 +556,36 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
       }
     }
   }
-  
+
+  Future<void> _pickProfileImage() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        setState(() {
+          _selectedImage = File(result.files.single.path!);
+          // Don't upload immediately, just store the file for later upload during submission
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error picking image: ${e.toString()}',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
   void _showSnackBar({
     required BuildContext context,
     required String text,
@@ -425,13 +594,15 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(text, style: TextStyle(color: textColor)),
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface, // Changed from Colors.white
+        backgroundColor: Theme.of(
+          context,
+        ).colorScheme.inverseSurface, // Changed from Colors.white
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
     );
   }
-  
+
   // Helper function to format file size
   String getFileSize(File file) {
     final bytes = file.lengthSync();
@@ -443,7 +614,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
       return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
     }
   }
-  
+
   // Helper function to create text form fields
   Widget textformfield(
     double height,
@@ -459,7 +630,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
   }) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    
+
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: height * 0.02,
@@ -468,6 +639,10 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
       child: TextFormField(
         controller: controller,
         maxLines: maxline,
+        readOnly: isDate, // Make field read-only for date selection
+        onTap: isDate
+            ? () => _selectDate(context, controller) // Open date picker on tap
+            : null,
         keyboardType: isPhone
             ? TextInputType.phone
             : isEmail
@@ -477,37 +652,47 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           labelText: isRequired ? '$hinttext *' : hinttext,
           labelStyle: TextStyle(
             fontSize: 11,
-            color: colorScheme.onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
+            color: colorScheme
+                .onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
           ),
           hintText: 'Enter $hinttext',
           hintStyle: TextStyle(
             fontSize: 12,
-            color: colorScheme.onSurfaceVariant.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+            color: colorScheme.onSurfaceVariant.withOpacity(
+              0.6,
+            ), // Changed from AppColors.black.withValues(alpha: 0.6)
           ),
           filled: true,
           fillColor: colorScheme.surface, // Changed from AppColors.white
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+              color: colorScheme
+                  .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+              color: colorScheme
+                  .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: colorScheme.primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
+              color: colorScheme
+                  .primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
             ),
           ),
-          prefixIcon: icon != null ? IconTheme.merge(
-            data: IconThemeData(color: colorScheme.onSurfaceVariant), // Changed from AppColors.grey.withValues(alpha: 0.7)
-            child: icon,
-          ) : null,
+          prefixIcon: icon != null
+              ? IconTheme.merge(
+                  data: IconThemeData(
+                    color: colorScheme.onSurfaceVariant,
+                  ), // Changed from AppColors.grey.withValues(alpha: 0.7)
+                  child: icon,
+                )
+              : null,
         ),
         validator: (value) {
           if (isRequired && (value == null || value.isEmpty)) {
@@ -534,7 +719,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
             final day = int.tryParse(parts[0]) ?? 0;
             final month = int.tryParse(parts[1]) ?? 0;
             final year = int.tryParse(parts[2]) ?? 0;
-            
+
             if (day < 1 || day > 31) {
               return 'Please enter a valid day (1-31)';
             }
@@ -549,5 +734,40 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
         },
       ),
     );
+  }
+
+  // Date picker function
+  Future<void> _selectDate(
+      BuildContext context, TextEditingController controller) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: Theme.of(context).colorScheme.primary,
+                  onPrimary: Theme.of(context).colorScheme.onPrimary,
+                  surface: Theme.of(context).colorScheme.surface,
+                  onSurface: Theme.of(context).colorScheme.onSurface,
+                ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      final formattedDate =
+          "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      controller.text = formattedDate;
+    }
   }
 }

@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobapp/Authentication/provider.dart';
 import 'package:jobapp/Authentication/auth_state.dart';
+import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/jobseeker_info.dart';
+import 'package:jobapp/Feature/Recuiter/screens/screens.dart';
 import 'package:lottie/lottie.dart';
 import 'package:jobapp/core/services/local_storage_service.dart';
 
@@ -18,11 +20,14 @@ class SignupScreen extends ConsumerStatefulWidget {
 
 class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailOrMobileController = TextEditingController();
+  final TextEditingController _emailOrMobileController =
+      TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final LocalStorageService _localStorage = LocalStorageService(); // Added local storage service
+  final LocalStorageService _localStorage =
+      LocalStorageService(); // Added local storage service
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -50,19 +55,35 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (userType == UserType.jobseeker) {
-        // Pass email, password, and phone to jobseeker info screen
-        context.push('/jobseeker-info', extra: {
-          'email': _emailOrMobileController.text.trim(),
-          'password': _passwordController.text,
-          'phone': _phoneController.text,
-        });
+        // Pass email, password, and phone to jobseeker info screen using Navigator
+        // Navigator.of(context).pushNamed('/jobseeker-info', arguments: {
+        //   'email': _emailOrMobileController.text.trim(),
+        //   'phone': _phoneController.text,
+        //   'password': _passwordController.text,
+        // });
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => JobseekerInfo(
+              email: _emailOrMobileController.text.trim(),
+              phone: _phoneController.text,
+            ),
+          ),
+        );
       } else {
-        // Pass email, password, and phone to recruiter info screen
-        context.push('/recuiter-info', extra: {
-          'email': _emailOrMobileController.text.trim(),
-          'password': _passwordController.text,
-          'phone': _phoneController.text,
-        });
+        // Pass email, password, and phone to recruiter info screen using Navigator
+        // Navigator.of(context).pushNamed('/recuiter-info', arguments: {
+        //   'email': _emailOrMobileController.text.trim(),
+        //   'password': _passwordController.text,
+        //   'phone': _phoneController.text,
+        // });
+         Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => RecuiterInfo(
+              email: _emailOrMobileController.text.trim(),
+              phone: _phoneController.text,
+            ),
+          ),
+        );
       }
     });
   }
@@ -117,16 +138,18 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     // Instead of calling Firebase auth here, just navigate to the info screens
     // with the email, password, and phone data
     _navigateBasedOnUserType();
-    
+
     // Save user type to local storage
     final userType = ref.read(selectionProvider);
     await _localStorage.setUserType(userType.name); // Using instance directly
-    
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('✅ Please complete your profile information',
-              style: TextStyle(color: Colors.white)),
+          content: Text(
+            '✅ Please complete your profile information',
+            style: TextStyle(color: Colors.white),
+          ),
           backgroundColor: Colors.green,
           duration: Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
@@ -143,7 +166,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(text, style: TextStyle(color: textColor)),
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface, // Changed from Colors.white
+        backgroundColor: Theme.of(
+          context,
+        ).colorScheme.inverseSurface, // Changed from Colors.white
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
@@ -159,7 +184,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    
+
     return Scaffold(
       backgroundColor: colorScheme.surface, // Changed from AppColors.white
       body: SafeArea(
@@ -182,14 +207,17 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           vertical: height * 0.005,
                         ),
                         decoration: BoxDecoration(
-                          color: colorScheme.primary.withValues(alpha: 0.1), // Changed from colorScheme.primary.withValues(alpha: 0.1)
+                          color: colorScheme.primary.withValues(
+                            alpha: 0.1,
+                          ), // Changed from colorScheme.primary.withValues(alpha: 0.1)
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           userType.name.toUpperCase(),
                           style: GoogleFonts.poppins(
                             fontSize: width * 0.03,
-                            color: colorScheme.primary, // Changed from colorScheme.primary
+                            color: colorScheme
+                                .primary, // Changed from colorScheme.primary
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -211,7 +239,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: width * 0.06,
                     fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface, // Changed from AppColors.black
+                    color:
+                        colorScheme.onSurface, // Changed from AppColors.black
                   ),
                 ),
                 SizedBox(height: height * 0.01),
@@ -219,7 +248,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   "Sign up to get started",
                   style: GoogleFonts.poppins(
                     fontSize: width * 0.035,
-                    color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey
+                    color: colorScheme
+                        .onSurfaceVariant, // Changed from AppColors.grey
                   ),
                 ),
                 SizedBox(height: height * 0.04),
@@ -229,42 +259,52 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   controller: _emailOrMobileController,
                   keyboardType: TextInputType.emailAddress,
                   showCursor: true,
-                  cursorColor: colorScheme.onSurface.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+                  cursorColor: colorScheme.onSurface.withOpacity(
+                    0.6,
+                  ), // Changed from AppColors.black.withValues(alpha: 0.6)
                   cursorHeight: 15,
                   decoration: InputDecoration(
                     labelText: "E-mail",
                     labelStyle: textTheme.bodySmall?.copyWith(
                       fontSize: 11,
-                      color: colorScheme.onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
+                      color: colorScheme
+                          .onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),
                     hintText: "Enter your email",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.onSurfaceVariant.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+                      color: colorScheme.onSurfaceVariant.withOpacity(
+                        0.6,
+                      ), // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),
                     filled: true,
-                    fillColor: colorScheme.surface, // Changed from AppColors.white
+                    fillColor:
+                        colorScheme.surface, // Changed from AppColors.white
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+                        color: colorScheme
+                            .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+                        color: colorScheme
+                            .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: colorScheme.primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
+                        color: colorScheme
+                            .primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
                       ),
                     ),
                     prefixIcon: Icon(
                       Icons.email,
-                      color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
+                      color: colorScheme
+                          .onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
                     ),
                   ),
                   validator: (value) {
@@ -284,42 +324,52 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   keyboardType: TextInputType.phone,
                   maxLength: 10,
                   showCursor: true,
-                  cursorColor: colorScheme.onSurface.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+                  cursorColor: colorScheme.onSurface.withOpacity(
+                    0.6,
+                  ), // Changed from AppColors.black.withValues(alpha: 0.6)
                   cursorHeight: 15,
                   decoration: InputDecoration(
                     labelText: "Mobile Number",
                     labelStyle: textTheme.bodySmall?.copyWith(
                       fontSize: 11,
-                      color: colorScheme.onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
+                      color: colorScheme
+                          .onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),
                     hintText: "Enter your mobile number",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.onSurfaceVariant.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+                      color: colorScheme.onSurfaceVariant.withOpacity(
+                        0.6,
+                      ), // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),
                     filled: true,
-                    fillColor: colorScheme.surface, // Changed from AppColors.white
+                    fillColor:
+                        colorScheme.surface, // Changed from AppColors.white
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+                        color: colorScheme
+                            .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+                        color: colorScheme
+                            .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: colorScheme.primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
+                        color: colorScheme
+                            .primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
                       ),
                     ),
                     prefixIcon: Icon(
                       Icons.phone,
-                      color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
+                      color: colorScheme
+                          .onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
                     ),
                     counterText: "",
                   ),
@@ -343,43 +393,52 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     labelText: "Password",
                     labelStyle: textTheme.bodySmall?.copyWith(
                       fontSize: 11,
-                      color: colorScheme.onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
+                      color: colorScheme
+                          .onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),
                     hintText: "Enter your password",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.onSurfaceVariant.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+                      color: colorScheme.onSurfaceVariant.withOpacity(
+                        0.6,
+                      ), // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),
                     filled: true,
-                    fillColor: colorScheme.surface, // Changed from AppColors.white
+                    fillColor:
+                        colorScheme.surface, // Changed from AppColors.white
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+                        color: colorScheme
+                            .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+                        color: colorScheme
+                            .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: colorScheme.primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
+                        color: colorScheme
+                            .primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
                       ),
                     ),
                     prefixIcon: Icon(
                       Icons.lock,
-                      color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
+                      color: colorScheme
+                          .onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
+                        color: colorScheme
+                            .onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
                       ),
                       onPressed: () {
                         setState(() {
@@ -408,43 +467,52 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     labelText: "Confirm password",
                     labelStyle: textTheme.bodySmall?.copyWith(
                       fontSize: 11,
-                      color: colorScheme.onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
+                      color: colorScheme
+                          .onSurfaceVariant, // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),
                     hintText: "Confirm your password",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.onSurfaceVariant.withOpacity(0.6), // Changed from AppColors.black.withValues(alpha: 0.6)
+                      color: colorScheme.onSurfaceVariant.withOpacity(
+                        0.6,
+                      ), // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),
                     filled: true,
-                    fillColor: colorScheme.surface, // Changed from AppColors.white
+                    fillColor:
+                        colorScheme.surface, // Changed from AppColors.white
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+                        color: colorScheme
+                            .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: colorScheme.outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
+                        color: colorScheme
+                            .outline, // Changed from AppColors.grey.withValues(alpha: 0.5)
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: colorScheme.primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
+                        color: colorScheme
+                            .primary, // Changed from AppColors.grey.withValues(alpha: 0.8)
                       ),
                     ),
                     prefixIcon: Icon(
                       Icons.lock,
-                      color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
+                      color: colorScheme
+                          .onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscureConfirmPassword
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
+                        color: colorScheme
+                            .onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
                       ),
                       onPressed: () {
                         setState(() {
@@ -475,8 +543,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       backgroundColor: authState.isLoading
                           ? Colors.grey
-                          : colorScheme.tertiary, // Changed from colorScheme.secondaryFixed
-                      foregroundColor: colorScheme.onTertiary, // Added foreground color
+                          : colorScheme
+                                .tertiary, // Changed from colorScheme.secondaryFixed
+                      foregroundColor:
+                          colorScheme.onTertiary, // Added foreground color
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -497,7 +567,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             style: GoogleFonts.poppins(
                               fontSize: width * 0.03,
                               fontWeight: FontWeight.w600,
-                              color: colorScheme.onTertiary, // Changed from colorScheme.onPrimary
+                              color: colorScheme
+                                  .onTertiary, // Changed from colorScheme.onPrimary
                             ),
                           ),
                   ),
@@ -510,14 +581,16 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     text: TextSpan(
                       style: GoogleFonts.poppins(
                         fontSize: width * 0.035,
-                        color: colorScheme.onSurface, // Changed from colorScheme.primary
+                        color: colorScheme
+                            .onSurface, // Changed from colorScheme.primary
                       ),
                       children: [
                         const TextSpan(text: "You haven't account? "),
                         TextSpan(
                           text: "Login",
                           style: GoogleFonts.poppins(
-                            color: colorScheme.primary, // This was already correct
+                            color:
+                                colorScheme.primary, // This was already correct
                             fontWeight: FontWeight.w600,
                             decoration: TextDecoration.underline,
                           ),

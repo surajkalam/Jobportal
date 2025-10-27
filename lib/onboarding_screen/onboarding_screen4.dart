@@ -103,7 +103,7 @@ class OnboardingScreen4 extends ConsumerWidget {
               Spacer(),
               SizedBox(
                 width: double.infinity,
-                height: height * 0.056,
+                height: height * 0.062,
                 child: ElevatedButton(
                   onPressed: () {
                     context.push('/check-login');
@@ -123,7 +123,7 @@ class OnboardingScreen4 extends ConsumerWidget {
                         'Get Started',
                         style: TextStyle(
                           fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       SizedBox(width: width * 0.01),
