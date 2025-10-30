@@ -154,7 +154,7 @@ class MaterialTheme {
       ),
       labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
       // ignore: deprecated_member_use
-      hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withOpacity(0.7)),
+      hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
     ),
     cardTheme: CardThemeData(
       color: colorScheme.surface,

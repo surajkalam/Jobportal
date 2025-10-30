@@ -82,11 +82,11 @@ class _CheckLoginSignupScreenState
                           height: height * 0.045,
                           width: width * 0.8,
                           decoration: BoxDecoration(
-                            color: colorScheme.surface.withOpacity(0.9),
+                            color: colorScheme.surface.withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(width * 0.05),
                             boxShadow: [
                               BoxShadow(
-                                color: colorScheme.shadow.withOpacity(0.2),
+                                color: colorScheme.shadow.withValues(alpha: 0.2),
                                 spreadRadius: 1,
                                 blurRadius: 6,
                                 offset: const Offset(1, 2),
@@ -189,7 +189,7 @@ class _CheckLoginSignupScreenState
                                     BorderRadius.circular(width * 0.02),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: colorScheme.shadow.withOpacity(0.3),
+                                    color: colorScheme.shadow.withValues(alpha: 0.3),
                                     spreadRadius: 2,
                                     blurRadius: 8,
                                     offset: const Offset(2, 3),
@@ -216,14 +216,14 @@ class _CheckLoginSignupScreenState
                               height: height * 0.06,
                               width: width * 0.5,
                               decoration: BoxDecoration(
-                                color: colorScheme.surface.withOpacity(0.9),
+                                color: colorScheme.surface.withValues(alpha: 0.9),
                                 border: Border.all(
                                     color: colorScheme.primary, width: 2),
                                 borderRadius:
                                     BorderRadius.circular(width * 0.02),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: colorScheme.shadow.withOpacity(0.2),
+                                    color: colorScheme.shadow.withValues(alpha: 0.2),
                                     spreadRadius: 1,
                                     blurRadius: 6,
                                     offset: const Offset(1, 2),

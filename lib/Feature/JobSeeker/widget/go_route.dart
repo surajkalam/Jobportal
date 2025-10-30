@@ -6,7 +6,6 @@ import 'package:jobapp/Authentication/checkloginsignup.dart';
 import 'package:jobapp/Authentication/loginscreen.dart';
 import 'package:jobapp/Feature/Recuiter/Widget/recuiternavbar.dart';
 import 'package:jobapp/Feature/Recuiter/screens/job_details.dart';
-import 'package:jobapp/onboarding_screen/onboarding_screen1.dart';
 import '../../Recuiter/recuiter_model/recuiter_model.dart';
 import '../jobseekers_screens/jobseekers_screens.dart';
 import 'Widget.dart';

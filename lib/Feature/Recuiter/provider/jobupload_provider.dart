@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:jobapp/Authentication/user_provider.dart';
-import 'package:jobapp/Feature/Recuiter/provider/application_provider.dart';
+
 import 'package:jobapp/Feature/Recuiter/recuiter_firebase/jobupload_firebase.dart';
-import 'package:jobapp/Feature/combomodel/application_model.dart';
+
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 
 // Firebase Service Provider

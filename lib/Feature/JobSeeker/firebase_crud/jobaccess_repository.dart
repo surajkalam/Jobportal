@@ -136,9 +136,8 @@ class JobRepository {
                 job.designation.toLowerCase().contains(searchTerm) ||
                 job.location.toLowerCase().contains(searchTerm) ||
                 job.category.toLowerCase().contains(searchTerm) ||
-                (job.skills.toLowerCase().contains(searchTerm) ?? false) ||
-                (job.qualifications.toLowerCase().contains(searchTerm) ??
-                    false),
+                (job.skills.toLowerCase().contains(searchTerm)) ||
+                (job.qualifications.toLowerCase().contains(searchTerm)),
           )
           .toList(),
     );

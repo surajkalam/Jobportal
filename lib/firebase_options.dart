@@ -52,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCCvoTD7SbBmOlOhUga0psaOMkZ05-uvIU',
-    appId: '1:699709353509:android:cb104d2fda4185675419cc',
+    appId: '1:699709353509:android:768209e36bb6823f5419cc',
     messagingSenderId: '699709353509',
     projectId: 'coffeeshop-3270e',
     storageBucket: 'coffeeshop-3270e.firebasestorage.app',
@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '699709353509',
     projectId: 'coffeeshop-3270e',
     storageBucket: 'coffeeshop-3270e.firebasestorage.app',
-    androidClientId: '699709353509-81eff9gakc81pmhobvicfkiis856a0oq.apps.googleusercontent.com',
+    androidClientId: '699709353509-0vclakfmbaf1r48hcac540n5nb6rtli6.apps.googleusercontent.com',
     iosClientId: '699709353509-sfuuaked7pdqjgs0r317u50n8kue2sha.apps.googleusercontent.com',
     iosBundleId: 'com.example.jobapp',
   );

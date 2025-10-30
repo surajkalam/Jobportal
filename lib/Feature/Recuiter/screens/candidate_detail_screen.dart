@@ -719,46 +719,46 @@ class _ApplicationDetailScreenState extends ConsumerState<ApplicationDetailScree
     }
   }
 
-  void _viewResume(String resumeUrl, double height, double width) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Resume',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Resume URL:',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-            ),
-            SizedBox(height: height * 0.01),
-            SelectableText(
-              resumeUrl,
-              style: TextStyle(fontSize: 10, color: Colors.blue),
-            ),
-            SizedBox(height: height * 0.02),
-            Text(
-              'Click the URL to copy and open in browser',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 10),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Close',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 11),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // void _viewResume(String resumeUrl, double height, double width) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: Text(
+  //         'Resume',
+  //         style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+  //       ),
+  //       content: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Text(
+  //             'Resume URL:',
+  //             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+  //           ),
+  //           SizedBox(height: height * 0.01),
+  //           SelectableText(
+  //             resumeUrl,
+  //             style: TextStyle(fontSize: 10, color: Colors.blue),
+  //           ),
+  //           SizedBox(height: height * 0.02),
+  //           Text(
+  //             'Click the URL to copy and open in browser',
+  //             style: TextStyle(fontWeight: FontWeight.w500, fontSize: 10),
+  //           ),
+  //         ],
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: Text(
+  //             'Close',
+  //             style: TextStyle(fontWeight: FontWeight.w500, fontSize: 11),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
   void _showCandidateDetails(
   ApplicationModel application,
   double height,

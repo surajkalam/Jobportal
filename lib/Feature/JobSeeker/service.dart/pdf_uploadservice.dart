@@ -3,9 +3,6 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jobapp/Authentication/user_provider.dart';
-import 'package:jobapp/Feature/Recuiter/provider/provider.dart';
-
 class PdfUploadService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
 

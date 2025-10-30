@@ -1,4 +1,4 @@
-package com.example.jobapp
+package com.aptitsolutions.airigo
 
 import io.flutter.embedding.android.FlutterActivity
 

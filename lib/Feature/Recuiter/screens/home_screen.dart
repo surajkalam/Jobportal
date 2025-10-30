@@ -274,7 +274,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         SizedBox(height: height * 0.01),
         applications.isEmpty
             ? _buildEmptyApplicationsState(height)
-            : Container(
+            : SizedBox(
                 height: height * 0.3,
                 child: ListView.builder(
                   itemCount: applications.length,

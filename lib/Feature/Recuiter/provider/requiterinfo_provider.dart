@@ -1,7 +1,7 @@
 // providers/recruiter_providers.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:jobapp/Authentication/user_provider.dart';
+// import 'package:jobapp/Authentication/user_provider.dart';
 
 import '../recuiter_firebase/requiterinfo_firebase.dart';
 import '../recuiter_model/recuiter_model.dart';
@@ -18,17 +18,18 @@ final recruiterDataProvider = StateNotifierProvider<RecruiterNotifier, AsyncValu
 
 class RecruiterNotifier extends StateNotifier<AsyncValue<RecruiterModel?>> {
   final FirebaseRecruiterService _recruiterService;
+  // ignore: unused_field
   final Ref _ref;
 
   RecruiterNotifier(this._recruiterService, this._ref) : super(const AsyncValue.loading());
 
-  String get _currentRecruiterEmail {
-    final email = _ref.read(currentRecruiterUserEmailProvider);
-    if (email.isEmpty) {
-      throw Exception('Recruiter email is not available. Please log in first.');
-    }
-    return email;
-  }
+  // String get _currentRecruiterEmail {
+  //   final email = _ref.read(currentRecruiterUserEmailProvider);
+  //   if (email.isEmpty) {
+  //     throw Exception('Recruiter email is not available. Please log in first.');
+  //   }
+  //   return email;
+  // }
 
   // Save recruiter data
   Future<void> saveRecruiter(RecruiterModel recruiter) async {

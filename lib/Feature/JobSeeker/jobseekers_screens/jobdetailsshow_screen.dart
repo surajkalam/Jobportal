@@ -167,6 +167,7 @@ Interested candidates can apply now!
 #JobOpportunity #Hiring #CareerGrowth
   ''';
 
+  // ignore: deprecated_member_use
   Share.share(
     shareText,
     subject: 'Job: ${job.designation} at ${job.companyName}',
@@ -492,7 +493,7 @@ Interested candidates can apply now!
                     ),
                   ],
                 ),
-              )).toList(),
+              )),
             ],
           ),
         ),
@@ -555,7 +556,7 @@ Interested candidates can apply now!
                     ),
                   ],
                 ),
-              )).toList(),
+              )),
             ],
           ),
         ),
@@ -563,41 +564,41 @@ Interested candidates can apply now!
     );
   }
 
-  List<Widget> _buildBulletPoints(String text) {
-    final points = text.split('\n').where((point) => point.trim().isNotEmpty);
+  // List<Widget> _buildBulletPoints(String text) {
+  //   final points = text.split('\n').where((point) => point.trim().isNotEmpty);
 
-    if (points.isEmpty) {
-      return [
-        Text('No information available', style: TextStyle(color: AppColors.grey)),
-      ];
-    }
-    return points
-        .map(
-          (point) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '• ',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 10),
-                ),
-                Expanded(
-                  child: Text(
-                    point.trim(),
-                    style: TextStyle(
-                      color: AppColors.grey,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 09,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )
-        .toList();
-  }
+  //   if (points.isEmpty) {
+  //     return [
+  //       Text('No information available', style: TextStyle(color: AppColors.grey)),
+  //     ];
+  //   }
+  //   return points
+  //       .map(
+  //         (point) => Padding(
+  //           padding: const EdgeInsets.symmetric(vertical: 4),
+  //           child: Row(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Text(
+  //                 '• ',
+  //                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 10),
+  //               ),
+  //               Expanded(
+  //                 child: Text(
+  //                   point.trim(),
+  //                   style: TextStyle(
+  //                     color: AppColors.grey,
+  //                     fontWeight: FontWeight.w400,
+  //                     fontSize: 09,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       )
+  //       .toList();
+  // }
 
   Widget _buildApplyButton(BuildContext context, WidgetRef ref,JobModel job,double height, double width) {
   return SizedBox(
@@ -818,18 +819,18 @@ void _navigateToProfile(BuildContext context) {
 
 
 
-  String _calculateTimeAgo(DateTime? postedDate) {
-    if (postedDate == null) return 'Recently';
+  // String _calculateTimeAgo(DateTime? postedDate) {
+  //   if (postedDate == null) return 'Recently';
 
-    final difference = DateTime.now().difference(postedDate);
-    if (difference.inMinutes < 60) {
-      return '${difference.inMinutes} min ago';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
-    } else {
-      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
-    }
-  }
+  //   final difference = DateTime.now().difference(postedDate);
+  //   if (difference.inMinutes < 60) {
+  //     return '${difference.inMinutes} min ago';
+  //   } else if (difference.inHours < 24) {
+  //     return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+  //   } else {
+  //     return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+  //   }
+  // }
 void _showSnackBar({
     required BuildContext context,
     required String text,

@@ -259,7 +259,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   controller: _emailOrMobileController,
                   keyboardType: TextInputType.emailAddress,
                   showCursor: true,
-                  cursorColor: colorScheme.onSurface.withOpacity(
+                  cursorColor: colorScheme.onSurface.withValues(alpha: 
                     0.6,
                   ), // Changed from AppColors.black.withValues(alpha: 0.6)
                   cursorHeight: 15,
@@ -273,7 +273,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     hintText: "Enter your email",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.onSurfaceVariant.withOpacity(
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 
                         0.6,
                       ), // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),
@@ -324,7 +324,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   keyboardType: TextInputType.phone,
                   maxLength: 10,
                   showCursor: true,
-                  cursorColor: colorScheme.onSurface.withOpacity(
+                  cursorColor: colorScheme.onSurface.withValues(alpha: 
                     0.6,
                   ), // Changed from AppColors.black.withValues(alpha: 0.6)
                   cursorHeight: 15,
@@ -338,7 +338,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     hintText: "Enter your mobile number",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.onSurfaceVariant.withOpacity(
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 
                         0.6,
                       ), // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),
@@ -399,7 +399,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     hintText: "Enter your password",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.onSurfaceVariant.withOpacity(
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 
                         0.6,
                       ), // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),
@@ -473,7 +473,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     hintText: "Confirm your password",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.onSurfaceVariant.withOpacity(
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 
                         0.6,
                       ), // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),

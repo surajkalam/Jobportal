@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:jobapp/Authentication/user_provider.dart';
-import 'package:jobapp/core/util/appcolors.dart';
 import 'package:jobapp/core/providers/theme_provider.dart';
 import 'package:jobapp/Authentication/auth_state.dart';
 import '../provider/provider.dart';
@@ -81,7 +80,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final recruiterAsync = ref.watch(recruiterDataProvider);
     final isLoading = ref.watch(loadingStateProvider);
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
     final themeMode = ref.watch(themeModeProvider);
     final colorScheme = Theme.of(context).colorScheme;
     var  width=MediaQuery.of(context).size.width;
@@ -518,13 +517,11 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
   void _showSnackBar({
     required BuildContext context,
     required String text,
-    Color backgroundColor = Colors.white,
     required Color textColor,
     Duration duration = const Duration(seconds: 3),
     SnackBarBehavior behavior = SnackBarBehavior.floating,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
-    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(

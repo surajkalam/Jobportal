@@ -212,7 +212,7 @@ class _ProfileInformationScreenState
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         // ignore: deprecated_member_use
-        border: Border.all(color: colorScheme.outline.withOpacity(0.3)),
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.3)),
         color: colorScheme.surface,
       ),
       child: Padding(
@@ -334,7 +334,7 @@ class _ProfileInformationScreenState
                   backgroundColor: colorScheme.surface,
                   foregroundColor: colorScheme.primary,
                   // ignore: deprecated_member_use
-                  side: BorderSide(color: colorScheme.primary.withOpacity(0.6)),
+                  side: BorderSide(color: colorScheme.primary.withValues(alpha: 0.6)),
                   padding: EdgeInsets.symmetric(vertical: 8),
                 ),
               ),

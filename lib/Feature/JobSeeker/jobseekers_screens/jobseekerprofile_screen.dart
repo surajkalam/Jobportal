@@ -1,5 +1,5 @@
 // Updated JobseekerProfileScreen.dart
-import 'dart:developer';
+// import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -76,7 +76,8 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-             colors: [colorScheme.primary, colorScheme.surfaceContainerHighest],
+            //  colors: [colorScheme.primary, colorScheme.surfaceContainerHighest],
+            colors: [colorScheme.primary.withValues(alpha: 0.3),colorScheme.onPrimary],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               stops: [0.04, 0.3],
@@ -151,7 +152,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: colorScheme.outline),
         gradient: LinearGradient(
-          colors: [colorScheme.primary.withOpacity(0.04), colorScheme.primary.withOpacity(0.6)],
+          colors: [colorScheme.primary.withValues(alpha: 0.04), colorScheme.primary.withValues(alpha: 0.6)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           stops: [0.06, 0.4],
@@ -170,7 +171,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
       borderRadius: BorderRadius.circular(10),
       border: Border.all(color: colorScheme.outline),
       gradient: LinearGradient(
-        colors: [colorScheme.primary.withOpacity(0.04), colorScheme.primary.withOpacity(0.6)],
+        colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.6)],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         stops: [0.06, 0.4],
@@ -216,7 +217,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                 children: [
                   Padding(padding: EdgeInsets.only(top: height * 0.01)),
                   Text(
-                    jobseekerInfo.name.isNotEmpty ? jobseekerInfo.name : 'Your Name',
+                    jobseekerInfo.name.isNotEmpty ? jobseekerInfo.name : jobseekerInfo.email ,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -268,7 +269,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
         SizedBox(height: height * 0.03),
         Divider(
           height: height * 0.01,
-          color: colorScheme.onPrimary.withOpacity(0.5),
+          color: colorScheme.onPrimary.withValues(alpha: 0.5),
         ),
         Row(
           children: [
@@ -296,7 +297,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
     height: height * 0.063,
     width: width * 0.14,
     decoration: BoxDecoration(
-      color: colorScheme.surfaceVariant,
+      color: colorScheme.surfaceContainerHighest,
       shape: BoxShape.circle,
     ),
     child: Icon(
@@ -349,7 +350,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
         border: Border.all(color: colorScheme.outline),
         gradient: LinearGradient(
           // ignore: deprecated_member_use
-          colors: [colorScheme.primary.withOpacity(0.04), colorScheme.primary.withOpacity(0.6)],
+          colors: [colorScheme.primary.withValues(alpha: 0.04), colorScheme.primary.withValues(alpha: 0.6)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           stops: [0.06, 0.4],
@@ -418,8 +419,8 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                     _buildAccountRow(
                       icon: Icons.email_outlined,
                       title: 'Email',
-                      subtitle: jobseekerInfo?.email.isNotEmpty == true
-                          ? jobseekerInfo!.email
+                      subtitle: jobseekerInfo.email.isNotEmpty == true
+                          ? jobseekerInfo.email
                           : 'Not set',
                       hasArrow: false, // No arrow for email
                       width: width,
@@ -433,7 +434,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       icon: Iconsax.heart,
                       title: 'Age',
                       subtitle:
-                          jobseekerInfo?.age != null && jobseekerInfo!.age > 0
+                          jobseekerInfo.age > 0
                           ? '${jobseekerInfo.age} years'
                           : 'Not set',
                       hasArrow: false,
@@ -447,8 +448,8 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                     _buildAccountRow(
                       icon: Icons.work_outline,
                       title: 'Profession',
-                      subtitle: jobseekerInfo?.jobDesignation.isNotEmpty == true
-                          ? jobseekerInfo!.jobDesignation
+                      subtitle: jobseekerInfo.jobDesignation.isNotEmpty == true
+                          ? jobseekerInfo.jobDesignation
                           : 'Not set',
                       hasArrow: false, // No arrow for profession
                       width: width,
@@ -575,6 +576,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               await ref.read(authStateProvider.notifier).signOut();
               // Navigate to login screen
               if (mounted) {
+                // ignore: use_build_context_synchronously
                 context.go('/'); // Adjust route as needed
               }
             },

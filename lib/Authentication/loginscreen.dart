@@ -5,10 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobapp/Authentication/auth_state.dart';
 import 'package:jobapp/Authentication/provider.dart';
-import 'package:jobapp/Authentication/user_provider.dart';
-import 'package:jobapp/core/typography.dart';
-import 'package:jobapp/core/util/appcolors.dart';
-import 'package:lottie/lottie.dart';
 import 'package:jobapp/core/services/local_storage_service.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -194,7 +190,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   controller: _emailOrMobileController,
                   keyboardType: TextInputType.emailAddress,
                   showCursor: true,
-                  cursorColor: colorScheme.onSurface.withOpacity(
+                  cursorColor: colorScheme.onSurface.withValues(alpha: 
                     0.6,
                   ), // Changed from AppColors.black.withValues(alpha: 0.6)
                   cursorHeight: 15,
@@ -208,7 +204,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     hintText: "Enter your email",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.onSurfaceVariant.withOpacity(
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 
                         0.6,
                       ), // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),
@@ -267,7 +263,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     hintText: "Enter your password",
                     hintStyle: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.onSurfaceVariant.withOpacity(
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 
                         0.6,
                       ), // Changed from AppColors.black.withValues(alpha: 0.6)
                     ),

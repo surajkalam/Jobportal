@@ -10,7 +10,6 @@ import 'package:jobapp/firebase_options.dart';
 import 'package:jobapp/core/services/local_storage_service.dart';
 import 'package:jobapp/core/providers/theme_provider.dart';
 import 'package:jobapp/Authentication/user_provider.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -38,15 +37,10 @@ class _MainAppState extends ConsumerState<MainApp> {
   void initState() {
     super.initState();
   }
-  
   @override
   Widget build(BuildContext context) {
-    // Watch the auth listener provider to ensure it's active
     ref.watch(authListenerProvider);
-    
     final materialTheme = MaterialTheme(textTheme);
-    
-    // Safely watch theme mode provider with fallback
     ThemeMode themeMode;
     try {
       themeMode = ref.watch(themeModeProvider);
@@ -54,7 +48,6 @@ class _MainAppState extends ConsumerState<MainApp> {
       // Fallback to system theme if provider is not available
       themeMode = ThemeMode.system;
     }
-    
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: materialTheme.light(),

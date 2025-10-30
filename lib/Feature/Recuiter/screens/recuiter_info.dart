@@ -235,7 +235,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
                         'Upload Photo',
                         style: TextStyle(
                           fontSize: 10,
-                          color: colorScheme.onSurfaceVariant.withOpacity(
+                          color: colorScheme.onSurfaceVariant.withValues(alpha: 
                             0.6,
                           ), // Changed from AppColors.black.withValues(alpha: 0.6)
                         ),
@@ -505,7 +505,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
     int maxline = 1,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    // final textTheme = Theme.of(context).textTheme;
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -530,7 +530,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
           hintText: 'Enter $hinttext',
           hintStyle: TextStyle(
             fontSize: 12,
-            color: colorScheme.onSurfaceVariant.withOpacity(
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 
               0.6,
             ), // Changed from AppColors.black.withValues(alpha: 0.6)
           ),
