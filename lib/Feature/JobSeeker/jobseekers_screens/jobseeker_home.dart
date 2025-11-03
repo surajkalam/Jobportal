@@ -281,7 +281,8 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
               SizedBox(width: width * 0.01),
               InkWell(
                 onTap: () {
-                  // _showFilterDialog(context, ref);
+                  // _showFilterDialog(context, ref);//navigate to filter 
+                  context.push('/admin-dashboard');
                 },
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
@@ -375,7 +376,9 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
         ),
         Spacer(),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+             context.push('/see-all-jobs');
+          },
           child: Text(
             'See All',
             style: TextStyle(
@@ -528,12 +531,6 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                 padding: EdgeInsets.all(10.0),
                 child: Column(
                   children: [
-                    // Text('jobid :${job.id.toString()}',
-                    //   style: TextStyle(
-                    //     fontSize: 8,
-                    //     color: colorScheme.onSurface,
-                    //   ),
-                    // ),
                     Row(
                       children: [
                         Padding(
@@ -660,7 +657,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 children: [
-                  Icon(Icons.alarm, color: colorScheme.outline, size: 15),
+                  Icon(Icons.alarm, color: colorScheme.onSurfaceVariant, size: 15),
                   SizedBox(width: 5),
                   Text(
                     '${_calculateTimeAgo(job.createdAt)} ago',

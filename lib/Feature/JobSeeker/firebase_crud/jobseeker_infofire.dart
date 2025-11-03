@@ -8,6 +8,20 @@ class JobseekerFirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final FirebaseStorage _storage = FirebaseStorage.instance;
 
+//all jobseekers count
+Stream<List<JobseekerModel>> getAllJobSeekers() {
+  return FirebaseFirestore.instance
+      .collection('jobseekers')
+      .snapshots()
+      .map((snapshot) {
+    return snapshot.docs
+        .map((doc) => JobseekerModel.fromMap(doc.id, doc.data() as Map<String, dynamic>))
+        .toList();
+  });
+}
+
+
+
   // Save jobseeker information
   Future<void> saveJobseekerInfo(JobseekerModel jobseeker, String email) async {
     try {
@@ -33,7 +47,6 @@ class JobseekerFirebaseService {
       throw Exception('Failed to get jobseeker info: $e');
     }
   }
-
   // Update jobseeker information
   Future<void> updateJobseekerInfo(JobseekerModel jobseeker, String email) async {
     try {
@@ -55,6 +68,7 @@ class JobseekerFirebaseService {
       throw Exception('Failed to check jobseeker info: $e');
     }
   }
+
 
   Future<void> saveJobseekerInfoWithResume(
   JobseekerModel jobseeker,

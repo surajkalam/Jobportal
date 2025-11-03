@@ -4,6 +4,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:jobapp/Feature/AdminSide/model/application_model.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 
 class JobRepository {
@@ -275,4 +276,59 @@ class JobRepository {
       throw Exception('Failed to check application status: $e');
     }
   }
+
+  
+// Add to JobRepository class
+Stream<List<JobApplication>> getJobseekerApplicationsByEmail(String jobseekerEmail) {
+  return FirebaseFirestore.instance
+      .collection('job_applications')
+      .where('jobseekerEmail', isEqualTo: jobseekerEmail)
+      .snapshots()
+      .map((snapshot) {
+    return snapshot.docs
+        .map((doc) => JobApplication.fromMap({
+          ...doc.data(),
+          'applicationId': doc.id,
+        }))
+        .toList();
+  });
 }
+
+Future<JobseekerApplicationStats> getJobseekerStats(String jobseekerEmail) async {
+  final applications = await getJobseekerApplicationsByEmail(jobseekerEmail).first;
+  
+  final total = applications.length;
+  final pending = applications.where((app) => app.status == 'pending').length;
+  final shortlisted = applications.where((app) => app.status == 'shortlisted').length;
+  final rejected = applications.where((app) => app.status == 'rejected').length;
+  final accepted = applications.where((app) => app.status == 'accepted').length;
+
+  return JobseekerApplicationStats(
+    totalApplications: total,
+    pending: pending,
+    shortlisted: shortlisted,
+    rejected: rejected,
+    accepted: accepted,
+  );
+}
+
+Future<JobModel?> getJobDetails(String jobId, String recruiterEmail) async {
+  try {
+    final doc = await FirebaseFirestore.instance
+        .collection('recruiters')
+        .doc(recruiterEmail)
+        .collection('jobs')
+        .doc(jobId)
+        .get();
+    
+    if (doc.exists) {
+      return JobModel.fromMap(doc.id, doc.data()!);
+    }
+    return null;
+  } catch (e) {
+    log('Error fetching job details: $e');
+    return null;
+  }
+}
+
+  }

@@ -42,31 +42,6 @@ class _OtpscreenState extends State<Otpscreen> {
       }
     });
   }
-  // void _verifyOTP() {
-  //   setState(() => isLoading = true);
-
-  //   final enteredOTP = otp.join();
-  //   if (enteredOTP.length != 6) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Please enter complete OTP')));
-  //     setState(() => isLoading = false);
-  //     return;
-  //   }
-
-  //   // Simulate verification
-  //   Future.delayed(Duration(seconds: 2), () {
-  //     setState(() => isLoading = false);
-  //     if (enteredOTP == "123456") { // Replace with actual verification
-  //       // ignore: use_build_context_synchronously
-  //       Navigator.pushReplacementNamed(context, '/success');
-  //     } else {
-  //       // ignore: use_build_context_synchronously
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('Invalid OTP. Try again')));
-  //     }
-  //   });
-  // }
-
   void _resendOTP() {
     setState(() {
       otp = List.filled(6, '');

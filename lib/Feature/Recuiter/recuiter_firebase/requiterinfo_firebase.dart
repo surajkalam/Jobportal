@@ -81,4 +81,12 @@ class FirebaseRecruiterService {
       throw Exception('Failed to update recruiter data: $e');
     }
   }
+  Stream<List<RecruiterModel>> getAllRecruiters() {
+  return _firestore
+      .collection('recruiters')
+      .snapshots()
+      .map((snapshot) => snapshot.docs
+          .map((doc) => RecruiterModel.fromMap(doc.data()))
+          .toList());
+}
 }

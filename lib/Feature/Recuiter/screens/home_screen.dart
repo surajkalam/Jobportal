@@ -62,6 +62,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: AppColors.faintbackblue,
       ),
       body: SingleChildScrollView(
+        physics:BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+          decelerationRate: ScrollDecelerationRate.fast,
+       ),
         scrollDirection: Axis.vertical,
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -79,6 +83,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               SizedBox(height: height * 0.03),
               // Recent Applications
               _buildRecentApplicationsSection(recentApplications, height, width),
+              SizedBox(height: height*0.05,),
             ],
           ),
         ),
@@ -289,37 +294,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildApplicationItem(ApplicationModel application, double height, double width) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 4),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: _getStatusColor(application.status).withValues(alpha: 0.1),
-          child: Icon(
-            _getStatusIcon(application.status),
-            color: _getStatusColor(application.status),
-            size: 20,
-          ),
-        ),
-        title: Text(
-          application.jobseekerName.isNotEmpty ? application.jobseekerName : 'Unknown Candidate',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
-        subtitle: Text(
-          application.jobTitle,
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-        ),
-        trailing: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: _getStatusColor(application.status).withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            application.status.toUpperCase(),
-            style: TextStyle(
-              fontSize: 10,
+    return InkWell(
+      child: Card(
+        margin: EdgeInsets.symmetric(vertical: 4),
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundColor: _getStatusColor(application.status).withValues(alpha: 0.1),
+            child: Icon(
+              _getStatusIcon(application.status),
               color: _getStatusColor(application.status),
-              fontWeight: FontWeight.w500,
+              size: 20,
+            ),
+          ),
+          title: Text(
+            application.jobseekerName.isNotEmpty ? application.jobseekerName : 'Unknown Candidate',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          ),
+          subtitle: Text(
+            application.jobTitle,
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          ),
+          trailing: Container(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: _getStatusColor(application.status).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              application.status.toUpperCase(),
+              style: TextStyle(
+                fontSize: 10,
+                color: _getStatusColor(application.status),
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ),

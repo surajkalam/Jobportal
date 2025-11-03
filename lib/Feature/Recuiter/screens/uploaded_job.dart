@@ -117,7 +117,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
               _buildRecentJobsHeader(hasRecentJobs, recentJobsAsync),
               const SizedBox(height: 8),
               // Recent Jobs List - Now part of the main scroll
-              _buildRecentJobsList(recentJobsAsync, recruiterEmail),
+              _buildRecentJobsList(recentJobsAsync, recruiterEmail,height,width),
             ],
           ),
         ),
@@ -346,6 +346,8 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
   Widget _buildRecentJobsList(
     AsyncValue<List<JobModel>> recentJobsAsync,
     String recruiterEmail,
+    double height,
+    double width,
   ) {
     return recentJobsAsync.when(
       data: (jobs) {
@@ -358,10 +360,10 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                 .map(
                   (job) => Padding(
                     padding: const EdgeInsets.only(bottom: 8),
-                    child: _buildJobItem(job, recruiterEmail),
+                    child: _buildJobItem(job, recruiterEmail,height,width),
                   ),
                 )
-                .toList(),
+                ,
           ],
         );
       },
@@ -400,7 +402,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     );
   }
 
-  Widget _buildJobItem(JobModel job, String recruiterEmail) {
+  Widget _buildJobItem(JobModel job, String recruiterEmail,double height,double width) {
     final jobStatusAsync = ref.watch(jobStatusProvider(job.id));
     final urgentHiringAsync = ref.watch(urgentHiringProvider(job.id));
     return InkWell(
@@ -443,21 +445,27 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                   )
                 : Icon(Iconsax.building, color: Colors.blue[600], size: 20),
           ),
-          title: Text(
-            job.designation,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          title: SizedBox(
+            width: width*0.42,
+            child: Text(
+              job.designation,
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 2),
-              Text(
-                job.companyName,
-                style: TextStyle(fontSize: 11),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              SizedBox(
+                width: width*0.42,
+                child: Text(
+                  job.companyName,
+                  style: TextStyle(fontSize: 10),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               SizedBox(height: 2),
                   Row(
@@ -465,24 +473,27 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                   Icon(Iconsax.location, size: 10, color: Colors.grey[600]),
                   SizedBox(width: 2),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.25,
+                    width:width * 0.35,
                     child: Text(
                       job.location,
                       style: TextStyle(fontSize: 10, color: Colors.grey[600]),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  SizedBox(width: 6),
-                  Icon(Iconsax.category, size: 10, color: Colors.grey[600]),
-                  SizedBox(width: 2),
+                ],
+              ),
+              Row(
+                children: [
+                   Icon(Iconsax.category, size: 10, color: Colors.grey[600]),
+                  SizedBox(width: width*0.014),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.18,
-                    child: Text(
-                      job.category,
-                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
+                        width:width * 0.25,
+                        child: Text(
+                          job.category,
+                          style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                 ],
               ),
             ],

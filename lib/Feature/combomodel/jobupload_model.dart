@@ -55,7 +55,7 @@ class JobModel {
       'ctc': ctc,
       'noticePeriod': noticePeriod,
       'location': location,
-      'application': application, //this is description 
+      'application': application,
       'imageUrl': imageUrl,
       'category': category,
       'isActive': isActive,
@@ -63,10 +63,10 @@ class JobModel {
       'benefits': benefits,
       'qualifications': qualifications,
       'skills': skills,
-       'requirements': requirements, // Add to map
-      'experience': experience, // Add to map
-      'ageRange': ageRange, // Add to map
-      'isUrgentHiring': isUrgentHiring, // Add to map
+       'requirements': requirements,
+      'experience': experience,
+      'ageRange': ageRange,
+      'isUrgentHiring': isUrgentHiring, 
        'jobType': jobType, 
       'createdAt': FieldValue.serverTimestamp(),
     };
@@ -88,9 +88,9 @@ class JobModel {
       benefits: map['benefits'] ?? '',
       qualifications: map['qualifications'] ?? '',
       skills: map['skills'] ?? '',
-        requirements: map['requirements'] ?? '', // Add from map
-      experience: map['experience'] ?? '', // Add from map
-      ageRange: map['ageRange'] ?? '', // Add from map
+        requirements: map['requirements'] ?? '', 
+      experience: map['experience'] ?? '',
+      ageRange: map['ageRange'] ?? '',
       isUrgentHiring: map['isUrgentHiring'] ?? false,
       jobType: map['jobType'] ?? 'Full-time',
       createdAt: map['createdAt'] != null 

@@ -1,3 +1,4 @@
+//job upload provider
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -216,20 +217,6 @@ class JobStatusNotifier extends StateNotifier<AsyncValue<bool>> {
       state = AsyncValue.error(e, StackTrace.current);
     }
   }
- 
- // Shortlisted applications count for recruiter (across all jobs)
-// final shortlistedApplicationsCountProvider = StreamProvider<int>((ref) {
-//   final firebaseService = ref.read(firebaseServiceProvider);
-//   final recruiterEmail = ref.watch(currentRecruiterUserEmailProvider);
-  
-//   if (recruiterEmail.isEmpty) return Stream.value(0);
-  
-//   return firebaseService.getAllApplicationsForRecruiter(recruiterEmail)
-//       .map((applications) => 
-//           applications.where((app) => app.status == 'shortlisted').length);
-// });
-
-
   Future<void> toggleStatus() async {
     try {
       final currentStatus = state.value ?? false;

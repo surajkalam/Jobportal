@@ -25,12 +25,6 @@ class JobDetailsScreen extends ConsumerWidget {
     final jobseekerState = ref.watch(jobseekerProvider);
     final jobseekerInfo = jobseekerState.jobseekerInfo;
     log('Jobseeker Info: $jobseekerInfo');
-  //  if(jobseekerInfo !=null){
-    // log(jobseekerInfo.name);
-    // log(jobseekerInfo.email);
-    // log(jobseekerInfo.contact);
-    // log(job.id);
-  //  }
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -243,7 +237,7 @@ Interested candidates can apply now!
                           ),
                           SizedBox(width: width * 0.005),
                           SizedBox(
-                            width: width * 0.25,
+                            width: width * 0.2,
                             child: Text(
                               job.location.isNotEmpty ? job.location : 'Location not specified',
                               style: TextStyle(color: AppColors.grey, fontSize: 10),
