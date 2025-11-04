@@ -2,6 +2,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:jobapp/Feature/JobSeeker/firebase_crud/jobaccess_repository.dart';
+import 'package:jobapp/Feature/JobSeeker/modelclass/issue_report_model.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 
 final List<String> staticCategories = [
@@ -75,6 +76,14 @@ final jobDetailsProvider = FutureProvider.autoDispose.family<JobModel?, JobDetai
   final repository = ref.read(jobRepositoryProvider);
   return await repository.getJobById(params.jobId, params.recruiterEmail);
 });
+ //report and issue 
+final jobseekerIssuesProvider = StreamProvider.family<List<IssueReport>, String>((ref, jobseekerEmail) {
+  final repository = ref.read(jobRepositoryProvider);
+  return repository.getJobseekerIssues(jobseekerEmail);
+});
+
+
+
 
 // Parameters class for job details
 class JobDetailsParams {

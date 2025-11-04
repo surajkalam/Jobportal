@@ -1,6 +1,7 @@
 // screens/contact_us_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/my_issues_screen.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/application_provider.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
 
@@ -12,7 +13,7 @@ class ContactUsScreen extends ConsumerStatefulWidget {
 }
 
 class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
-  String _selectedType = 'issue'; // 'issue' or 'report'
+  String _selectedType = 'issue';
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -89,9 +90,17 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Contact Us'),
+        title:Text('Contact Us'),
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
+        actions: [IconButton(onPressed: () {
+          Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MyIssuesScreen(),
+                          ),
+                        );
+        }, icon: Icon(Icons.report_gmailerrorred))],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -464,7 +464,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                          _showContactUsOptions(context);
                       },
                       child: _buildAccountRow(
-                        icon: Icons.contact_page_outlined,
+                        icon: Icons.report_problem_outlined,
                         title: 'Contact Us',
                         subtitle: 'select',
                         hasArrow: true, // No arrow for profession
@@ -478,7 +478,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                     GestureDetector(
                       onTap: _toggleTheme,
                       child: _buildAccountRow(
-                        icon: themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
+                        icon: themeMode == ThemeMode.dark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
                         title: 'Theme',
                         subtitle: themeMode == ThemeMode.dark ? 'Light Mode' : 'Dark Mode',
                         hasArrow: true,
@@ -588,7 +588,7 @@ void _showContactUsOptions(BuildContext context) {
             width: width * 0.07,
             height: height * 0.03,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-            child: Icon(icon, size: 18, color: textColor),
+            child: Icon(icon, size: 18, color: colorScheme.onSurface),
           ),
           SizedBox(width: width * 0.012),
           Expanded(

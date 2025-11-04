@@ -26,12 +26,7 @@ class MyIssuesScreen extends ConsumerWidget {
         ),
       );
     }
-
-    final issuesAsync = ref.watch(StreamProvider<List<IssueReport>>((ref) {
-      final repository = ref.read(jobRepositoryProvider);
-      return repository.getJobseekerIssues(jobseekerInfo.email);
-    }));
-
+       final issuesAsync = ref.watch(jobseekerIssuesProvider(jobseekerInfo.email));
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Issues & Reports'),
@@ -41,18 +36,31 @@ class MyIssuesScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              ref.invalidate(StreamProvider<List<IssueReport>>((ref) {
-                final repository = ref.read(jobRepositoryProvider);
-                return repository.getJobseekerIssues(jobseekerInfo.email);
-              }));
+             ref.invalidate(jobseekerIssuesProvider(jobseekerInfo.email));
             },
           ),
         ],
       ),
       body: issuesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
-        data: (issues) {
+         error: (error, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              Text('Error: $error'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  ref.invalidate(jobseekerIssuesProvider(jobseekerInfo.email));
+                },
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+         data: (issues) {
           if (issues.isEmpty) {
             return const Center(
               child: Column(
@@ -61,11 +69,15 @@ class MyIssuesScreen extends ConsumerWidget {
                   Icon(Icons.inbox, size: 64, color: Colors.grey),
                   SizedBox(height: 16),
                   Text('No issues or reports submitted yet'),
+                  SizedBox(height: 8),
+                  Text(
+                    'Any issues or reports you submit will appear here',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
                 ],
               ),
             );
           }
-
           return ListView.builder(
             itemCount: issues.length,
             itemBuilder: (context, index) {
@@ -87,7 +99,7 @@ class IssueReportCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
+    
     Color statusColor = Colors.orange;
     if (issue.status == 'in_progress') statusColor = Colors.blue;
     if (issue.status == 'resolved') statusColor = Colors.green;
