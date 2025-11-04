@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jobapp/Feature/AdminSide/candidatelist_screen.dart';
 import 'package:jobapp/Feature/AdminSide/provider/admininfo_provider.dart';
 import 'package:jobapp/Feature/AdminSide/recuiterlist_screen.dart';
+import 'package:jobapp/Feature/AdminSide/reports_issue_screen.dart';
 class AdminDashboardScreen extends ConsumerStatefulWidget {
   const AdminDashboardScreen({super.key});
 
@@ -16,12 +17,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
 
   static final List<Widget> _widgetOptions = [
     DashboardHome(),
-     RecruitersListScreen(),
+    RecruitersListScreen(),
     CandidatelistScreen(),
-    // const PaymentsScreen(),
-    // const SettingsScreen(),
-    // const ReportsScreen(),
-    // const SupportScreen(),
+    ReportissueScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -76,10 +74,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
             _buildDrawerItem(0, Icons.dashboard, 'Dashboard'),
             _buildDrawerItem(1, Icons.business_center, 'Recruiters'),
             _buildDrawerItem(2, Icons.people, 'Candidates'),
-            _buildDrawerItem(3, Icons.payment, 'Payments'),
-            _buildDrawerItem(4, Icons.settings, 'Settings'),
-            _buildDrawerItem(5, Icons.analytics, 'Reports & Issues'),
-            _buildDrawerItem(6, Icons.support, 'Support'),
+            _buildDrawerItem(3, Icons.report_problem, 'Reports & Issues'),
           ],
         ),
       ),
@@ -162,20 +157,20 @@ class DashboardHome extends ConsumerWidget {
                     Colors.green,
                     colorScheme,
                   ),
-                  _buildStatCard(
-                    'Total Payments',
-                    '\$${stats['totalPayments']}',
-                    Icons.payment,
-                    Colors.orange,
-                    colorScheme,
-                  ),
-                  _buildStatCard(
-                    'Active Jobs',
-                    stats['activeJobs'].toString(),
-                    Icons.work,
-                    Colors.purple,
-                    colorScheme,
-                  ),
+                  // _buildStatCard(
+                  //   'Total Payments',
+                  //   '\$${stats['totalPayments']}',
+                  //   Icons.payment,
+                  //   Colors.orange,
+                  //   colorScheme,
+                  // ),
+                  // _buildStatCard(
+                  //   'Active Jobs',
+                  //   stats['activeJobs'].toString(),
+                  //   Icons.work,
+                  //   Colors.purple,
+                  //   colorScheme,
+                  // ),
                 ],
               );
             },

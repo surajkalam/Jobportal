@@ -1,18 +1,22 @@
 
 // Revised Implementation without collectionGroup . single file
+//jobseeekr_repository
 
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jobapp/Feature/AdminSide/model/application_model.dart';
+import 'package:jobapp/Feature/AdminSide/model/admin_issuereport.dart';
+import 'package:jobapp/Feature/JobSeeker/modelclass/issue_report_model.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 
 class JobRepository {
   final FirebaseFirestore _firestore;
-
+ final jobRepositoryProvider = Provider<JobRepository>((ref) => JobRepository());
   JobRepository({FirebaseFirestore? firestore})
     : _firestore = firestore ?? FirebaseFirestore.instance;
-
+ 
   // Fetch all active jobs from all recruiters
   Stream<List<JobModel>> getActiveJobs() {
     try {
@@ -330,5 +334,105 @@ Future<JobModel?> getJobDetails(String jobId, String recruiterEmail) async {
     return null;
   }
 }
+//issue or report 
+// Add to JobRepository class
+Future<void> submitIssueReport({
+  required String jobseekerEmail,
+  required String jobseekerName,
+  required String type, // 'issue' or 'report'
+  required String title,
+  required String description,
+}) async {
+  try {
+    final issueData = {
+      'jobseekerEmail': jobseekerEmail,
+      'jobseekerName': jobseekerName,
+      'type': type,
+      'title': title,
+      'description': description,
+      'status': 'pending',
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+
+    // Store in jobseeker's issues subcollection
+    await _firestore
+        .collection('jobseekers')
+        .doc(jobseekerEmail)
+        .collection('issues_reports')
+        .add(issueData);
+
+    // Also store in admin collection for easy access
+    await _firestore
+        .collection('admin_issues_reports')
+        .add(issueData);
+
+  } catch (e) {
+    throw Exception('Failed to submit $type: $e');
+  }
+}
+
+// Get jobseeker's issues/reports
+Stream<List<IssueReport>> getJobseekerIssues(String jobseekerEmail) {
+  return _firestore
+      .collection('jobseekers')
+      .doc(jobseekerEmail)
+      .collection('issues_reports')
+      .orderBy('createdAt', descending: true)
+      .snapshots()
+      .map((snapshot) {
+    return snapshot.docs
+        .map((doc) => IssueReport.fromMap(doc.id, doc.data()))
+        .toList();
+  });
+}
+// Provider for JobRepository
+
+// Get all issues/reports for admin
+ Stream<List<AdminIssuereport>> getAllIssuesReports() {
+    return _firestore
+        .collection('admin_issues_reports')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => AdminIssuereport.fromMap(doc.id, doc.data()))
+          .toList();
+    });
+  }
+
+// Update issue/report status (for admin)
+Future<void> updateIssueStatus({
+  required String issueId,
+  required String status,
+  required String jobseekerEmail,
+  String? adminResponse,
+}) async {
+  try {
+    final updateData = {
+      'status': status,
+      'updatedAt': FieldValue.serverTimestamp(),
+      if (adminResponse != null) 'adminResponse': adminResponse,
+    };
+
+    // Update in admin collection
+    await _firestore
+        .collection('admin_issues_reports')
+        .doc(issueId)
+        .update(updateData);
+
+    // Also update in jobseeker's collection
+    await _firestore
+        .collection('jobseekers')
+        .doc(jobseekerEmail)
+        .collection('issues_reports')
+        .doc(issueId)
+        .update(updateData);
+
+  } catch (e) {
+    throw Exception('Failed to update issue status: $e');
+  }
+}
+
 
   }
