@@ -567,9 +567,6 @@ void _showContactUsOptions(BuildContext context) {
     },
   );
 }
-
-
-
   Widget _buildAccountRow({
     required IconData icon,
     required String title,

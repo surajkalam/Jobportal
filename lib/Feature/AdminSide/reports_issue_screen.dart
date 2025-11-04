@@ -26,14 +26,15 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Issues & Reports Management'),
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
+        title:Text('Issues & Reports Management',
+        style: TextStyle(fontSize:14 ),
+        ),
+        backgroundColor: colorScheme.primaryContainer,
+        foregroundColor: colorScheme.onPrimaryContainer,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon:Icon(Icons.refresh),
             onPressed: () {
-              // Force refresh
               ref.invalidate(allIssuesReportsProvider);
             },
           ),
@@ -60,7 +61,7 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(16),
           bottomRight: Radius.circular(16),
@@ -104,11 +105,11 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
             children: [
               Chip(
                 label: Text('Issues: ${stats['issues']}'),
-                backgroundColor: Colors.orange.withOpacity(0.2),
+                backgroundColor: Colors.orange.withValues(alpha: 0.2),
               ),
               Chip(
                 label: Text('Reports: ${stats['reports']}'),
-                backgroundColor: Colors.red.withOpacity(0.2),
+                backgroundColor: Colors.red.withValues(alpha:0.2),
               ),
             ],
           ),
@@ -122,13 +123,13 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
       child: Card(
         elevation: 2,
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding:  EdgeInsets.all(12),
           child: Column(
             children: [
               Text(
                 value,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
@@ -137,10 +138,12 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 10,
+                  fontSize: 08,
                   color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600
                 ),
                 textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -158,16 +161,16 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
           Text(
             'Filters',
             style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
               color: colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 8),
+           SizedBox(height: 8),
           Row(
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _selectedFilter,
+                  initialValue: _selectedFilter,
                   items: _statusFilters.map((status) {
                     return DropdownMenuItem(
                       value: status,
@@ -175,6 +178,7 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
                         status == 'all' ? 'All Status' : 
                         status == 'in_progress' ? 'In Progress' :
                         status.replaceAll('_', ' ').toUpperCase(),
+                        style: TextStyle(fontSize: 12),
                       ),
                     );
                   }).toList(),
@@ -183,7 +187,7 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
                       _selectedFilter = value!;
                     });
                   },
-                  decoration: const InputDecoration(
+                  decoration:  InputDecoration(
                     labelText: 'Status',
                     border: OutlineInputBorder(),
                     contentPadding: EdgeInsets.symmetric(horizontal: 12),
@@ -193,12 +197,13 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _selectedType,
+                  initialValue: _selectedType,
                   items: _typeFilters.map((type) {
                     return DropdownMenuItem(
                       value: type,
                       child: Text(
                         type == 'all' ? 'All Types' : type.toUpperCase(),
+                        style: TextStyle(fontSize: 12),
                       ),
                     );
                   }).toList(),
@@ -228,16 +233,12 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(child: Text('Error: $error')),
       data: (issues) {
-        // Apply status filter
         final filteredByStatus = _selectedFilter == 'all'
             ? issues
             : issues.where((issue) => issue.status == _selectedFilter).toList();
-
-        // Apply type filter
         final filteredByType = _selectedType == 'all'
             ? filteredByStatus
             : filteredByStatus.where((issue) => issue.type == _selectedType).toList();
-
         if (filteredByType.isEmpty) {
           return const Center(
             child: Column(
@@ -250,11 +251,10 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
             ),
           );
         }
-
         return ListView.builder(
           itemCount: filteredByType.length,
           itemBuilder: (context, index) {
-            final issue = filteredByType[index];
+          final issue = filteredByType[index];
             return IssueReportCard(
               issue: issue,
               onTap: () {
@@ -273,7 +273,6 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
     );
   }
 }
-
 class IssueReportCard extends StatelessWidget {
   final AdminIssuereport issue;
   final VoidCallback onTap;
@@ -296,13 +295,13 @@ class IssueReportCard extends StatelessWidget {
     IconData typeIcon = issue.type == 'issue' ? Icons.warning : Icons.report_problem;
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 3),
       child: ListTile(
         leading: Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: typeColor.withOpacity(0.2),
+            color: typeColor.withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
           child: Icon(typeIcon, color: typeColor, size: 20),
@@ -322,13 +321,13 @@ class IssueReportCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
             ),
-            const SizedBox(height: 4),
+             SizedBox(height: 4),
             Row(
               children: [
                 Icon(Icons.person, size: 12, color: colorScheme.onSurfaceVariant),
                 const SizedBox(width: 4),
                 Text(
-                  issue.jobseekerName,
+                  issue.userName,
                   style: TextStyle(fontSize: 10, color: colorScheme.onSurfaceVariant),
                 ),
               ],
@@ -336,7 +335,7 @@ class IssueReportCard extends StatelessWidget {
           ],
         ),
         trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Chip(
               label: Text(
@@ -348,20 +347,19 @@ class IssueReportCard extends StatelessWidget {
                 ),
               ),
               backgroundColor: statusColor,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding:  EdgeInsets.symmetric(horizontal: 8, vertical: 1),
             ),
-            const SizedBox(height: 4),
-            Text(
-              _timeAgo(issue.createdAt),
-              style: TextStyle(fontSize: 10, color: colorScheme.onSurfaceVariant),
-            ),
+            // SizedBox(height: 1),
+            // Text(
+            //   _timeAgo(issue.createdAt),
+            //   style: TextStyle(fontSize: 10, color: colorScheme.onSurfaceVariant),
+            // ),
           ],
         ),
         onTap: onTap,
       ),
     );
   }
-
   String _timeAgo(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);

@@ -5,6 +5,9 @@ import 'package:iconsax/iconsax.dart';
 import 'package:jobapp/Authentication/user_provider.dart';
 import 'package:jobapp/core/providers/theme_provider.dart';
 import 'package:jobapp/Authentication/auth_state.dart';
+import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/contactus_screen.dart';
+import 'package:jobapp/Feature/Recuiter/screens/RecruiterContactUsScreen.dart';
+import 'package:jobapp/Feature/Recuiter/screens/RecruiterMyIssuesScreen.dart';
 import '../provider/provider.dart';
 import '../recuiter_model/recuiter_model.dart';
 
@@ -71,6 +74,73 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               child: Text('Logout'),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void _showContactUsOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Contact Us',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: Icon(Icons.warning_amber, color: Colors.orange),
+                title: Text('Report an Issue'),
+                subtitle: Text('Technical problems or bugs'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RecruiterContactUsScreen(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.report_problem, color: Colors.red),
+                title: Text('Make a Report'),
+                subtitle: Text('Report inappropriate content or behavior'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RecruiterContactUsScreen(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.history, color: Colors.blue),
+                title: Text('View My Issues'),
+                subtitle: Text('Check status of your submitted issues'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RecruiterMyIssuesScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         );
       },
     );
@@ -202,6 +272,44 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       Iconsax.calendar,
                       width,height,
                       colorScheme
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Action Buttons
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Actions',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          _showContactUsOptions(context);
+                        },
+                        icon: const Icon(Icons.report_problem),
+                        label: const Text('Report Issue'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          backgroundColor: Colors.orange,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
                     ),
                   ],
                 ),

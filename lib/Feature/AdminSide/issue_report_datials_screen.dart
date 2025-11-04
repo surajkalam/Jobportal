@@ -70,10 +70,15 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
           ? _responseController.text.trim()
           : _getDefaultResponseForStatus(_selectedStatus);
 
+      // Determine user type and email based on available fields
+      final userType = widget.issue.jobseekerEmail != null ? 'jobseeker' : 'recruiter';
+      final userEmail = widget.issue.jobseekerEmail ?? widget.issue.recruiterEmail ?? '';
+
       await repository.updateIssueStatus(
         issueId: widget.issue.id,
         status: _selectedStatus,
-        jobseekerEmail: widget.issue.jobseekerEmail,
+        userEmail: userEmail,
+        userType: userType,
         adminResponse: adminResponse,
       );
 
@@ -157,7 +162,6 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with type and current status
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -167,8 +171,8 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: widget.issue.type == 'issue' 
-                            ? Colors.orange.withOpacity(0.2)
-                            : Colors.red.withOpacity(0.2),
+                            ? Colors.orange.withValues(alpha: 0.2)
+                            : Colors.red.withValues(alpha:0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -228,8 +232,8 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                     const SizedBox(height: 16),
                     Divider(color: colorScheme.outline),
                     const SizedBox(height: 8),
-                    _buildInfoRow('Submitted by', widget.issue.jobseekerName),
-                    _buildInfoRow('Email', widget.issue.jobseekerEmail),
+                    _buildInfoRow('Submitted by', widget.issue.userName),
+                    _buildInfoRow('Email', widget.issue.userEmail),
                     _buildInfoRow('Submitted on', _formatDate(widget.issue.createdAt)),
                     if (widget.issue.updatedAt != null)
                       _buildInfoRow('Last updated', _formatDate(widget.issue.updatedAt!)),

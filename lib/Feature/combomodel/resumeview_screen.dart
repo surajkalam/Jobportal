@@ -12,6 +12,7 @@ class ResumeViewerScreen extends StatelessWidget {
     required this.resumeUrl,
     required this.resumeFileName,
   });
+  
 
   Future<void> _launchResume() async {
     try {

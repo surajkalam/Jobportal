@@ -1,16 +1,20 @@
 // screens/admin_jobseeker_list_screen.dart
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jobapp/Feature/AdminSide/jobseeekr_detail.screen.dart';
 import 'package:jobapp/Feature/AdminSide/provider/admininfo_provider.dart';
-import 'package:jobapp/Feature/AdminSide/provider/jobseekerprovider.dart' hide allJobSeekersProvider;
+import 'package:jobapp/Feature/AdminSide/provider/jobseekerprovider.dart'
+    hide allJobSeekersProvider;
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 
 class CandidatelistScreen extends ConsumerStatefulWidget {
   const CandidatelistScreen({super.key});
 
   @override
-  ConsumerState<CandidatelistScreen> createState() => _CandidatelistScreenState();
+  ConsumerState<CandidatelistScreen> createState() =>
+      _CandidatelistScreenState();
 }
 
 class _CandidatelistScreenState extends ConsumerState<CandidatelistScreen> {
@@ -18,18 +22,14 @@ class _CandidatelistScreenState extends ConsumerState<CandidatelistScreen> {
   Widget build(BuildContext context) {
     final jobseekersAsync = ref.watch(allJobSeekersProvider);
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Scaffold(
       body: jobseekersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Error: $error'),
-        ),
+        error: (error, stack) => Center(child: Text('Error: $error')),
         data: (jobseekers) {
           if (jobseekers.isEmpty) {
-            return const Center(
-              child: Text('No jobseekers found'),
-            );
+            return const Center(child: Text('No jobseekers found'));
           }
           return Column(
             children: [
@@ -55,7 +55,8 @@ class _CandidatelistScreenState extends ConsumerState<CandidatelistScreen> {
                     return JobseekerListTile(
                       jobseeker: jobseeker,
                       onTap: () {
-                        ref.read(selectedJobseekerProvider.notifier).state = jobseeker;
+                        ref.read(selectedJobseekerProvider.notifier).state =
+                            jobseeker;
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -94,8 +95,10 @@ class JobseekerListTile extends ConsumerStatefulWidget {
 class _JobseekerListTileState extends ConsumerState<JobseekerListTile> {
   @override
   Widget build(BuildContext context) {
-    final statsAsync = ref.watch(jobseekerStatsProvider(widget.jobseeker.email));
-
+    final statsAsync = ref.watch(
+      jobseekerStatsProvider(widget.jobseeker.email),
+    );
+    log(widget.jobseeker.email);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: ListTile(
@@ -103,7 +106,9 @@ class _JobseekerListTileState extends ConsumerState<JobseekerListTile> {
           backgroundColor: Theme.of(context).colorScheme.primary,
           foregroundColor: Theme.of(context).colorScheme.onPrimary,
           child: Text(
-            widget.jobseeker.name.isNotEmpty ? widget.jobseeker.name[0].toUpperCase() : 'J',
+            widget.jobseeker.name.isNotEmpty
+                ? widget.jobseeker.name[0].toUpperCase()
+                : 'J',
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -115,16 +120,15 @@ class _JobseekerListTileState extends ConsumerState<JobseekerListTile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(widget.jobseeker.email),
-            Text('${widget.jobseeker.location} • ${widget.jobseeker.experience}'),
+            Text(
+              '${widget.jobseeker.location} • ${widget.jobseeker.experience}',
+            ),
             statsAsync.when(
               data: (stats) => Text(
                 'Applications: ${stats.totalApplications} • '
                 'Shortlisted: ${stats.shortlisted} • '
                 'Rejected: ${stats.rejected}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
               loading: () => const Text(
                 'Loading applications...',

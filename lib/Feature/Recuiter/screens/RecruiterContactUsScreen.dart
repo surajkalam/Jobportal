@@ -1,18 +1,18 @@
-// screens/contact_us_screen.dart
+// screens/recruiter_contact_us_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/my_issues_screen.dart';
-import 'package:jobapp/Feature/JobSeeker/provider/application_provider.dart';
-import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
+import 'package:jobapp/Feature/Recuiter/screens/RecruiterMyIssuesScreen.dart';
+import 'package:jobapp/Feature/Recuiter/provider/requiterinfo_provider.dart';
+import 'package:jobapp/Feature/JobSeeker/provider/jobaccess_provider.dart';
 
-class ContactUsScreen extends ConsumerStatefulWidget {
-  const ContactUsScreen({super.key});
+class RecruiterContactUsScreen extends ConsumerStatefulWidget {
+  const RecruiterContactUsScreen({super.key});
 
   @override
-  ConsumerState<ContactUsScreen> createState() => _ContactUsScreenState();
+  ConsumerState<RecruiterContactUsScreen> createState() => _RecruiterContactUsScreenState();
 }
 
-class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
+class _RecruiterContactUsScreenState extends ConsumerState<RecruiterContactUsScreen> {
   String _selectedType = 'issue';
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -27,10 +27,10 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
 
   void _submitIssueReport() async {
     if (_formKey.currentState!.validate()) {
-      final jobseekerState = ref.read(jobseekerProvider);
-      final jobseekerInfo = jobseekerState.jobseekerInfo;
+      final recruiterAsync = ref.read(recruiterDataProvider);
+      final recruiter = recruiterAsync.value;
 
-      if (jobseekerInfo == null) {
+      if (recruiter == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Please complete your profile first')),
         );
@@ -47,9 +47,9 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
 
         // Submit the issue/report
         final repository = ref.read(jobRepositoryProvider);
-        await repository.submitIssueReport(
-          jobseekerEmail: jobseekerInfo.email,
-          jobseekerName: jobseekerInfo.name.isNotEmpty ? jobseekerInfo.name : jobseekerInfo.email,
+        await repository.submitRecruiterIssueReport(
+          recruiterEmail: recruiter.email,
+          recruiterName: recruiter.name.isNotEmpty ? recruiter.name : recruiter.email,
           type: _selectedType,
           title: _titleController.text.trim(),
           description: _descriptionController.text.trim(),
@@ -72,7 +72,7 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
       } catch (e) {
         // Hide loading
         if (mounted) Navigator.of(context).pop();
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to submit: $e'),
@@ -82,11 +82,12 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    var height=MediaQuery.of(context).size.height;
-    var width=MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -102,10 +103,10 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MyIssuesScreen()),
+                MaterialPageRoute(builder: (context) => RecruiterMyIssuesScreen()),
               );
             },
-            icon: Icon(Icons.report_gmailerrorred,size: 22,color:colorScheme.onPrimaryContainer),
+            icon: Icon(Icons.report_gmailerrorred, size: 22, color: colorScheme.onPrimaryContainer),
           ),
         ],
       ),
@@ -124,7 +125,7 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
                   color: colorScheme.onPrimaryContainer,
                 ),
               ),
-               SizedBox(height:height*0.01),
+              SizedBox(height: height * 0.01),
               // Type Selection
               Row(
                 children: [
@@ -146,11 +147,11 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
                       },
                     ),
                   ),
-                   SizedBox(width:width*0.01),
+                  SizedBox(width: width * 0.01),
                   Expanded(
                     child: ChoiceChip(
-                      label:  Text('Report',
-                      style: TextStyle(
+                      label: Text('Report',
+                        style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: colorScheme.onPrimaryContainer,
@@ -166,32 +167,32 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
                   ),
                 ],
               ),
-               SizedBox(height:height*0.033),
-              
+              SizedBox(height: height * 0.033),
+
               // Title Field
               TextFormField(
                 controller: _titleController,
-                 style:TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onPrimaryContainer,
-                        ),
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onPrimaryContainer,
+                ),
                 decoration: InputDecoration(
                   labelText: 'Title',
-                  labelStyle:TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onPrimaryContainer,
-                        ) ,
+                  labelStyle: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: colorScheme.onPrimaryContainer,
+                  ),
                   border: OutlineInputBorder(),
-                  hintText: _selectedType == 'issue' 
+                  hintText: _selectedType == 'issue'
                     ? 'e.g., App not working properly'
                     : 'e.g., Report inappropriate content',
                   hintStyle: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onSecondaryContainer,
-                        ) ,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: colorScheme.onSecondaryContainer,
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -200,30 +201,30 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
                   return null;
                 },
               ),
-               SizedBox(height:height*0.023),
+              SizedBox(height: height * 0.023),
               TextFormField(
                 controller: _descriptionController,
-                style:TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onPrimaryContainer,
-                        ),
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onPrimaryContainer,
+                ),
                 decoration: InputDecoration(
                   labelText: 'Description',
-                   labelStyle:TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onPrimaryContainer,
-                        ) ,
+                  labelStyle: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: colorScheme.onPrimaryContainer,
+                  ),
                   border: OutlineInputBorder(),
                   hintText: _selectedType == 'issue'
                     ? 'Describe the issue in detail...'
                     : 'Provide detailed information about your report...',
                   hintStyle: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onSecondaryContainer,
-                        ) ,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: colorScheme.onSecondaryContainer,
+                  ),
                 ),
                 maxLines: 5,
                 validator: (value) {
@@ -236,22 +237,22 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
                   return null;
                 },
               ),
-               SizedBox(height: height*0.036),
+              SizedBox(height: height * 0.036),
               // Submit Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _submitIssueReport,
                   style: ElevatedButton.styleFrom(
-                    padding:  EdgeInsets.symmetric(vertical: height*0.02),
+                    padding: EdgeInsets.symmetric(vertical: height * 0.02),
                   ),
-                  child:  Text(
+                  child: Text(
                     'Submit',
-                    style: TextStyle(fontSize: 15,fontWeight: FontWeight.w600,color: colorScheme.surface),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: colorScheme.surface),
                   ),
                 ),
               ),
-              
+
               // Help Text
               const SizedBox(height: 16),
               Container(

@@ -2,7 +2,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:jobapp/Feature/JobSeeker/firebase_crud/jobaccess_repository.dart';
-import 'package:jobapp/Feature/JobSeeker/modelclass/issue_report_model.dart';
+import 'package:jobapp/Feature/combomodel/issue_report_model.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 
 final List<String> staticCategories = [

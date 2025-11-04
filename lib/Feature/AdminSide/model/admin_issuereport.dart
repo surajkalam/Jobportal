@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdminIssuereport {
   final String id;
-  final String jobseekerEmail;
-  final String jobseekerName;
+  final String? jobseekerEmail;
+  final String? jobseekerName;
+  final String? recruiterEmail;
+  final String? recruiterName;
   final String type; // 'issue' or 'report'
   final String title;
   final String description;
@@ -13,10 +15,17 @@ class AdminIssuereport {
   final DateTime? updatedAt;
   final String? adminResponse;
 
+  // Computed properties for easier access
+  String get userEmail => jobseekerEmail ?? recruiterEmail ?? '';
+  String get userName => jobseekerName ?? recruiterName ?? '';
+  String get userType => jobseekerEmail != null ? 'jobseeker' : 'recruiter';
+
   AdminIssuereport({
     required this.id,
-    required this.jobseekerEmail,
-    required this.jobseekerName,
+    this.jobseekerEmail,
+    this.jobseekerName,
+    this.recruiterEmail,
+    this.recruiterName,
     required this.type,
     required this.title,
     required this.description,
@@ -43,16 +52,18 @@ class AdminIssuereport {
   factory AdminIssuereport.fromMap(String id, Map<String, dynamic> map) {
     return AdminIssuereport(
       id: id,
-      jobseekerEmail: map['jobseekerEmail'] ?? '',
-      jobseekerName: map['jobseekerName'] ?? '',
+      jobseekerEmail: map['jobseekerEmail']?.toString(),
+      jobseekerName: map['jobseekerName']?.toString(),
+      recruiterEmail: map['recruiterEmail']?.toString(),
+      recruiterName: map['recruiterName']?.toString(),
       type: map['type'] ?? '',
       title: map['title'] ?? '',
       description: map['description'] ?? '',
       status: map['status'] ?? 'pending',
-      createdAt: map['createdAt'] != null 
+      createdAt: map['createdAt'] != null
           ? (map['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
-      updatedAt: map['updatedAt'] != null 
+      updatedAt: map['updatedAt'] != null
           ? (map['updatedAt'] as Timestamp).toDate()
           : null,
       adminResponse: map['adminResponse'],

@@ -357,8 +357,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       onPressed: _handleLogin,
                       child: authState.isLoading
                           ? SizedBox(
-                              height: height * 0.03,
-                              width: width * 0.04,
+                              height: height * 0.015,
+                              width: width * 0.035,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 color: colorScheme.onTertiary,

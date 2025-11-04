@@ -1,9 +1,11 @@
 // providers/recruiterInfo_providers.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:jobapp/Feature/JobSeeker/provider/application_provider.dart';
 
 import '../recuiter_firebase/requiterinfo_firebase.dart';
 import '../recuiter_model/recuiter_model.dart';
+import 'package:jobapp/Feature/combomodel/issue_report_model.dart';
 
 // Firebase Service Provider
 final firebaseRecruiterServiceProvider = Provider<FirebaseRecruiterService>((ref) {
@@ -66,3 +68,9 @@ class RecruiterNotifier extends StateNotifier<AsyncValue<RecruiterModel?>> {
 
 // Loading State Provider
 final loadingStateProvider = StateProvider<bool>((ref) => false);
+
+// Provider for recruiter's issues/reports
+final recruiterIssuesProvider = StreamProvider.family<List<IssueReport>, String>((ref, recruiterEmail) {
+  final repository = ref.watch(jobRepositoryProvider);
+  return repository.getRecruiterIssues(recruiterEmail);
+});
