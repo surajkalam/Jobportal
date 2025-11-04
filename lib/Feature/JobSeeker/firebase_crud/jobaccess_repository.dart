@@ -334,7 +334,7 @@ Future<JobModel?> getJobDetails(String jobId, String recruiterEmail) async {
     return null;
   }
 }
-//issue or report 
+//issue or report
 // Add to JobRepository class
 Future<void> submitIssueReport({
   required String jobseekerEmail,
@@ -355,16 +355,11 @@ Future<void> submitIssueReport({
       'updatedAt': FieldValue.serverTimestamp(),
     };
 
-    // Store in jobseeker's issues subcollection
+    // Store only in jobseeker's issues subcollection
     await _firestore
         .collection('jobseekers')
         .doc(jobseekerEmail)
         .collection('issues_reports')
-        .add(issueData);
-
-    // Also store in admin collection for easy access
-    await _firestore
-        .collection('admin_issues_reports')
         .add(issueData);
 
   } catch (e) {
@@ -388,18 +383,35 @@ Stream<List<IssueReport>> getJobseekerIssues(String jobseekerEmail) {
 }
 // Provider for JobRepository
 
-// Get all issues/reports for admin
- Stream<List<AdminIssuereport>> getAllIssuesReports() {
-    return _firestore
-        .collection('admin_issues_reports')
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => AdminIssuereport.fromMap(doc.id, doc.data()))
-          .toList();
-    });
-  }
+// Get all issues/reports for admin - fetch from all jobseekers' subcollections
+Stream<List<AdminIssuereport>> getAllIssuesReports() {
+  return _firestore.collection('jobseekers').snapshots().asyncMap((jobseekersSnapshot) async {
+    final allIssues = <AdminIssuereport>[];
+
+    for (final jobseekerDoc in jobseekersSnapshot.docs) {
+      try {
+        final issuesSnapshot = await _firestore
+            .collection('jobseekers')
+            .doc(jobseekerDoc.id)
+            .collection('issues_reports')
+            .orderBy('createdAt', descending: true)
+            .get();
+
+        allIssues.addAll(
+          issuesSnapshot.docs
+              .map((doc) => AdminIssuereport.fromMap(doc.id, doc.data()))
+              .toList(),
+        );
+      } catch (e) {
+        log('Error fetching issues for jobseeker ${jobseekerDoc.id}: $e');
+      }
+    }
+
+    // Sort all issues by createdAt descending
+    allIssues.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return allIssues;
+  });
+}
 
 // Update issue/report status (for admin)
 Future<void> updateIssueStatus({
@@ -415,13 +427,7 @@ Future<void> updateIssueStatus({
       if (adminResponse != null) 'adminResponse': adminResponse,
     };
 
-    // Update in admin collection
-    await _firestore
-        .collection('admin_issues_reports')
-        .doc(issueId)
-        .update(updateData);
-
-    // Also update in jobseeker's collection
+    // Update only in jobseeker's collection
     await _firestore
         .collection('jobseekers')
         .doc(jobseekerEmail)
