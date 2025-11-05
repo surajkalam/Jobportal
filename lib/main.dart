@@ -6,19 +6,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jobapp/Feature/combomodel/combo_gorouter.dart';
 import 'package:jobapp/core/material_theme.dart';
 import 'package:jobapp/core/typography.dart';
-import 'package:jobapp/firebase_options.dart';
 import 'package:jobapp/core/services/local_storage_service.dart';
 import 'package:jobapp/core/providers/theme_provider.dart';
 import 'package:jobapp/Authentication/user_provider.dart';
+import 'package:jobapp/firebase_options.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate(
-  // ignore: deprecated_member_use
-  androidProvider: AndroidProvider.playIntegrity,
-);
+    // ignore: deprecated_member_use
+    androidProvider: AndroidProvider.debug,
+  );
+  FirebaseAppCheck.instance.getToken(true).then((token) {
+    debugPrint("🔥 Debug Token => $token");
+  });
   // Initialize local storage service
   await LocalStorageService().init();
   log('message: Firebase Initialized');
@@ -37,6 +39,7 @@ class _MainAppState extends ConsumerState<MainApp> {
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(authListenerProvider);

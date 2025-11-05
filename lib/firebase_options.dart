@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,9 +28,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -40,19 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCHa5HwcAwIyOE9TYuTUeOlX--RtdR9gN8',
-    appId: '1:699709353509:web:4607ffb2b2954a4e5419cc',
-    messagingSenderId: '699709353509',
-    projectId: 'coffeeshop-3270e',
-    authDomain: 'coffeeshop-3270e.firebaseapp.com',
-    storageBucket: 'coffeeshop-3270e.firebasestorage.app',
-    measurementId: 'G-4HF4GXFS32',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCCvoTD7SbBmOlOhUga0psaOMkZ05-uvIU',
-    appId: '1:699709353509:android:768209e36bb6823f5419cc',
+    appId: '1:699709353509:android:7130fa52b26744b75419cc',
     messagingSenderId: '699709353509',
     projectId: 'coffeeshop-3270e',
     storageBucket: 'coffeeshop-3270e.firebasestorage.app',
@@ -64,29 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '699709353509',
     projectId: 'coffeeshop-3270e',
     storageBucket: 'coffeeshop-3270e.firebasestorage.app',
-    androidClientId: '699709353509-0vclakfmbaf1r48hcac540n5nb6rtli6.apps.googleusercontent.com',
-    iosClientId: '699709353509-sfuuaked7pdqjgs0r317u50n8kue2sha.apps.googleusercontent.com',
-    iosBundleId: 'com.example.jobapp',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyARnoP_c-3NHE5c1cbcK-AFxuZtmy2gMrs',
-    appId: '1:699709353509:ios:9270de5182870e665419cc',
-    messagingSenderId: '699709353509',
-    projectId: 'coffeeshop-3270e',
-    storageBucket: 'coffeeshop-3270e.firebasestorage.app',
     androidClientId: '699709353509-81eff9gakc81pmhobvicfkiis856a0oq.apps.googleusercontent.com',
-    iosClientId: '699709353509-sfuuaked7pdqjgs0r317u50n8kue2sha.apps.googleusercontent.com',
     iosBundleId: 'com.example.jobapp',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCHa5HwcAwIyOE9TYuTUeOlX--RtdR9gN8',
-    appId: '1:699709353509:web:1ca3b94f842fdca55419cc',
-    messagingSenderId: '699709353509',
-    projectId: 'coffeeshop-3270e',
-    authDomain: 'coffeeshop-3270e.firebaseapp.com',
-    storageBucket: 'coffeeshop-3270e.firebasestorage.app',
-    measurementId: 'G-LQV9BWYZVN',
   );
 }

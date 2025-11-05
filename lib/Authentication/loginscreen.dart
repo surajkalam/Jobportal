@@ -44,107 +44,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     context.go('/signup', extra: userType.name);
   }
 
-  //
-  // Future<void> _handleLogin() async {
-  //   if (!_formKey.currentState!.validate()) {
-  //     return;
-  //   }
-
-  //   final authNotifier = ref.read(authStateProvider.notifier);
-
-  //   final user = await authNotifier.loginWithEmailAndPassword(
-  //     email: _emailOrMobileController.text.trim(),
-  //     password: _passwordController.text,
-  //   );
-
-  //   if (user != null) {
-  //     final userEmail = user.email ?? _emailOrMobileController.text.trim();
-  //     final userType = ref.read(selectionProvider);
-
-  //     // Save user data to local storage
-  //     await _localStorage.setUserEmail(userEmail);
-  //     await _localStorage.setUserType(userType.name);
-  //     await _localStorage.setLoggedIn(true);
-
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text(
-  //             '✅ Login successful for: $userEmail',
-  //             style: TextStyle(color: Colors.white),
-  //           ),
-  //           backgroundColor: Colors.greenAccent,
-  //           duration: Duration(seconds: 2),
-  //           behavior: SnackBarBehavior.floating,
-  //         ),
-  //       );
-  //     }
-
-  //     WidgetsBinding.instance.addPostFrameCallback((_) {
-  //       if (userType == UserType.jobseeker) {
-  //         context.go('/job-nav');
-  //       } else {
-  //         context.go('/recuiter-nav');
-  //       }
-  //     });
-  //   } else {
-  //     // Error is already handled in the auth state
-  //     final error = ref.read(authStateProvider).error;
-  //     if (error != null && mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text(error, style: TextStyle(color: Colors.white)),
-  //           backgroundColor: Colors.red,
-  //           duration: Duration(seconds: 3),
-  //           behavior: SnackBarBehavior.floating,
-  //         ),
-  //       );
-  //     }
-  //   }
-  // }
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    final userType = ref.read(selectionProvider);
-    final email = _emailOrMobileController.text.trim();
-    final password = _passwordController.text.trim();
-    // ✅ Domain restriction logic
-    final disallowedDomains = [
-      '@gmail.com',
-      '@yahoo.com',
-      '@hotmail.com',
-      '@outlook.com',
-      '@icloud.com',
-    ];
-    if (userType == UserType.recruiter) {
-      if (disallowedDomains.any((domain) => email.endsWith(domain))) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Recruiters must use a company email (not Gmail, Yahoo, etc.)',
-            ),
-            backgroundColor: Colors.white,
-            behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.all(16),
-            duration: Duration(seconds: 3),
-            shape: Border.all(color: Colors.red),
-          ),
-        );
-        return;
-      }
-    }
     final authNotifier = ref.read(authStateProvider.notifier);
+
     final user = await authNotifier.loginWithEmailAndPassword(
-      email: email,
-      password: password,
+      email: _emailOrMobileController.text.trim(),
+      password: _passwordController.text,
     );
 
     if (user != null) {
-      final userEmail = user.email ?? email;
+      final userEmail = user.email ?? _emailOrMobileController.text.trim();
+      final userType = ref.read(selectionProvider);
 
-      // Save user data locally
+      // Save user data to local storage
       await _localStorage.setUserEmail(userEmail);
       await _localStorage.setUserType(userType.name);
       await _localStorage.setLoggedIn(true);
@@ -154,10 +70,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           SnackBar(
             content: Text(
               '✅ Login successful for: $userEmail',
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white),
             ),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.greenAccent,
+            duration: Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -171,19 +87,106 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         }
       });
     } else {
+      // Error is already handled in the auth state
       final error = ref.read(authStateProvider).error;
       if (error != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error, style: const TextStyle(color: Colors.white)),
-            backgroundColor: Colors.redAccent,
-            duration: const Duration(seconds: 3),
+            content: Text(error, style: TextStyle(color: Colors.white)),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
             behavior: SnackBarBehavior.floating,
           ),
         );
       }
     }
   }
+
+  // Future<void> _handleLogin() async {
+  //   if (!_formKey.currentState!.validate()) {
+  //     return;
+  //   }
+
+  //   final userType = ref.read(selectionProvider);
+  //   final email = _emailOrMobileController.text.trim();
+  //   final password = _passwordController.text.trim();
+  //   // ✅ Domain restriction logic
+  //   final disallowedDomains = [
+  //     '@gmail.com',
+  //     '@yahoo.com',
+  //     '@hotmail.com',
+  //     '@outlook.com',
+  //     '@icloud.com',
+  //   ];
+  //   if (userType == UserType.recruiter) {
+  //     if (disallowedDomains.any((domain) => email.endsWith(domain))) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text(
+  //             'Recruiters must use a company email (not Gmail, Yahoo, etc.)',
+  //             style: TextStyle(color: Colors.red),
+  //           ),
+  //           backgroundColor: Colors.white,
+  //           behavior: SnackBarBehavior.floating,
+  //           margin: EdgeInsets.all(16),
+  //           duration: Duration(seconds: 3),
+  //           shape: Border.all(color: Colors.red),
+  //         ),
+  //       );
+  //       return;
+  //     }
+  //   }
+  //   final authNotifier = ref.read(authStateProvider.notifier);
+  //   final user = await authNotifier.loginWithEmailAndPassword(
+  //     email: email,
+  //     password: password,
+  //   );
+
+  //   if (user != null) {
+  //     final userEmail = user.email ?? email;
+
+  //     // Save user data locally
+  //     await _localStorage.setUserEmail(userEmail);
+  //     await _localStorage.setUserType(userType.name);
+  //     await _localStorage.setLoggedIn(true);
+
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text(
+  //             ' Login successful for: $userEmail',
+  //             style: const TextStyle(color: Colors.green),
+  //           ),
+  //           backgroundColor: Colors.white,
+  //           duration: const Duration(seconds: 2),
+  //           behavior: SnackBarBehavior.floating,
+  //           shape: Border.all(color: Colors.green),
+  //         ),
+  //       );
+  //     }
+
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       if (userType == UserType.jobseeker) {
+  //         context.go('/job-nav');
+  //       } else {
+  //         context.go('/recuiter-nav');
+  //       }
+  //     });
+  //   } else {
+  //     final error = ref.read(authStateProvider).error;
+  //     if (error != null && mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text(error, style: const TextStyle(color: Colors.red)),
+  //           backgroundColor: Colors.white,
+  //           duration: const Duration(seconds: 3),
+  //           behavior: SnackBarBehavior.floating,
+  //           shape: Border.all(color: Colors.red),
+  //         ),
+  //       );
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

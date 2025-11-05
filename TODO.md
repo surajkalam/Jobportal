@@ -1,9 +1,7 @@
-# Recruiter Issue/Report Functionality Implementation
+# TODO: Fix Firebase App Check Authentication Issues
 
-## Tasks
-- [x] Create RecruiterContactUsScreen.dart (similar to ContactUsScreen but for recruiters)
-- [x] Create RecruiterMyIssuesScreen.dart (similar to MyIssuesScreen but for recruiters)
-- [x] Add recruiterIssuesProvider to requiterinfo_provider.dart
-- [x] Update profile_screens.dart to navigate to RecruiterContactUsScreen and add view issues button
-- [x] Test navigation and submission functionality
-- [x] Verify admin can view and respond to recruiter issues
+- [x] Uncomment Firebase App Check activation in lib/main.dart
+- [x] Uncomment Play Integrity dependency in android/app/build.gradle.kts
+- [x] Run flutter clean and rebuild the app
+- [x] Build Android APK to verify no compilation errors
+- [ ] Test authentication to ensure App Check works

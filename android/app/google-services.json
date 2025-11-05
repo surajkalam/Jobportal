@@ -7,15 +7,19 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:699709353509:android:768209e36bb6823f5419cc",
+        "mobilesdk_app_id": "1:699709353509:android:7130fa52b26744b75419cc",
         "android_client_info": {
           "package_name": "com.aptitsolutions.airigo"
         }
       },
       "oauth_client": [
         {
-          "client_id": "699709353509-893fjuki2ukjkaonkve1u5uvirpnba5p.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "699709353509-jnafakalilgm0dq57r8l5lhtu2rgtgdk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aptitsolutions.airigo",
+            "certificate_hash": "8527ba16773ae0e5f92642aad9b7692787b670df"
+          }
         }
       ],
       "api_key": [
@@ -26,10 +30,6 @@
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
-            {
-              "client_id": "699709353509-893fjuki2ukjkaonkve1u5uvirpnba5p.apps.googleusercontent.com",
-              "client_type": 3
-            },
             {
               "client_id": "699709353509-5sejl2f6j14e5u67fk1dsjkbrjqnp0sa.apps.googleusercontent.com",
               "client_type": 2,
@@ -48,20 +48,7 @@
           "package_name": "com.example.jobapp"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "699709353509-0vclakfmbaf1r48hcac540n5nb6rtli6.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.jobapp",
-            "certificate_hash": "8527ba16773ae0e5f92642aad9b7692787b670df"
-          }
-        },
-        {
-          "client_id": "699709353509-893fjuki2ukjkaonkve1u5uvirpnba5p.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyCCvoTD7SbBmOlOhUga0psaOMkZ05-uvIU"
@@ -70,10 +57,6 @@
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
-            {
-              "client_id": "699709353509-893fjuki2ukjkaonkve1u5uvirpnba5p.apps.googleusercontent.com",
-              "client_type": 3
-            },
             {
               "client_id": "699709353509-5sejl2f6j14e5u67fk1dsjkbrjqnp0sa.apps.googleusercontent.com",
               "client_type": 2,
