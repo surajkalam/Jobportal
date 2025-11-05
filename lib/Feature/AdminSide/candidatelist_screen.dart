@@ -1,6 +1,3 @@
-// screens/admin_jobseeker_list_screen.dart
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jobapp/Feature/AdminSide/jobseeekr_detail.screen.dart';
@@ -95,10 +92,9 @@ class JobseekerListTile extends ConsumerStatefulWidget {
 class _JobseekerListTileState extends ConsumerState<JobseekerListTile> {
   @override
   Widget build(BuildContext context) {
-    final statsAsync = ref.watch(
-      jobseekerStatsProvider(widget.jobseeker.email),
-    );
-    log(widget.jobseeker.email);
+    // final statsAsync = ref.watch(
+    //   jobseekerStatsProvider(widget.jobseeker.email),
+    // );
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: ListTile(
@@ -123,22 +119,22 @@ class _JobseekerListTileState extends ConsumerState<JobseekerListTile> {
             Text(
               '${widget.jobseeker.location} • ${widget.jobseeker.experience}',
             ),
-            statsAsync.when(
-              data: (stats) => Text(
-                'Applications: ${stats.totalApplications} • '
-                'Shortlisted: ${stats.shortlisted} • '
-                'Rejected: ${stats.rejected}',
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
-              loading: () => const Text(
-                'Loading applications...',
-                style: TextStyle(fontSize: 12),
-              ),
-              error: (error, stack) => const Text(
-                'Error loading stats',
-                style: TextStyle(fontSize: 12),
-              ),
-            ),
+            //     statsAsync.when(
+            //       data: (stats) => Text(
+            //         'Applications: ${stats.totalApplications} • '
+            //         'Shortlisted: ${stats.shortlisted} • '
+            //         'Rejected: ${stats.rejected}',
+            //         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            //       ),
+            //       loading: () => const Text(
+            //         'Loading applications...',
+            //         style: TextStyle(fontSize: 12),
+            //       ),
+            //       error: (error, stack) => const Text(
+            //         'Error loading stats',
+            //         style: TextStyle(fontSize: 12),
+            //       ),
+            //     ),
           ],
         ),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),

@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:jobapp/core/services/local_storage_service.dart';
 
-final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
+final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((
+  ref,
+) {
   return AuthStateNotifier();
 });
 
@@ -47,12 +49,9 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   void _checkCurrentUser() {
     final currentUser = _auth.currentUser;
     final isLoggedInLocally = _localStorage.isLoggedIn;
-    
+
     if (currentUser != null && isLoggedInLocally) {
-      state = state.copyWith(
-        user: currentUser,
-        isLoggedIn: true,
-      );
+      state = state.copyWith(user: currentUser, isLoggedIn: true);
     }
   }
 
@@ -64,27 +63,28 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   }) async {
     try {
       state = state.copyWith(isLoading: true, error: null);
-      
-      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password,
-      );
+
+      final UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(
+            email: email.trim(),
+            password: password,
+          );
 
       await userCredential.user?.updateDisplayName(phoneNumber);
-      
+
       // Save user data to local storage
       await _localStorage.setUserEmail(email);
       await _localStorage.setLoggedIn(true);
-      
+
       state = state.copyWith(
-        user: userCredential.user, 
+        user: userCredential.user,
         isLoading: false,
         isLoggedIn: true,
       );
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'Sign up failed. Please try again.';
-      
+
       switch (e.code) {
         case 'email-already-in-use':
           errorMessage = 'This email is already registered.';
@@ -101,11 +101,14 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         default:
           errorMessage = e.message ?? 'An unexpected error occurred.';
       }
-      
+
       state = state.copyWith(error: errorMessage, isLoading: false);
       return null;
     } catch (e) {
-      state = state.copyWith(error: 'An unexpected error occurred.', isLoading: false);
+      state = state.copyWith(
+        error: 'An unexpected error occurred.',
+        isLoading: false,
+      );
       return null;
     }
   }
@@ -118,15 +121,13 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email.trim(),
-        password: password,
-      );
-      
+      final UserCredential userCredential = await _auth
+          .signInWithEmailAndPassword(email: email.trim(), password: password);
+
       // Save user data to local storage
       await _localStorage.setUserEmail(email);
       await _localStorage.setLoggedIn(true);
-      
+
       state = state.copyWith(
         user: userCredential.user,
         isLoading: false,
@@ -135,7 +136,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'Login failed. Please try again.';
-      
+
       switch (e.code) {
         case 'user-not-found':
           errorMessage = 'No user found with this email.';
@@ -152,11 +153,14 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         default:
           errorMessage = e.message ?? 'An unexpected error occurred.';
       }
-      
+
       state = state.copyWith(error: errorMessage, isLoading: false);
       return null;
     } catch (e) {
-      state = state.copyWith(error: 'An unexpected error occurred.', isLoading: false);
+      state = state.copyWith(
+        error: 'An unexpected error occurred.',
+        isLoading: false,
+      );
       return null;
     }
   }

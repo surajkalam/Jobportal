@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +16,8 @@ class JobSeekerDashboard extends ConsumerStatefulWidget {
 
 class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
   final TextEditingController _searchController = TextEditingController();
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -70,16 +70,18 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
     final searchQuery = ref.watch(searchQueryProvider);
     // Decide which provider to use based on whether user is searching
     final jobsAsync = searchQuery.isEmpty
-        ? ref.watch(filteredJobsProvider(selectedCategory)) // Use category filter
+        ? ref.watch(
+            filteredJobsProvider(selectedCategory),
+          ) // Use category filter
         : ref.watch(searchOnlyProvider); // Use search results
     final jobseekerState = ref.watch(jobseekerProvider);
     final jobseekerInfo = jobseekerState.jobseekerInfo;
-  
-        // Get name and email
-        final name = jobseekerInfo?.name ?? 'Master';
-        // final email = jobseekerInfo?.email ?? '';
-      // log('👤 Name: $name');
-      // log('📧 Email: $email');
+
+    // Get name and email
+    final name = jobseekerInfo?.name ?? 'Master';
+    // final email = jobseekerInfo?.email ?? '';
+    // log('👤 Name: $name');
+    // log('📧 Email: $email');
     return Scaffold(
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
@@ -93,7 +95,10 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [colorScheme.primary, colorScheme.surfaceContainerHighest],
+                colors: [
+                  colorScheme.primary,
+                  colorScheme.surfaceContainerHighest,
+                ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 stops: [0.06, 0.4],
@@ -104,7 +109,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildWelcomeSection(height, width, colorScheme,name),
+                  _buildWelcomeSection(height, width, colorScheme, name),
                   SizedBox(height: height * 0.02),
                   _buildSearchBar(height, width, colorScheme),
                   SizedBox(height: height * 0.02),
@@ -129,9 +134,20 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
                           children: [
-                            _buildCategorySection(ref, height, width, colorScheme),
+                            _buildCategorySection(
+                              ref,
+                              height,
+                              width,
+                              colorScheme,
+                            ),
                             _buildJobMatchHeader(colorScheme),
-                            _buildJobsList(jobsAsync, selectedCategory, height, width, colorScheme),
+                            _buildJobsList(
+                              jobsAsync,
+                              selectedCategory,
+                              height,
+                              width,
+                              colorScheme,
+                            ),
                           ],
                         ),
                       ),
@@ -154,8 +170,18 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
                           children: [
-                            _buildSearchHeader(searchQuery, context, colorScheme),
-                            _buildJobsList(jobsAsync, "Search Results", height, width, colorScheme),
+                            _buildSearchHeader(
+                              searchQuery,
+                              context,
+                              colorScheme,
+                            ),
+                            _buildJobsList(
+                              jobsAsync,
+                              "Search Results",
+                              height,
+                              width,
+                              colorScheme,
+                            ),
                           ],
                         ),
                       ),
@@ -170,14 +196,22 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
     );
   }
 
-  Widget _buildSearchHeader(String searchQuery, BuildContext context, ColorScheme colorScheme) {
+  Widget _buildSearchHeader(
+    String searchQuery,
+    BuildContext context,
+    ColorScheme colorScheme,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
           child: Text(
             'Search Results for "$searchQuery"',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colorScheme.onSurface),
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: colorScheme.onSurface,
+            ),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -193,7 +227,12 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
     );
   }
 
-  Widget _buildWelcomeSection(double height, double width, ColorScheme colorScheme,String name) {
+  Widget _buildWelcomeSection(
+    double height,
+    double width,
+    ColorScheme colorScheme,
+    String name,
+  ) {
     return Padding(
       padding: EdgeInsets.only(
         left: width * 0.05,
@@ -246,26 +285,45 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                   controller: _searchController, // Use the same controller
                   decoration: InputDecoration(
                     hintText: 'Search by company, location, designation...',
-                    hintStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
-                    prefixIcon: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
+                    hintStyle: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                     suffixIcon: searchQuery.isNotEmpty
                         ? IconButton(
-                            icon: Icon(Icons.clear, size: 16, color: colorScheme.onSurface),
+                            icon: Icon(
+                              Icons.clear,
+                              size: 16,
+                              color: colorScheme.onSurface,
+                            ),
                             onPressed: () {
                               _searchController.clear();
                             },
                           )
                         : null,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     filled: true,
                     fillColor: colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: colorScheme.outline, width: 1),
+                      borderSide: BorderSide(
+                        color: colorScheme.outline,
+                        width: 1,
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: colorScheme.outline, width: 1),
+                      borderSide: BorderSide(
+                        color: colorScheme.outline,
+                        width: 1,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -281,7 +339,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
               SizedBox(width: width * 0.01),
               InkWell(
                 onTap: () {
-                  // _showFilterDialog(context, ref);//navigate to filter 
+                  // _showFilterDialog(context, ref);//navigate to filter
                   context.push('/admin-dashboard');
                 },
                 borderRadius: BorderRadius.circular(12),
@@ -291,10 +349,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: colorScheme.outline,
-                      width: 1,
-                    ),
+                    border: Border.all(color: colorScheme.outline, width: 1),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -317,7 +372,12 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
     );
   }
 
-  Widget _buildCategorySection(WidgetRef ref, double height, double width, ColorScheme colorScheme) {
+  Widget _buildCategorySection(
+    WidgetRef ref,
+    double height,
+    double width,
+    ColorScheme colorScheme,
+  ) {
     final staticCats = ref.watch(staticCategoriesProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
@@ -326,7 +386,11 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
       children: [
         Text(
           'Category',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: colorScheme.onSurface),
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: colorScheme.onSurface,
+          ),
         ),
         SizedBox(height: height * 0.012),
         SizedBox(
@@ -342,20 +406,31 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                 child: FilterChip(
                   label: Text(
                     category,
-                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w400, color: isSelected ? colorScheme.onPrimary : colorScheme.onSurfaceVariant),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: isSelected
+                          ? colorScheme.onPrimary
+                          : colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   selected: isSelected,
                   onSelected: (selected) {
-                    ref.read(selectedCategoryProvider.notifier).state = category;
+                    ref.read(selectedCategoryProvider.notifier).state =
+                        category;
                     log('Selected category: $category');
                   },
                   shape: StadiumBorder(
-                    side: BorderSide(color: colorScheme.outline.withValues(alpha: 0.5)),
+                    side: BorderSide(
+                      color: colorScheme.outline.withValues(alpha: 0.5),
+                    ),
                   ),
                   backgroundColor: colorScheme.surface,
                   selectedColor: colorScheme.primary,
                   labelStyle: TextStyle(
-                    color: isSelected ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
+                    color: isSelected
+                        ? colorScheme.onPrimary
+                        : colorScheme.onSurfaceVariant,
                   ),
                 ),
               );
@@ -372,12 +447,16 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
       children: [
         Text(
           'Job match with you',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colorScheme.onSurface),
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: colorScheme.onSurface,
+          ),
         ),
         Spacer(),
         TextButton(
           onPressed: () {
-             context.push('/see-all-jobs');
+            context.push('/see-all-jobs');
           },
           child: Text(
             'See All',
@@ -388,7 +467,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
             ),
           ),
         ),
-        Icon(Icons.arrow_drop_down,size: 18,color: colorScheme.onSurface,),
+        Icon(Icons.arrow_drop_down, size: 18, color: colorScheme.onSurface),
       ],
     );
   }
@@ -396,8 +475,9 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
   Widget _buildJobsList(
     AsyncValue<List<JobModel>> jobsAsync,
     String selectedCategory,
-    double height, double width,
-    ColorScheme colorScheme
+    double height,
+    double width,
+    ColorScheme colorScheme,
   ) {
     return jobsAsync.when(
       loading: () => SizedBox(
@@ -410,7 +490,10 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
               SizedBox(height: 10),
               Text(
                 'Loading jobs...',
-                style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -450,20 +533,31 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.search_off, size: 50, color: colorScheme.onSurfaceVariant),
+                  Icon(
+                    Icons.search_off,
+                    size: 50,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                   SizedBox(height: 10),
                   Text(
-                    selectedCategory == 'All' || selectedCategory == 'Search Results'
+                    selectedCategory == 'All' ||
+                            selectedCategory == 'Search Results'
                         ? 'No jobs available'
                         : 'No $selectedCategory jobs found',
-                    style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: _refreshData,
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 8,
+                      ),
                       backgroundColor: colorScheme.primary,
                       foregroundColor: colorScheme.onPrimary,
                     ),
@@ -488,7 +582,13 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
   }
 
   // Rest of your methods remain the same (_buildJobCard, _buildJobTag, _calculateTimeAgo)
-  Widget _buildJobCard(BuildContext context, JobModel job, double height, double width, ColorScheme colorScheme) {
+  Widget _buildJobCard(
+    BuildContext context,
+    JobModel job,
+    double height,
+    double width,
+    ColorScheme colorScheme,
+  ) {
     return InkWell(
       onTap: () {
         context.push('/job-details', extra: job);
@@ -499,7 +599,10 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outline.withValues(alpha: 0.8), width: 01),
+          border: Border.all(
+            color: colorScheme.outline.withValues(alpha: 0.8),
+            width: 01,
+          ),
           boxShadow: [
             BoxShadow(
               color: colorScheme.shadow.withValues(alpha: 0.05),
@@ -544,7 +647,9 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                               border: Border.all(color: colorScheme.outline),
                               boxShadow: [
                                 BoxShadow(
-                                  color: colorScheme.shadow.withValues(alpha: 0.05),
+                                  color: colorScheme.shadow.withValues(
+                                    alpha: 0.05,
+                                  ),
                                   blurRadius: 2,
                                   offset: const Offset(0, 1),
                                 ),
@@ -559,7 +664,10 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                                   job.imageUrl,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
-                                    return Icon(Icons.broken_image, color: colorScheme.onSurfaceVariant);
+                                    return Icon(
+                                      Icons.broken_image,
+                                      color: colorScheme.onSurfaceVariant,
+                                    );
                                   },
                                 ),
                               ),
@@ -574,7 +682,8 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SizedBox(
-                                  width: MediaQuery.of(context).size.width * 0.4,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
                                   child: Text(
                                     job.designation,
                                     style: TextStyle(
@@ -585,9 +694,9 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                SizedBox(width: 10,),
+                                SizedBox(width: 10),
                                 SizedBox(
-                                  width: width*0.14,
+                                  width: width * 0.14,
                                   child: Text(
                                     '${job.ctc} ',
                                     style: TextStyle(
@@ -605,7 +714,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  width: width*0.3,
+                                  width: width * 0.3,
                                   child: Text(
                                     '${job.companyName} ',
                                     style: TextStyle(
@@ -620,10 +729,12 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                                 Icon(
                                   Icons.location_pin,
                                   size: 15,
-                                  color: colorScheme.outline.withValues(alpha: 0.8),
+                                  color: colorScheme.outline.withValues(
+                                    alpha: 0.8,
+                                  ),
                                 ),
                                 SizedBox(
-                                  width: width*0.2,
+                                  width: width * 0.2,
                                   child: Text(
                                     ' ${job.location}',
                                     style: TextStyle(
@@ -643,9 +754,11 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        _buildJobTag('Remote', colorScheme),
-                        const SizedBox(width: 8),
-                        _buildJobTag('full Time', colorScheme),
+                        _buildJobTag(job.noticePeriod, colorScheme),
+                        SizedBox(width: 8),
+                        _buildJobTag(job.jobType, colorScheme),
+                        SizedBox(width: 8),
+                        _buildJobTag(job.experience, colorScheme),
                       ],
                     ),
                   ],
@@ -657,51 +770,58 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 children: [
-                  Icon(Icons.alarm, color: colorScheme.onSurfaceVariant, size: 15),
+                  Icon(
+                    Icons.alarm,
+                    color: colorScheme.onSurfaceVariant,
+                    size: 15,
+                  ),
                   SizedBox(width: 5),
                   Text(
                     '${_calculateTimeAgo(job.createdAt)} ago',
-                    style: TextStyle(fontSize: 10, color: colorScheme.onSurfaceVariant),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   SizedBox(width: 20),
-                  Icon(
-                    Icons.person_2_outlined,
-                    color: colorScheme.outline,
-                    size: 15,
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    '8 application',
-                    style: TextStyle(
-                      color: colorScheme.outline,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
+                  // Icon(
+                  //   Icons.person_2_outlined,
+                  //   color: colorScheme.outline,
+                  //   size: 15,
+                  // ),
+                  // SizedBox(width: 4),
+                  // Text(
+                  //   '8 application',
+                  //   style: TextStyle(
+                  //     color: colorScheme.outline,
+                  //     fontSize: 8,
+                  //     fontWeight: FontWeight.w400,
+                  //   ),
+                  // ),
                   Spacer(),
                   if (job.isUrgentHiring)
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: colorScheme.error.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: colorScheme.shadow.withValues(alpha: 0.05),
-                          blurRadius: 2,
-                          offset: Offset(0, 1),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: colorScheme.error.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorScheme.shadow.withValues(alpha: 0.05),
+                            blurRadius: 2,
+                            offset: Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        'URGENT',
+                        style: TextStyle(
+                          color: colorScheme.error,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w400,
                         ),
-                      ],
-                    ),
-                    child: Text(
-                      'URGENT',
-                      style: TextStyle(
-                        color: colorScheme.error,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w400,
                       ),
                     ),
-                  ),
                 ],
               ),
             ),

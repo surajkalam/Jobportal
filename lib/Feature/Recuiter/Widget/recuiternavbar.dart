@@ -48,7 +48,7 @@ class _RecruiterNavbarState extends ConsumerState<RecruiterNavbar> {
                 await ref.read(authStateProvider.notifier).signOut();
                 // Navigate to login screen
                 if (mounted) {
-                  context.go('/'); // Adjust route as needed
+                  context.go('/login'); // Adjust route as needed
                 }
               },
               child: Text('Logout'),
@@ -78,22 +78,16 @@ class _RecruiterNavbarState extends ConsumerState<RecruiterNavbar> {
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Iconsax.home),
-            label: "Home",
-          ),
+          BottomNavigationBarItem(icon: Icon(Iconsax.home), label: "Home"),
           BottomNavigationBarItem(
             icon: Icon(Iconsax.add_square),
             label: "Upload Jobs",
           ),
           BottomNavigationBarItem(
-          icon: Icon(Icons.people),
+            icon: Icon(Icons.people),
             label: "Applications",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Iconsax.user),
-            label: "Profile",
-          ),
+          BottomNavigationBarItem(icon: Icon(Iconsax.user), label: "Profile"),
         ],
       ),
     );

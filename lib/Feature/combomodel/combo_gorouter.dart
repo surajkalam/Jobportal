@@ -12,24 +12,22 @@ import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 import '../../onboarding_screen/onboarding_screen.dart';
 import '../JobSeeker/jobseekers_screens/jobseekers_screens.dart';
 import '../Recuiter/screens/screens.dart';
+
 class JobPortalAppRouter {
   static final GoRouter router = GoRouter(
-      routes:[
+    routes: [
+      GoRoute(path: '/', builder: (context, state) => OnboardingScreen1()),
       GoRoute(
-        path: '/',
-        builder: (context, state) =>OnboardingScreen1(),
-      ),
-       GoRoute(
         path: '/on-board2',
-        builder: (context, state) =>OnboardingScreen2(),
+        builder: (context, state) => OnboardingScreen2(),
       ),
       GoRoute(
         path: '/on-board3',
-        builder: (context, state) =>OnboardingScreen3(),
+        builder: (context, state) => OnboardingScreen3(),
       ),
       GoRoute(
         path: '/on-board4',
-        builder: (context, state) =>OnboardingScreen4(),
+        builder: (context, state) => OnboardingScreen4(),
       ),
       GoRoute(
         path: '/check-login',
@@ -51,13 +49,9 @@ class JobPortalAppRouter {
           return SignupScreen(option: option);
         },
       ),
-       GoRoute(
-        path: '/job-nav',
-        builder: (context, state) => JobseekerNavbar(),
-      ),
+      GoRoute(path: '/job-nav', builder: (context, state) => JobseekerNavbar()),
 
       //Recuiter router
-
       GoRoute(
         path: '/recuiter-nav',
         builder: (context, state) => RecruiterNavbar(),
@@ -66,10 +60,8 @@ class JobPortalAppRouter {
         path: '/job-details',
         builder: (context, state) {
           final job = state.extra as JobModel?;
-          if(job == null){
-            return Scaffold(
-              body: Center(child: Text('No job data provided')),
-            );
+          if (job == null) {
+            return Scaffold(body: Center(child: Text('No job data provided')));
           }
           return JobDetailsScreen(job: job);
         },

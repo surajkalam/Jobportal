@@ -68,7 +68,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 await ref.read(authStateProvider.notifier).signOut();
                 // Navigate to login screen
                 if (mounted) {
-                  context.go('/'); // Adjust route as needed
+                  context.go('/login'); // Adjust route as needed
                 }
               },
               child: Text('Logout'),
@@ -153,27 +153,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     // final theme = Theme.of(context);
     final themeMode = ref.watch(themeModeProvider);
     final colorScheme = Theme.of(context).colorScheme;
-    var  width=MediaQuery.of(context).size.width;
-    var height=MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
-        title:Text(
+        title: Text(
           'Recruiter Profile',
           style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
         ),
-        centerTitle: true ,
-        backgroundColor: colorScheme.surface, // Changed from AppColors.faintbackblue
+        centerTitle: true,
+        backgroundColor:
+            colorScheme.surface, // Changed from AppColors.faintbackblue
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode),
+            icon: Icon(
+              themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
+            ),
             onPressed: _toggleTheme,
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _logout,
-          ),
+          IconButton(icon: const Icon(Icons.logout), onPressed: _logout),
           IconButton(
             icon: const Icon(Iconsax.edit, size: 24),
             onPressed: () {
@@ -193,35 +193,58 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator(color: Colors.orange))
           : recruiterAsync.when(
-              data: (recruiter) => _buildProfileContent(recruiter,height,width,colorScheme),
-              loading: () => const Center(child: CircularProgressIndicator(color: Colors.orange)),
-              error: (error, stackTrace) => _buildErrorWidget(error.toString(),colorScheme),
+              data: (recruiter) =>
+                  _buildProfileContent(recruiter, height, width, colorScheme),
+              loading: () => const Center(
+                child: CircularProgressIndicator(color: Colors.orange),
+              ),
+              error: (error, stackTrace) =>
+                  _buildErrorWidget(error.toString(), colorScheme),
             ),
     );
   }
 
-  Widget _buildProfileContent(RecruiterModel? recruiter  ,double height,double width, ColorScheme colorScheme) {
+  Widget _buildProfileContent(
+    RecruiterModel? recruiter,
+    double height,
+    double width,
+    ColorScheme colorScheme,
+  ) {
     if (recruiter == null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Iconsax.profile_delete, size: 60, color: colorScheme.onSurfaceVariant), // Changed from Colors.grey[400]
-            SizedBox(height: height*0.016),
+            Icon(
+              Iconsax.profile_delete,
+              size: 60,
+              color: colorScheme.onSurfaceVariant,
+            ), // Changed from Colors.grey[400]
+            SizedBox(height: height * 0.016),
             Text(
               'No profile data found',
-              style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant), // Changed from Colors.grey[600]
+              style: TextStyle(
+                fontSize: 14,
+                color: colorScheme.onSurfaceVariant,
+              ), // Changed from Colors.grey[600]
             ),
-          SizedBox(height:height*0.016),
+            SizedBox(height: height * 0.016),
             ElevatedButton.icon(
               onPressed: _loadRecruiterData,
               icon: const Icon(Iconsax.refresh),
               label: const Text('Retry'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: colorScheme.primary, // Changed from Colors.orange
-                foregroundColor: colorScheme.onPrimary, // Added foreground color
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                backgroundColor:
+                    colorScheme.primary, // Changed from Colors.orange
+                foregroundColor:
+                    colorScheme.onPrimary, // Added foreground color
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ],
@@ -236,12 +259,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Profile Header
-            _buildProfileHeader(recruiter,height,width,colorScheme),
-             SizedBox(height: 24),
+            _buildProfileHeader(recruiter, height, width, colorScheme),
+            SizedBox(height: 24),
             // Profile Details Card
             Card(
               elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -252,26 +277,63 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface, // Changed from Colors.grey[800]
+                        color: colorScheme
+                            .onSurface, // Changed from Colors.grey[800]
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildProfileItem('Company Name', recruiter.companyName, Iconsax.building,width,height,colorScheme),
+                    _buildProfileItem(
+                      'Company Name',
+                      recruiter.companyName,
+                      Iconsax.building,
+                      width,
+                      height,
+                      colorScheme,
+                    ),
                     const Divider(height: 24),
-                    _buildProfileItem('Contact Email', recruiter.email, Iconsax.message,width,height,colorScheme),
+                    _buildProfileItem(
+                      'Contact Email',
+                      recruiter.email,
+                      Iconsax.message,
+                      width,
+                      height,
+                      colorScheme,
+                    ),
                     const Divider(height: 24),
-                    _buildProfileItem('Phone', recruiter.contact, Iconsax.call,width,height,colorScheme),
+                    _buildProfileItem(
+                      'Phone',
+                      recruiter.contact,
+                      Iconsax.call,
+                      width,
+                      height,
+                      colorScheme,
+                    ),
                     const Divider(height: 24),
-                    _buildProfileItem('Location', recruiter.location, Iconsax.location,width,height,colorScheme),
+                    _buildProfileItem(
+                      'Location',
+                      recruiter.location,
+                      Iconsax.location,
+                      width,
+                      height,
+                      colorScheme,
+                    ),
                     const Divider(height: 24),
-                    _buildProfileItem('Designation', recruiter.designation, Iconsax.briefcase,width,height,colorScheme),
+                    _buildProfileItem(
+                      'Designation',
+                      recruiter.designation,
+                      Iconsax.briefcase,
+                      width,
+                      height,
+                      colorScheme,
+                    ),
                     const Divider(height: 24),
                     _buildProfileItem(
                       'Member Since',
                       '${recruiter.createdAt.day}/${recruiter.createdAt.month}/${recruiter.createdAt.year}',
                       Iconsax.calendar,
-                      width,height,
-                      colorScheme
+                      width,
+                      height,
+                      colorScheme,
                     ),
                   ],
                 ),
@@ -281,7 +343,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             // Action Buttons
             Card(
               elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -321,28 +385,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileHeader(RecruiterModel recruiter,double height,double width, ColorScheme colorScheme) {
+  Widget _buildProfileHeader(
+    RecruiterModel recruiter,
+    double height,
+    double width,
+    ColorScheme colorScheme,
+  ) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: colorScheme.surfaceVariant, // Changed from Colors.orange[50]
         borderRadius: BorderRadius.circular(16),
       ),
-      padding:EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       child: Center(
         child: Column(
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundColor: colorScheme.surface, // Changed from Colors.orange[100]
-              backgroundImage: recruiter.photoUrl.isNotEmpty 
+              backgroundColor:
+                  colorScheme.surface, // Changed from Colors.orange[100]
+              backgroundImage: recruiter.photoUrl.isNotEmpty
                   ? NetworkImage(recruiter.photoUrl) as ImageProvider
                   : null,
               child: recruiter.photoUrl.isEmpty
                   ? const Icon(Iconsax.user, size: 40, color: Colors.orange)
                   : null,
             ),
-           SizedBox(height: height*0.014),
+            SizedBox(height: height * 0.014),
             Text(
               recruiter.name,
               style: TextStyle(
@@ -351,10 +421,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 color: colorScheme.onSurface, // Changed from Colors.black87
               ),
             ),
-             SizedBox(height: height*0.006),
+            SizedBox(height: height * 0.006),
             Text(
               recruiter.email,
-              style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant), // Changed from Colors.grey[600]
+              style: TextStyle(
+                fontSize: 11,
+                color: colorScheme.onSurfaceVariant,
+              ), // Changed from Colors.grey[600]
             ),
           ],
         ),
@@ -362,11 +435,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileItem(String title, String value, IconData icon,double width,double height, ColorScheme colorScheme) {
+  Widget _buildProfileItem(
+    String title,
+    String value,
+    IconData icon,
+    double width,
+    double height,
+    ColorScheme colorScheme,
+  ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: colorScheme.primary), // Changed from Colors.orange[700]
+        Icon(
+          icon,
+          size: 18,
+          color: colorScheme.primary,
+        ), // Changed from Colors.orange[700]
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -380,10 +464,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   color: colorScheme.onSurface, // Changed from Colors.black87
                 ),
               ),
-            SizedBox(height:height*0.004),
+              SizedBox(height: height * 0.004),
               Text(
                 value.isEmpty ? 'Not provided' : value,
-                style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant), // Changed from Colors.grey[600]
+                style: TextStyle(
+                  fontSize: 11,
+                  color: colorScheme.onSurfaceVariant,
+                ), // Changed from Colors.grey[600]
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -409,7 +496,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           Text(
             error,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant), // Changed from Colors.grey[600]
+            style: TextStyle(
+              fontSize: 14,
+              color: colorScheme.onSurfaceVariant,
+            ), // Changed from Colors.grey[600]
           ),
           const SizedBox(height: 16),
           ElevatedButton.icon(
@@ -417,10 +507,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             icon: const Icon(Iconsax.refresh),
             label: const Text('Retry'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: colorScheme.primary, // Changed from Colors.orange
+              backgroundColor:
+                  colorScheme.primary, // Changed from Colors.orange
               foregroundColor: colorScheme.onPrimary, // Added foreground color
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ],
@@ -435,10 +528,12 @@ class EditProfileBottomSheet extends ConsumerStatefulWidget {
   const EditProfileBottomSheet({super.key, required this.recruiter});
 
   @override
-  ConsumerState<EditProfileBottomSheet> createState() => _EditProfileBottomSheetState();
+  ConsumerState<EditProfileBottomSheet> createState() =>
+      _EditProfileBottomSheetState();
 }
 
-class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet> {
+class _EditProfileBottomSheetState
+    extends ConsumerState<EditProfileBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _contactController;
@@ -451,9 +546,15 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
     super.initState();
     _nameController = TextEditingController(text: widget.recruiter.name);
     _contactController = TextEditingController(text: widget.recruiter.contact);
-    _companyController = TextEditingController(text: widget.recruiter.companyName);
-    _designationController = TextEditingController(text: widget.recruiter.designation);
-    _locationController = TextEditingController(text: widget.recruiter.location);
+    _companyController = TextEditingController(
+      text: widget.recruiter.companyName,
+    );
+    _designationController = TextEditingController(
+      text: widget.recruiter.designation,
+    );
+    _locationController = TextEditingController(
+      text: widget.recruiter.location,
+    );
   }
 
   @override
@@ -480,7 +581,9 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
           updatedAt: DateTime.now(),
         );
 
-        await ref.read(recruiterDataProvider.notifier).saveRecruiter(updatedRecruiter);
+        await ref
+            .read(recruiterDataProvider.notifier)
+            .saveRecruiter(updatedRecruiter);
 
         if (mounted) {
           Navigator.pop(context);
@@ -507,8 +610,8 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(loadingStateProvider);
-    var height=MediaQuery.of(context).size.height;
-    var width=MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
@@ -533,50 +636,87 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurface, // Changed from Colors.black87
+                      color:
+                          colorScheme.onSurface, // Changed from Colors.black87
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Iconsax.close_circle, color: colorScheme.onSurfaceVariant), // Changed from Colors.grey[600]
+                    icon: Icon(
+                      Iconsax.close_circle,
+                      color: colorScheme.onSurfaceVariant,
+                    ), // Changed from Colors.grey[600]
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),
-               SizedBox(height:height*0.024),
-              _buildTextField(_nameController, 'Full Name', Iconsax.user, colorScheme),
+              SizedBox(height: height * 0.024),
+              _buildTextField(
+                _nameController,
+                'Full Name',
+                Iconsax.user,
+                colorScheme,
+              ),
               const SizedBox(height: 16),
-              _buildTextField(_contactController, 'Contact Number', Iconsax.call, colorScheme),
+              _buildTextField(
+                _contactController,
+                'Contact Number',
+                Iconsax.call,
+                colorScheme,
+              ),
               const SizedBox(height: 16),
-              _buildTextField(_companyController, 'Company Name', Iconsax.building, colorScheme),
+              _buildTextField(
+                _companyController,
+                'Company Name',
+                Iconsax.building,
+                colorScheme,
+              ),
               const SizedBox(height: 16),
-              _buildTextField(_designationController, 'Designation', Iconsax.briefcase, colorScheme),
+              _buildTextField(
+                _designationController,
+                'Designation',
+                Iconsax.briefcase,
+                colorScheme,
+              ),
               const SizedBox(height: 16),
-              _buildTextField(_locationController, 'Location', Iconsax.location, colorScheme),
-              SizedBox(height: height*0.03),
+              _buildTextField(
+                _locationController,
+                'Location',
+                Iconsax.location,
+                colorScheme,
+              ),
+              SizedBox(height: height * 0.03),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: isLoading ? null : _updateProfile,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: colorScheme.primary, // Changed from Colors.orange
-                    foregroundColor: colorScheme.onPrimary, // Added foreground color
-                    padding:  EdgeInsets.symmetric(vertical: 08),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    backgroundColor:
+                        colorScheme.primary, // Changed from Colors.orange
+                    foregroundColor:
+                        colorScheme.onPrimary, // Added foreground color
+                    padding: EdgeInsets.symmetric(vertical: 08),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     elevation: 2,
-                  fixedSize: Size(width, height*0.003)
+                    fixedSize: Size(width, height * 0.003),
                   ),
                   child: isLoading
-                      ?  SizedBox(
+                      ? SizedBox(
                           height: 24,
                           width: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: colorScheme.onPrimary, // Changed from Colors.white
+                            color: colorScheme
+                                .onPrimary, // Changed from Colors.white
                           ),
                         )
                       : const Text(
                           'Update Profile',
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                 ),
               ),
@@ -588,27 +728,52 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon, ColorScheme colorScheme) {
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label,
+    IconData icon,
+    ColorScheme colorScheme,
+  ) {
     return TextFormField(
       controller: controller,
       cursorHeight: 15,
-      style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: colorScheme.onSurface), // Changed from AppColors.black
+      style: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        color: colorScheme.onSurface,
+      ), // Changed from AppColors.black
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: colorScheme.primary), // Changed from Colors.orange[700]
-        labelStyle: TextStyle(fontSize: 12,color: colorScheme.onSurfaceVariant), // Changed from Colors.grey
-        hintStyle:TextStyle(fontSize: 12,color: colorScheme.onSurfaceVariant), // Changed from Colors.grey
+        prefixIcon: Icon(
+          icon,
+          color: colorScheme.primary,
+        ), // Changed from Colors.orange[700]
+        labelStyle: TextStyle(
+          fontSize: 12,
+          color: colorScheme.onSurfaceVariant,
+        ), // Changed from Colors.grey
+        hintStyle: TextStyle(
+          fontSize: 12,
+          color: colorScheme.onSurfaceVariant,
+        ), // Changed from Colors.grey
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline), // Changed from Colors.grey[300]!
+          borderSide: BorderSide(
+            color: colorScheme.outline,
+          ), // Changed from Colors.grey[300]!
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline), // Changed from Colors.grey[300]!
+          borderSide: BorderSide(
+            color: colorScheme.outline,
+          ), // Changed from Colors.grey[300]!
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.primary, width: 2), // Changed from Colors.orange[700]!
+          borderSide: BorderSide(
+            color: colorScheme.primary,
+            width: 2,
+          ), // Changed from Colors.orange[700]!
         ),
         fillColor: colorScheme.surface, // Changed from Colors.grey[50]
         filled: true,
@@ -641,7 +806,8 @@ class _EditProfileBottomSheetState extends ConsumerState<EditProfileBottomSheet>
           ),
           textAlign: TextAlign.center,
         ),
-        backgroundColor: colorScheme.inverseSurface, // Changed from backgroundColor
+        backgroundColor:
+            colorScheme.inverseSurface, // Changed from backgroundColor
         duration: duration,
         behavior: behavior,
         margin: const EdgeInsets.all(16),

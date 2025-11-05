@@ -54,7 +54,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                 // Navigate to login screen
                 if (mounted) {
                   // ignore: use_build_context_synchronously
-                  context.go('/'); // Adjust route as needed
+                  context.go('/login'); // Adjust route as needed
                 }
               },
               child: Text('Logout'),
@@ -64,6 +64,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     final jobseekerState = ref.watch(jobseekerProvider);
@@ -78,8 +79,10 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-            //  colors: [colorScheme.primary, colorScheme.surfaceContainerHighest],
-            colors: [colorScheme.primary.withValues(alpha: 0.3),colorScheme.onPrimary],
+              colors: [
+                colorScheme.primary.withValues(alpha: 0.3),
+                colorScheme.onPrimary,
+              ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               stops: [0.04, 0.3],
@@ -94,10 +97,21 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               SizedBox(height: height * 0.02),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: buildheadercontainer(height, width, jobseekerInfo, colorScheme),
+                child: buildheadercontainer(
+                  height,
+                  width,
+                  jobseekerInfo,
+                  colorScheme,
+                ),
               ),
               SizedBox(height: height * 0.02),
-              buildacountsession(height, width, jobseekerInfo, themeMode, colorScheme),
+              buildacountsession(
+                height,
+                width,
+                jobseekerInfo,
+                themeMode,
+                colorScheme,
+              ),
             ],
           ),
         ),
@@ -122,7 +136,9 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
             IconButton(
               onPressed: _toggleTheme,
               icon: Icon(
-                themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
+                themeMode == ThemeMode.dark
+                    ? Icons.light_mode
+                    : Icons.dark_mode,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
@@ -140,13 +156,33 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
   }
 
   Widget buildheadercontainer(
-  double height,
-  double width,
-  JobseekerModel? jobseekerInfo,
-  ColorScheme colorScheme,
-) {
-  // Handle null case first
-  if (jobseekerInfo == null) {
+    double height,
+    double width,
+    JobseekerModel? jobseekerInfo,
+    ColorScheme colorScheme,
+  ) {
+    // Handle null case first
+    if (jobseekerInfo == null) {
+      return Container(
+        height: height * 0.2,
+        width: width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: colorScheme.outline),
+          gradient: LinearGradient(
+            colors: [
+              colorScheme.primary.withValues(alpha: 0.04),
+              colorScheme.primary.withValues(alpha: 0.6),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0.06, 0.4],
+          ),
+        ),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Container(
       height: height * 0.2,
       width: width,
@@ -154,169 +190,177 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: colorScheme.outline),
         gradient: LinearGradient(
-          colors: [colorScheme.primary.withValues(alpha: 0.04), colorScheme.primary.withValues(alpha: 0.6)],
+          colors: [
+            colorScheme.primary,
+            colorScheme.primary.withValues(alpha: 0.6),
+          ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           stops: [0.06, 0.4],
         ),
       ),
-      child: Center(
-        child: CircularProgressIndicator(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                  top: height * 0.024,
+                  left: width * 0.05,
+                  right: width * 0.06,
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(color: colorScheme.primary),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: jobseekerInfo.profileImageUrl.isNotEmpty
+                        ? Image(
+                            image: NetworkImage(jobseekerInfo.profileImageUrl),
+                            height: height * 0.063,
+                            width: width * 0.14,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return _buildProfilePlaceholder(
+                                height,
+                                width,
+                                colorScheme,
+                              );
+                            },
+                          )
+                        : _buildProfilePlaceholder(height, width, colorScheme),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(padding: EdgeInsets.only(top: height * 0.01)),
+                    Text(
+                      jobseekerInfo.name.isNotEmpty
+                          ? jobseekerInfo.name
+                          : jobseekerInfo.email,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: colorScheme.onPrimary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: height * 0.008),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: width * 0.3,
+                          child: Text(
+                            jobseekerInfo.jobDesignation.isNotEmpty
+                                ? jobseekerInfo.jobDesignation
+                                : 'Designation',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
+                              color: colorScheme.onPrimary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        SizedBox(width: width * 0.04),
+                        SizedBox(
+                          width: width * 0.26,
+                          child: Column(
+                            children: [
+                              Text(
+                                jobseekerInfo.location.isNotEmpty
+                                    ? jobseekerInfo.location
+                                    : 'Location',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w400,
+                                  color: colorScheme.onPrimary,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: height * 0.03),
+          Divider(
+            height: height * 0.01,
+            color: colorScheme.onPrimary.withValues(alpha: 0.5),
+          ),
+          Row(
+            children: [
+              buildemailheadercontainer(
+                height,
+                width,
+                jobseekerInfo.email.isNotEmpty ? jobseekerInfo.email : '',
+                colorScheme,
+              ),
+              buildemailheadercontainer(
+                height,
+                width,
+                jobseekerInfo.contact.isNotEmpty ? jobseekerInfo.contact : '',
+                colorScheme,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  return Container(
-    height: height * 0.2,
-    width: width,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(color: colorScheme.outline),
-      gradient: LinearGradient(
-        colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.6)],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        stops: [0.06, 0.4],
+  Widget _buildProfilePlaceholder(
+    double height,
+    double width,
+    ColorScheme colorScheme,
+  ) {
+    return Container(
+      height: height * 0.063,
+      width: width * 0.14,
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        shape: BoxShape.circle,
       ),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(
-                top: height * 0.024,
-                left: width * 0.05,
-                right: width * 0.06,
-              ),
-              child: Container(
-                padding: EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: colorScheme.surface,
-                  borderRadius: BorderRadius.circular(50),
-                  border: Border.all(color: colorScheme.primary),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: jobseekerInfo.profileImageUrl.isNotEmpty
-                      ? Image(
-                          image: NetworkImage(jobseekerInfo.profileImageUrl),
-                          height: height * 0.063,
-                          width: width * 0.14,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return _buildProfilePlaceholder(height, width, colorScheme);
-                          },
-                        )
-                      : _buildProfilePlaceholder(height, width, colorScheme),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(padding: EdgeInsets.only(top: height * 0.01)),
-                  Text(
-                    jobseekerInfo.name.isNotEmpty ? jobseekerInfo.name : jobseekerInfo.email ,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: colorScheme.onPrimary,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: height * 0.008),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: width * 0.3,
-                        child: Text(
-                          jobseekerInfo.jobDesignation.isNotEmpty ? jobseekerInfo.jobDesignation : 'Designation',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
-                            color: colorScheme.onPrimary,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      SizedBox(width: width * 0.04),
-                      SizedBox(
-                        width: width * 0.26,
-                        child: Column(
-                          children: [
-                            Text(
-                              jobseekerInfo.location.isNotEmpty ? jobseekerInfo.location : 'Location',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w400,
-                                color: colorScheme.onPrimary,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: height * 0.03),
-        Divider(
-          height: height * 0.01,
-          color: colorScheme.onPrimary.withValues(alpha: 0.5),
-        ),
-        Row(
-          children: [
-            buildemailheadercontainer(
-              height,
-              width,
-              jobseekerInfo.email.isNotEmpty ? jobseekerInfo.email : '',
-              colorScheme,
-            ),
-            buildemailheadercontainer(
-              height,
-              width,
-              jobseekerInfo.contact.isNotEmpty ? jobseekerInfo.contact : '',
-              colorScheme,
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-  
-  Widget _buildProfilePlaceholder(double height, double width, ColorScheme colorScheme) {
-  return Container(
-    height: height * 0.063,
-    width: width * 0.14,
-    decoration: BoxDecoration(
-      color: colorScheme.surfaceContainerHighest,
-      shape: BoxShape.circle,
-    ),
-    child: Icon(
-      Icons.person,
-      size: height * 0.03,
-      color: colorScheme.onSurfaceVariant,
-    ),
-  );
-}
-  Widget buildemailheadercontainer(double height, double width, String text, ColorScheme colorScheme) {
+      child: Icon(
+        Icons.person,
+        size: height * 0.03,
+        color: colorScheme.onSurfaceVariant,
+      ),
+    );
+  }
+
+  Widget buildemailheadercontainer(
+    double height,
+    double width,
+    String text,
+    ColorScheme colorScheme,
+  ) {
     return Padding(
       padding: EdgeInsets.only(top: height * 0.02, left: width * 0.02),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: colorScheme.onPrimary), // Changed from AppColors.white
-          color: colorScheme.onPrimary.withValues(alpha: 0.1), // Changed from AppColors.white
+          border: Border.all(
+            color: colorScheme.onPrimary,
+          ), // Changed from AppColors.white
+          color: colorScheme.onPrimary.withValues(
+            alpha: 0.1,
+          ), // Changed from AppColors.white
         ),
         child: Center(
           child: Padding(
@@ -343,33 +387,36 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
     ThemeMode themeMode,
     ColorScheme colorScheme,
   ) {
-     if (jobseekerInfo == null) {
-    return Container(
-      height: height * 0.2,
-      width: width,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: colorScheme.outline),
-        gradient: LinearGradient(
-          // ignore: deprecated_member_use
-          colors: [colorScheme.primary.withValues(alpha: 0.04), colorScheme.primary.withValues(alpha: 0.6)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          stops: [0.06, 0.4],
+    if (jobseekerInfo == null) {
+      return Container(
+        height: height * 0.2,
+        width: width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: colorScheme.outline),
+          gradient: LinearGradient(
+            // ignore: deprecated_member_use
+            colors: [
+              colorScheme.primary.withValues(alpha: 0.04),
+              colorScheme.primary.withValues(alpha: 0.6),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0.06, 0.4],
+          ),
         ),
-      ),
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
     return Container(
       height: height * 0.78,
       width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: colorScheme.surface, // Changed from AppColors.white
-        border: Border.all(color: colorScheme.outline), // Changed from AppColors.grey
+        border: Border.all(
+          color: colorScheme.outline,
+        ), // Changed from AppColors.grey
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -389,7 +436,9 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 color: Colors.transparent,
-                border: Border.all(color: colorScheme.outline), // Changed from AppColors.grey
+                border: Border.all(
+                  color: colorScheme.outline,
+                ), // Changed from AppColors.grey
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -415,8 +464,9 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                         colorScheme: colorScheme,
                       ),
                     ),
-                    Divider(color: colorScheme.outline.withValues(alpha: 0.3)), // Changed from AppColors.grey
-
+                    Divider(
+                      color: colorScheme.outline.withValues(alpha: 0.3),
+                    ), // Changed from AppColors.grey
                     // Row 2: Email - NO ACTION
                     _buildAccountRow(
                       icon: Icons.email_outlined,
@@ -429,14 +479,14 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       height: height,
                       colorScheme: colorScheme,
                     ),
-                    Divider(color: colorScheme.outline.withValues(alpha: 0.3)), // Changed from AppColors.grey
-
+                    Divider(
+                      color: colorScheme.outline.withValues(alpha: 0.3),
+                    ), // Changed from AppColors.grey
                     // Row 3: Age - NO ACTION
                     _buildAccountRow(
                       icon: Iconsax.heart,
                       title: 'Age',
-                      subtitle:
-                          jobseekerInfo.age > 0
+                      subtitle: jobseekerInfo.age > 0
                           ? '${jobseekerInfo.age} years'
                           : 'Not set',
                       hasArrow: false,
@@ -444,8 +494,9 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       height: height,
                       colorScheme: colorScheme,
                     ),
-                    Divider(color: colorScheme.outline.withValues(alpha: 0.3)), // Changed from AppColors.grey
-
+                    Divider(
+                      color: colorScheme.outline.withValues(alpha: 0.3),
+                    ), // Changed from AppColors.grey
                     // Row 4: Profession - NO ACTION
                     _buildAccountRow(
                       icon: Icons.work_outline,
@@ -458,10 +509,12 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                       height: height,
                       colorScheme: colorScheme,
                     ),
-                    Divider(color: colorScheme.outline.withValues(alpha: 0.3)), // Changed from AppColors.grey
+                    Divider(
+                      color: colorScheme.outline.withValues(alpha: 0.3),
+                    ), // Changed from AppColors.grey
                     InkWell(
                       onTap: () {
-                         _showContactUsOptions(context);
+                        _showContactUsOptions(context);
                       },
                       child: _buildAccountRow(
                         icon: Icons.report_problem_outlined,
@@ -478,17 +531,22 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                     GestureDetector(
                       onTap: _toggleTheme,
                       child: _buildAccountRow(
-                        icon: themeMode == ThemeMode.dark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+                        icon: themeMode == ThemeMode.dark
+                            ? Icons.light_mode_outlined
+                            : Icons.dark_mode_outlined,
                         title: 'Theme',
-                        subtitle: themeMode == ThemeMode.dark ? 'Light Mode' : 'Dark Mode',
+                        subtitle: themeMode == ThemeMode.dark
+                            ? 'Light Mode'
+                            : 'Dark Mode',
                         hasArrow: true,
                         width: width,
                         height: height,
                         colorScheme: colorScheme,
                       ),
                     ),
-                    Divider(color: colorScheme.outline.withValues(alpha: 0.3)), // Changed from AppColors.grey
-
+                    Divider(
+                      color: colorScheme.outline.withValues(alpha: 0.3),
+                    ), // Changed from AppColors.grey
                     // Row 6: Logout - WITH ACTION
                     GestureDetector(
                       onTap: () {
@@ -515,58 +573,56 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
       ),
     );
   }
-void _showContactUsOptions(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    builder: (context) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Contact Us',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
+
+  void _showContactUsOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Contact Us',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: Icon(Icons.warning_amber, color: Colors.orange),
-              title: Text('Report an Issue'),
-              subtitle: Text('Technical problems or bugs'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ContactUsScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.report_problem, color: Colors.red),
-              title: Text('Make a Report'),
-              subtitle: Text('Report inappropriate content or behavior'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ContactUsScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
+              const SizedBox(height: 16),
+              ListTile(
+                leading: Icon(Icons.warning_amber, color: Colors.orange),
+                title: Text('Report an Issue'),
+                subtitle: Text('Technical problems or bugs'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ContactUsScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.report_problem, color: Colors.red),
+                title: Text('Make a Report'),
+                subtitle: Text('Report inappropriate content or behavior'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ContactUsScreen()),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildAccountRow({
     required IconData icon,
     required String title,
@@ -598,7 +654,9 @@ void _showContactUsOptions(BuildContext context) {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
-                      color: textColor == Colors.red ? textColor : colorScheme.onSurface, // Changed from Colors.black
+                      color: textColor == Colors.red
+                          ? textColor
+                          : colorScheme.onSurface, // Changed from Colors.black
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -610,7 +668,8 @@ void _showContactUsOptions(BuildContext context) {
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
                       fontSize: 09,
-                      color: colorScheme.onSurfaceVariant, // Changed from AppColors.grey
+                      color: colorScheme
+                          .onSurfaceVariant, // Changed from AppColors.grey
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -619,7 +678,11 @@ void _showContactUsOptions(BuildContext context) {
           ),
           SizedBox(width: width * 0.01),
           if (hasArrow)
-            Icon(Icons.arrow_forward_ios, size: 16, color: colorScheme.onSurfaceVariant), // Changed from AppColors.grey
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: colorScheme.onSurfaceVariant,
+            ), // Changed from AppColors.grey
         ],
       ),
     );
@@ -644,7 +707,7 @@ void _showContactUsOptions(BuildContext context) {
               // Navigate to login screen
               if (mounted) {
                 // ignore: use_build_context_synchronously
-                context.go('/'); // Adjust route as needed
+                context.go('/login'); // Adjust route as needed
               }
             },
             child: Text('Logout', style: TextStyle(color: Colors.red)),

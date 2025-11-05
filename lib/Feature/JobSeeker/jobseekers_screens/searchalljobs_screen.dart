@@ -38,12 +38,12 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    
+
     // Watch search query and decide which provider to use
     final searchQuery = ref.watch(searchQueryProvider);
     final jobsAsync = searchQuery.isEmpty
-        ? ref.watch(jobsProvider) 
-        : ref.watch(searchOnlyProvider); 
+        ? ref.watch(jobsProvider)
+        : ref.watch(searchOnlyProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -74,7 +74,7 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
           children: [
             // Search Bar
             _buildSearchBar(height, width, colorScheme),
-            SizedBox(height: height*0.01),
+            SizedBox(height: height * 0.01),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -92,7 +92,10 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                     builder: (context, ref, child) {
                       return jobsAsync.when(
                         data: (jobs) => Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: colorScheme.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
@@ -107,25 +110,37 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                           ),
                         ),
                         loading: () => Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
                             'Loading...',
-                            style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ),
                         error: (error, stack) => Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: colorScheme.errorContainer,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
                             'Error',
-                            style: TextStyle(fontSize: 12, color: colorScheme.onErrorContainer),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: colorScheme.onErrorContainer,
+                            ),
                           ),
                         ),
                       );
@@ -134,7 +149,7 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                 ],
               ),
             ),
-            
+
             // Search query display (only when searching)
             if (searchQuery.isNotEmpty)
               Padding(
@@ -152,7 +167,11 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.close, size: 20, color: colorScheme.onSurface),
+                      icon: Icon(
+                        Icons.close,
+                        size: 20,
+                        color: colorScheme.onSurface,
+                      ),
                       onPressed: () {
                         _searchController.clear();
                         ref.read(searchQueryProvider.notifier).state = '';
@@ -161,7 +180,7 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                   ],
                 ),
               ),
-            
+
             // Jobs list
             Expanded(
               child: Container(
@@ -174,7 +193,13 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: _buildJobsList(jobsAsync, height, width, colorScheme, searchQuery),
+                  child: _buildJobsList(
+                    jobsAsync,
+                    height,
+                    width,
+                    colorScheme,
+                    searchQuery,
+                  ),
                 ),
               ),
             ),
@@ -190,16 +215,26 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
       _searchController.text = searchQuery;
     }
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: width*0.03, vertical: height*0.012),
+      padding: EdgeInsets.symmetric(
+        horizontal: width * 0.03,
+        vertical: height * 0.012,
+      ),
       child: TextField(
         controller: _searchController,
         decoration: InputDecoration(
           hintText: 'Search by company, location, designation...',
-          hintStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 11),
+          hintStyle: TextStyle(
+            color: colorScheme.onSurfaceVariant,
+            fontSize: 11,
+          ),
           prefixIcon: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
           suffixIcon: searchQuery.isNotEmpty
               ? IconButton(
-                  icon: Icon(Icons.clear, size: 16, color: colorScheme.onSurface),
+                  icon: Icon(
+                    Icons.clear,
+                    size: 16,
+                    color: colorScheme.onSurface,
+                  ),
                   onPressed: () {
                     _searchController.clear();
                   },
@@ -218,10 +253,7 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: colorScheme.primary,
-              width: 2,
-            ),
+            borderSide: BorderSide(color: colorScheme.primary, width: 2),
           ),
         ),
       ),
@@ -244,7 +276,10 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
             SizedBox(height: 16),
             Text(
               searchQuery.isEmpty ? 'Loading all jobs...' : 'Searching jobs...',
-              style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                fontSize: 14,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -262,7 +297,10 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
             SizedBox(height: 8),
             Text(
               error.toString(),
-              style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                fontSize: 12,
+                color: colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -282,14 +320,20 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                 SizedBox(height: 16),
                 Text(
                   searchQuery.isEmpty ? 'No jobs available' : 'No jobs found',
-                  style: TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 SizedBox(height: 8),
                 Text(
-                  searchQuery.isEmpty 
-                    ? 'Check back later for new job postings'
-                    : 'Try different search terms',
-                  style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+                  searchQuery.isEmpty
+                      ? 'Check back later for new job postings'
+                      : 'Try different search terms',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -308,7 +352,13 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
     );
   }
 
-  Widget _buildJobCard(BuildContext context, JobModel job, double height, double width, ColorScheme colorScheme) {
+  Widget _buildJobCard(
+    BuildContext context,
+    JobModel job,
+    double height,
+    double width,
+    ColorScheme colorScheme,
+  ) {
     return InkWell(
       onTap: () {
         context.push('/job-details', extra: job);
@@ -319,7 +369,10 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outline.withValues(alpha: 0.8), width: 01),
+          border: Border.all(
+            color: colorScheme.outline.withValues(alpha: 0.8),
+            width: 01,
+          ),
           boxShadow: [
             BoxShadow(
               color: colorScheme.shadow.withValues(alpha: 0.05),
@@ -364,7 +417,9 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                               border: Border.all(color: colorScheme.outline),
                               boxShadow: [
                                 BoxShadow(
-                                  color: colorScheme.shadow.withValues(alpha: 0.05),
+                                  color: colorScheme.shadow.withValues(
+                                    alpha: 0.05,
+                                  ),
                                   blurRadius: 2,
                                   offset: const Offset(0, 1),
                                 ),
@@ -379,7 +434,10 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                                   job.imageUrl,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
-                                    return Icon(Icons.broken_image, color: colorScheme.onSurfaceVariant);
+                                    return Icon(
+                                      Icons.broken_image,
+                                      color: colorScheme.onSurfaceVariant,
+                                    );
                                   },
                                 ),
                               ),
@@ -394,7 +452,8 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SizedBox(
-                                  width: MediaQuery.of(context).size.width * 0.4,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
                                   child: Text(
                                     job.designation,
                                     style: TextStyle(
@@ -405,9 +464,9 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                SizedBox(width: 10,),
+                                SizedBox(width: 10),
                                 SizedBox(
-                                  width: width*0.14,
+                                  width: width * 0.14,
                                   child: Text(
                                     '${job.ctc} ',
                                     style: TextStyle(
@@ -425,7 +484,7 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  width: width*0.3,
+                                  width: width * 0.3,
                                   child: Text(
                                     '${job.companyName} ',
                                     style: TextStyle(
@@ -440,10 +499,12 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                                 Icon(
                                   Icons.location_pin,
                                   size: 15,
-                                  color: colorScheme.outline.withValues(alpha: 0.8),
+                                  color: colorScheme.outline.withValues(
+                                    alpha: 0.8,
+                                  ),
                                 ),
                                 SizedBox(
-                                  width: width*0.2,
+                                  width: width * 0.2,
                                   child: Text(
                                     ' ${job.location}',
                                     style: TextStyle(
@@ -463,9 +524,11 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        _buildJobTag('Remote', colorScheme),
-                        const SizedBox(width: 8),
-                        _buildJobTag('full Time', colorScheme),
+                        _buildJobTag(job.noticePeriod, colorScheme),
+                        SizedBox(width: 8),
+                        _buildJobTag(job.jobType, colorScheme),
+                        SizedBox(width: 8),
+                        _buildJobTag(job.experience, colorScheme),
                       ],
                     ),
                   ],
@@ -474,54 +537,61 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
             ),
             const SizedBox(height: 12),
             Padding(
-              padding:EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 children: [
-                  Icon(Icons.alarm, color: colorScheme.onSurfaceVariant, size: 15),
+                  Icon(
+                    Icons.alarm,
+                    color: colorScheme.onSurfaceVariant,
+                    size: 15,
+                  ),
                   SizedBox(width: 5),
                   Text(
                     '${_calculateTimeAgo(job.createdAt)} ago',
-                    style: TextStyle(fontSize: 10, color: colorScheme.onSurfaceVariant),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   SizedBox(width: 20),
-                  Icon(
-                    Icons.person_2_outlined,
-                    color: colorScheme.outline,
-                    size: 15,
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    '8 application',
-                    style: TextStyle(
-                      color: colorScheme.outline,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
+                  // Icon(
+                  //   Icons.person_2_outlined,
+                  //   color: colorScheme.outline,
+                  //   size: 15,
+                  // ),
+                  // SizedBox(width: 4),
+                  // Text(
+                  //   '8 application',
+                  //   style: TextStyle(
+                  //     color: colorScheme.outline,
+                  //     fontSize: 8,
+                  //     fontWeight: FontWeight.w400,
+                  //   ),
+                  // ),
                   Spacer(),
                   if (job.isUrgentHiring)
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: colorScheme.error.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: colorScheme.shadow.withValues(alpha: 0.05),
-                          blurRadius: 2,
-                          offset: Offset(0, 1),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: colorScheme.error.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorScheme.shadow.withValues(alpha: 0.05),
+                            blurRadius: 2,
+                            offset: Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        'URGENT',
+                        style: TextStyle(
+                          color: colorScheme.error,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w400,
                         ),
-                      ],
-                    ),
-                    child: Text(
-                      'URGENT',
-                      style: TextStyle(
-                        color: colorScheme.error,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w400,
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -530,7 +600,8 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
       ),
     );
   }
-   Widget _buildJobTag(String text, ColorScheme colorScheme) {
+
+  Widget _buildJobTag(String text, ColorScheme colorScheme) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(

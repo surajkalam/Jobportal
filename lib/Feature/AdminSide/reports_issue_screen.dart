@@ -16,7 +16,12 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
   String _selectedFilter = 'all';
   String _selectedType = 'all';
 
-  final List<String> _statusFilters = ['all', 'pending', 'in_progress', 'resolved'];
+  final List<String> _statusFilters = [
+    'all',
+    'pending',
+    'in_progress',
+    'resolved',
+  ];
   final List<String> _typeFilters = ['all', 'issue', 'report'];
 
   @override
@@ -26,14 +31,15 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title:Text('Issues & Reports Management',
-        style: TextStyle(fontSize:14 ),
+        title: Text(
+          'Issues & Reports Management',
+          style: TextStyle(fontSize: 14),
         ),
         backgroundColor: colorScheme.primaryContainer,
         foregroundColor: colorScheme.onPrimaryContainer,
         actions: [
           IconButton(
-            icon:Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             onPressed: () {
               ref.invalidate(allIssuesReportsProvider);
             },
@@ -44,20 +50,21 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
         children: [
           // Statistics Cards
           _buildStatisticsCards(stats, colorScheme),
-          
+
           // Filters
           _buildFilterSection(colorScheme),
-          
+
           // Issues List
-          Expanded(
-            child: _buildIssuesList(),
-          ),
+          Expanded(child: _buildIssuesList()),
         ],
       ),
     );
   }
 
-  Widget _buildStatisticsCards(Map<String, int> stats, ColorScheme colorScheme) {
+  Widget _buildStatisticsCards(
+    Map<String, int> stats,
+    ColorScheme colorScheme,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -109,7 +116,7 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
               ),
               Chip(
                 label: Text('Reports: ${stats['reports']}'),
-                backgroundColor: Colors.red.withValues(alpha:0.2),
+                backgroundColor: Colors.red.withValues(alpha: 0.2),
               ),
             ],
           ),
@@ -118,12 +125,17 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
     );
   }
 
-  Widget _buildStatCard(String title, String value, Color color, ColorScheme colorScheme) {
+  Widget _buildStatCard(
+    String title,
+    String value,
+    Color color,
+    ColorScheme colorScheme,
+  ) {
     return Expanded(
       child: Card(
         elevation: 2,
         child: Padding(
-          padding:  EdgeInsets.all(12),
+          padding: EdgeInsets.all(12),
           child: Column(
             children: [
               Text(
@@ -140,7 +152,7 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
                 style: TextStyle(
                   fontSize: 08,
                   color: colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w600
+                  fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
@@ -165,19 +177,21 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
               color: colorScheme.onSurface,
             ),
           ),
-           SizedBox(height: 8),
+          SizedBox(height: 8),
           Row(
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  initialValue: _selectedFilter,
+                  value: _selectedFilter,
                   items: _statusFilters.map((status) {
                     return DropdownMenuItem(
                       value: status,
                       child: Text(
-                        status == 'all' ? 'All Status' : 
-                        status == 'in_progress' ? 'In Progress' :
-                        status.replaceAll('_', ' ').toUpperCase(),
+                        status == 'all'
+                            ? 'All Status'
+                            : status == 'in_progress'
+                            ? 'In Progress'
+                            : status.replaceAll('_', ' ').toUpperCase(),
                         style: TextStyle(fontSize: 12),
                       ),
                     );
@@ -187,7 +201,7 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
                       _selectedFilter = value!;
                     });
                   },
-                  decoration:  InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Status',
                     border: OutlineInputBorder(),
                     contentPadding: EdgeInsets.symmetric(horizontal: 12),
@@ -197,7 +211,7 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  initialValue: _selectedType,
+                  value: _selectedType,
                   items: _typeFilters.map((type) {
                     return DropdownMenuItem(
                       value: type,
@@ -238,7 +252,9 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
             : issues.where((issue) => issue.status == _selectedFilter).toList();
         final filteredByType = _selectedType == 'all'
             ? filteredByStatus
-            : filteredByStatus.where((issue) => issue.type == _selectedType).toList();
+            : filteredByStatus
+                  .where((issue) => issue.type == _selectedType)
+                  .toList();
         if (filteredByType.isEmpty) {
           return const Center(
             child: Column(
@@ -254,7 +270,7 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
         return ListView.builder(
           itemCount: filteredByType.length,
           itemBuilder: (context, index) {
-          final issue = filteredByType[index];
+            final issue = filteredByType[index];
             return IssueReportCard(
               issue: issue,
               onTap: () {
@@ -273,26 +289,25 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
     );
   }
 }
+
 class IssueReportCard extends StatelessWidget {
   final AdminIssuereport issue;
   final VoidCallback onTap;
 
-  const IssueReportCard({
-    super.key,
-    required this.issue,
-    required this.onTap,
-  });
+  const IssueReportCard({super.key, required this.issue, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     Color statusColor = Colors.orange;
     if (issue.status == 'in_progress') statusColor = Colors.blue;
     if (issue.status == 'resolved') statusColor = Colors.green;
 
     Color typeColor = issue.type == 'issue' ? Colors.orange : Colors.red;
-    IconData typeIcon = issue.type == 'issue' ? Icons.warning : Icons.report_problem;
+    IconData typeIcon = issue.type == 'issue'
+        ? Icons.warning
+        : Icons.report_problem;
 
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 3),
@@ -319,16 +334,26 @@ class IssueReportCard extends StatelessWidget {
               issue.description,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                fontSize: 12,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
-             SizedBox(height: 4),
+            SizedBox(height: 4),
             Row(
               children: [
-                Icon(Icons.person, size: 12, color: colorScheme.onSurfaceVariant),
+                Icon(
+                  Icons.person,
+                  size: 12,
+                  color: colorScheme.onSurfaceVariant,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   issue.userName,
-                  style: TextStyle(fontSize: 10, color: colorScheme.onSurfaceVariant),
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -347,7 +372,7 @@ class IssueReportCard extends StatelessWidget {
                 ),
               ),
               backgroundColor: statusColor,
-              padding:  EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 1),
             ),
             // SizedBox(height: 1),
             // Text(
@@ -360,6 +385,7 @@ class IssueReportCard extends StatelessWidget {
       ),
     );
   }
+
   String _timeAgo(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
