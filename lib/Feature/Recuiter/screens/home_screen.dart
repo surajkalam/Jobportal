@@ -335,7 +335,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildEmptyApplicationsState(double height) {
-    return Container(
+    return SizedBox(
       height: height * 0.2,
       child: Center(
         child: Column(

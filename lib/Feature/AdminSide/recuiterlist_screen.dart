@@ -1,13 +1,17 @@
 // screens/recruiters_list_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jobapp/Feature/AdminSide/admin_recruiter_jobs_screen.dart';
 import 'package:jobapp/Feature/AdminSide/provider/admininfo_provider.dart';
 import 'package:jobapp/Feature/Recuiter/recuiter_model/recuiterinfo_model.dart';
+
 class RecruitersListScreen extends ConsumerStatefulWidget {
   const RecruitersListScreen({super.key});
   @override
-  ConsumerState<RecruitersListScreen> createState() => _RecruitersListScreenState();
+  ConsumerState<RecruitersListScreen> createState() =>
+      _RecruitersListScreenState();
 }
+
 class _RecruitersListScreenState extends ConsumerState<RecruitersListScreen> {
   final TextEditingController _searchController = TextEditingController();
 
@@ -16,12 +20,13 @@ class _RecruitersListScreenState extends ConsumerState<RecruitersListScreen> {
     _searchController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     final recruitersAsync = ref.watch(allRecruitersProvider);
     final colorScheme = Theme.of(context).colorScheme;
-    var height=MediaQuery.of(context).size.height;
-     var width=MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -40,8 +45,8 @@ class _RecruitersListScreenState extends ConsumerState<RecruitersListScreen> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search recruiters...',
-              hintStyle: TextStyle(fontSize: 11,fontWeight: FontWeight.w400),
-              prefixIcon: Icon(Icons.search,size: 20,),
+              hintStyle: TextStyle(fontSize: 11, fontWeight: FontWeight.w400),
+              prefixIcon: Icon(Icons.search, size: 20),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -53,7 +58,7 @@ class _RecruitersListScreenState extends ConsumerState<RecruitersListScreen> {
           SizedBox(height: 16),
           Expanded(
             child: recruitersAsync.when(
-              loading: () =>Center(child: CircularProgressIndicator()),
+              loading: () => Center(child: CircularProgressIndicator()),
               error: (error, stack) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -73,8 +78,12 @@ class _RecruitersListScreenState extends ConsumerState<RecruitersListScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.people_outline, size: 60, color: colorScheme.onSurfaceVariant),
-                         SizedBox(height: 16),
+                        Icon(
+                          Icons.people_outline,
+                          size: 60,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        SizedBox(height: 16),
                         Text(
                           'No recruiters found',
                           style: TextStyle(
@@ -90,7 +99,12 @@ class _RecruitersListScreenState extends ConsumerState<RecruitersListScreen> {
                   itemCount: recruiters.length,
                   itemBuilder: (context, index) {
                     final recruiter = recruiters[index];
-                    return _buildRecruiterCard(recruiter, colorScheme,height,width);
+                    return _buildRecruiterCard(
+                      recruiter,
+                      colorScheme,
+                      height,
+                      width,
+                    );
                   },
                 );
               },
@@ -100,9 +114,15 @@ class _RecruitersListScreenState extends ConsumerState<RecruitersListScreen> {
       ),
     );
   }
-  Widget _buildRecruiterCard(RecruiterModel recruiter, ColorScheme colorScheme,double height,double width) {
+
+  Widget _buildRecruiterCard(
+    RecruiterModel recruiter,
+    ColorScheme colorScheme,
+    double height,
+    double width,
+  ) {
     return Card(
-      margin:EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: 12),
       elevation: 2,
       child: ListTile(
         leading: CircleAvatar(
@@ -127,25 +147,34 @@ class _RecruitersListScreenState extends ConsumerState<RecruitersListScreen> {
           children: [
             Text(
               recruiter.companyName,
-              style: TextStyle(color: colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-              fontSize: 13,
+              style: TextStyle(
+                color: colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
               ),
             ),
             Text(
               recruiter.email,
-              style: TextStyle(color: colorScheme.onSurfaceVariant,
-               fontWeight: FontWeight.w400,
-              fontSize: 12,
+              style: TextStyle(
+                color: colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w400,
+                fontSize: 12,
               ),
             ),
             Text(
               '${recruiter.designation} • ${recruiter.location}',
-              style: TextStyle(fontSize: 10, color: colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                fontSize: 10,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
-        trailing: Icon(Icons.arrow_forward_ios, size: 16, color: colorScheme.onSurfaceVariant),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: colorScheme.onSurfaceVariant,
+        ),
         onTap: () {
           // Navigate to recruiter details screen
           _showRecruiterDetails(recruiter, context);
@@ -155,13 +184,14 @@ class _RecruitersListScreenState extends ConsumerState<RecruitersListScreen> {
   }
 
   void _showRecruiterDetails(RecruiterModel recruiter, BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-
-      builder: (context) {
-        return RecruiterDetailsBottomSheet(recruiter: recruiter);
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AdminRecruiterJobsScreen(
+          recruiterEmail: recruiter.email,
+          recruiterName: recruiter.name,
+        ),
+      ),
     );
   }
 }
@@ -210,7 +240,11 @@ class RecruiterDetailsBottomSheet extends ConsumerWidget {
                     ? NetworkImage(recruiter.photoUrl)
                     : null,
                 child: recruiter.photoUrl.isEmpty
-                    ? Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer)
+                    ? Icon(
+                        Icons.person,
+                        size: 40,
+                        color: colorScheme.onPrimaryContainer,
+                      )
                     : null,
               ),
               const SizedBox(width: 16),
@@ -249,11 +283,23 @@ class RecruiterDetailsBottomSheet extends ConsumerWidget {
           const SizedBox(height: 24),
           // Detailed Information
           _buildDetailRow(Icons.email, 'Email', recruiter.email, colorScheme),
-          _buildDetailRow(Icons.phone, 'Contact', recruiter.contact, colorScheme),
-          _buildDetailRow(Icons.location_on, 'Location', recruiter.location, colorScheme),
-          _buildDetailRow(Icons.calendar_today, 'Joined', 
-            '${recruiter.createdAt.day}/${recruiter.createdAt.month}/${recruiter.createdAt.year}', 
-            colorScheme
+          _buildDetailRow(
+            Icons.phone,
+            'Contact',
+            recruiter.contact,
+            colorScheme,
+          ),
+          _buildDetailRow(
+            Icons.location_on,
+            'Location',
+            recruiter.location,
+            colorScheme,
+          ),
+          _buildDetailRow(
+            Icons.calendar_today,
+            'Joined',
+            '${recruiter.createdAt.day}/${recruiter.createdAt.month}/${recruiter.createdAt.year}',
+            colorScheme,
           ),
           SizedBox(height: 24),
           // Action Buttons
@@ -264,7 +310,7 @@ class RecruiterDetailsBottomSheet extends ConsumerWidget {
                   onPressed: () {
                     // Implement edit functionality
                   },
-                  child:Text('Edit'),
+                  child: Text('Edit'),
                 ),
               ),
               const SizedBox(width: 12),
@@ -273,7 +319,7 @@ class RecruiterDetailsBottomSheet extends ConsumerWidget {
                   onPressed: () {
                     // Implement contact functionality
                   },
-                  child:Text('Contact'),
+                  child: Text('Contact'),
                 ),
               ),
             ],
@@ -284,7 +330,12 @@ class RecruiterDetailsBottomSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildDetailRow(IconData icon, String label, String value, ColorScheme colorScheme) {
+  Widget _buildDetailRow(
+    IconData icon,
+    String label,
+    String value,
+    ColorScheme colorScheme,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(

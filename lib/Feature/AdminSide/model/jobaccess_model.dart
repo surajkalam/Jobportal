@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class JobModel {
+class AdminJobModel {
   final String id;
   final String companyName;
   final String designation;
@@ -23,7 +23,7 @@ class JobModel {
   final bool isUrgentHiring;
   final String jobType;
 
-  JobModel({
+  AdminJobModel({
     this.id = '',
     required this.companyName,
     required this.designation,
@@ -33,7 +33,7 @@ class JobModel {
     required this.application,
     required this.imageUrl,
     required this.category,
-    this.isActive = false,
+    this.isActive = true,
     required this.createdAt,
     this.updatedAt,
     required this.recruiterEmail,
@@ -72,8 +72,8 @@ class JobModel {
     };
   }
 
-  factory JobModel.fromMap(String id, Map<String, dynamic> map) {
-    return JobModel(
+  factory AdminJobModel.fromMap(String id, Map<String, dynamic> map) {
+    return AdminJobModel(
       id: id,
       companyName: map['companyName'] ?? '',
       designation: map['designation'] ?? '',
@@ -83,7 +83,7 @@ class JobModel {
       application: map['application'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
       category: map['category'] ?? '',
-      isActive: map['isActive'] ?? false,
+      isActive: map['isActive'] ?? true,
       recruiterEmail: map['recruiterEmail'] ?? '',
       benefits: map['benefits'] ?? '',
       qualifications: map['qualifications'] ?? '',
@@ -102,7 +102,7 @@ class JobModel {
     );
   }
 
-  JobModel copyWith({
+  AdminJobModel copyWith({
     String? id,
     String? companyName,
     String? designation,
@@ -125,7 +125,7 @@ class JobModel {
     bool? isUrgentHiring,
     String? jobType,
   }) {
-    return JobModel(
+    return AdminJobModel(
       id: id ?? this.id,
       companyName: companyName ?? this.companyName,
       designation: designation ?? this.designation,

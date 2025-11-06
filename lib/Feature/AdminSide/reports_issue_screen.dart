@@ -182,7 +182,7 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _selectedFilter,
+                  initialValue: _selectedFilter,
                   items: _statusFilters.map((status) {
                     return DropdownMenuItem(
                       value: status,
@@ -211,7 +211,7 @@ class _ReportissueScreenState extends ConsumerState<ReportissueScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _selectedType,
+                  initialValue: _selectedType,
                   items: _typeFilters.map((type) {
                     return DropdownMenuItem(
                       value: type,

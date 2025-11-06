@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jobapp/Authentication/Signupscreen.dart';
 import 'package:jobapp/Authentication/checkloginsignup.dart';
+import 'package:jobapp/Authentication/forgot_password_screen.dart';
 import 'package:jobapp/Authentication/loginscreen.dart';
 import 'package:jobapp/Feature/AdminSide/admindashboard_screen.dart';
 import 'package:jobapp/Feature/JobSeeker/widget/jobseeker_navbar.dart';
@@ -48,6 +49,10 @@ class JobPortalAppRouter {
           final option = state.extra as String? ?? 'jobseeker';
           return SignupScreen(option: option);
         },
+      ),
+      GoRoute(
+        path: '/forgot-password',
+        builder: (context, state) => const ForgotPasswordScreen(),
       ),
       GoRoute(path: '/job-nav', builder: (context, state) => JobseekerNavbar()),
 

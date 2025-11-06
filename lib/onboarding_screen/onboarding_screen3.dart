@@ -30,7 +30,7 @@ class OnboardingScreen3 extends ConsumerWidget {
                 width: width*0.65,
                 height: height*0.3,
                 decoration: BoxDecoration(
-                  color: colorScheme.surfaceVariant,
+                  color: colorScheme.surfaceContainerHighest,
                   shape: BoxShape.circle,
                 ),
                 child: Center(

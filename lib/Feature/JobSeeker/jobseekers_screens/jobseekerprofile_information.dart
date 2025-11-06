@@ -40,7 +40,7 @@ class _ProfileInformationScreenState
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-         backgroundColor: colorScheme.surfaceVariant,
+         backgroundColor: colorScheme.surfaceContainerHighest,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),

@@ -15,7 +15,7 @@ Stream<List<JobseekerModel>> getAllJobSeekers() {
       .snapshots()
       .map((snapshot) {
     return snapshot.docs
-        .map((doc) => JobseekerModel.fromMap(doc.id, doc.data() as Map<String, dynamic>))
+        .map((doc) => JobseekerModel.fromMap(doc.id, doc.data()))
         .toList();
   });
 }

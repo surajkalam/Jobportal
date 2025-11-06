@@ -41,15 +41,17 @@ class _CheckLoginSignupScreenState
   }
 
   void _navigateToLogin() {
-    final userType =
-        _selectedIndex == 0 ? UserType.jobseeker : UserType.recruiter;
-    context.go('/login', extra: userType.name);
+    final userType = _selectedIndex == 0
+        ? UserType.jobseeker
+        : UserType.recruiter;
+    context.push('/login', extra: userType.name);
   }
 
   void _navigateToSignup() {
-    final userType =
-        _selectedIndex == 0 ? UserType.jobseeker : UserType.recruiter;
-    context.go('/signup', extra: userType.name);
+    final userType = _selectedIndex == 0
+        ? UserType.jobseeker
+        : UserType.recruiter;
+    context.push('/signup', extra: userType.name);
   }
 
   @override
@@ -67,8 +69,7 @@ class _CheckLoginSignupScreenState
             child: Container(
               width: double.infinity,
               height: double.infinity,
-              decoration: BoxDecoration(
-              ),
+              decoration: BoxDecoration(),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -86,7 +87,9 @@ class _CheckLoginSignupScreenState
                             borderRadius: BorderRadius.circular(width * 0.05),
                             boxShadow: [
                               BoxShadow(
-                                color: colorScheme.shadow.withValues(alpha: 0.2),
+                                color: colorScheme.shadow.withValues(
+                                  alpha: 0.2,
+                                ),
                                 spreadRadius: 1,
                                 blurRadius: 6,
                                 offset: const Offset(1, 2),
@@ -109,11 +112,10 @@ class _CheckLoginSignupScreenState
                                   decoration: BoxDecoration(
                                     color: _selectedIndex == 0
                                         ? colorScheme.primary
-                                        : colorScheme.surfaceVariant,
+                                        : colorScheme.surfaceContainerHighest,
                                     borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(width * 0.05),
-                                      bottomLeft:
-                                          Radius.circular(width * 0.05),
+                                      bottomLeft: Radius.circular(width * 0.05),
                                     ),
                                   ),
                                   child: Center(
@@ -144,11 +146,12 @@ class _CheckLoginSignupScreenState
                                   decoration: BoxDecoration(
                                     color: _selectedIndex == 1
                                         ? colorScheme.primary
-                                        : colorScheme.surfaceVariant,
+                                        : colorScheme.surfaceContainerHighest,
                                     borderRadius: BorderRadius.only(
                                       topRight: Radius.circular(width * 0.05),
-                                      bottomRight:
-                                          Radius.circular(width * 0.05),
+                                      bottomRight: Radius.circular(
+                                        width * 0.05,
+                                      ),
                                     ),
                                   ),
                                   child: Center(
@@ -185,11 +188,14 @@ class _CheckLoginSignupScreenState
                               width: width * 0.5,
                               decoration: BoxDecoration(
                                 color: colorScheme.primary,
-                                borderRadius:
-                                    BorderRadius.circular(width * 0.02),
+                                borderRadius: BorderRadius.circular(
+                                  width * 0.02,
+                                ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: colorScheme.shadow.withValues(alpha: 0.3),
+                                    color: colorScheme.shadow.withValues(
+                                      alpha: 0.3,
+                                    ),
                                     spreadRadius: 2,
                                     blurRadius: 8,
                                     offset: const Offset(2, 3),
@@ -216,14 +222,21 @@ class _CheckLoginSignupScreenState
                               height: height * 0.06,
                               width: width * 0.5,
                               decoration: BoxDecoration(
-                                color: colorScheme.surface.withValues(alpha: 0.9),
+                                color: colorScheme.surface.withValues(
+                                  alpha: 0.9,
+                                ),
                                 border: Border.all(
-                                    color: colorScheme.primary, width: 2),
-                                borderRadius:
-                                    BorderRadius.circular(width * 0.02),
+                                  color: colorScheme.primary,
+                                  width: 2,
+                                ),
+                                borderRadius: BorderRadius.circular(
+                                  width * 0.02,
+                                ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: colorScheme.shadow.withValues(alpha: 0.2),
+                                    color: colorScheme.shadow.withValues(
+                                      alpha: 0.2,
+                                    ),
                                     spreadRadius: 1,
                                     blurRadius: 6,
                                     offset: const Offset(1, 2),

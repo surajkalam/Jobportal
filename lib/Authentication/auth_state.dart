@@ -187,6 +187,38 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     return _auth.currentUser != null && _localStorage.isLoggedIn;
   }
 
+  // Send password reset email
+  Future<bool> sendPasswordResetEmail(String email) async {
+    try {
+      state = state.copyWith(isLoading: true, error: null);
+      await _auth.sendPasswordResetEmail(email: email.trim());
+      state = state.copyWith(isLoading: false);
+      return true;
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'Failed to send reset email. Please try again.';
+
+      switch (e.code) {
+        case 'invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        case 'user-not-found':
+          errorMessage = 'No user found with this email address.';
+          break;
+        default:
+          errorMessage = e.message ?? 'An unexpected error occurred.';
+      }
+
+      state = state.copyWith(error: errorMessage, isLoading: false);
+      return false;
+    } catch (e) {
+      state = state.copyWith(
+        error: 'An unexpected error occurred.',
+        isLoading: false,
+      );
+      return false;
+    }
+  }
+
   // Clear error
   void clearError() {
     state = state.copyWith(error: null);

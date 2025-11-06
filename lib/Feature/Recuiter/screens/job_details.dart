@@ -13,6 +13,7 @@ class JobuploaddetailScreen extends ConsumerStatefulWidget {
   @override
   ConsumerState<JobuploaddetailScreen> createState() => _JobdetailScreenState();
 }
+
 class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
   int selectedIndex = 0;
   File? _selectedImage;
@@ -25,7 +26,8 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _benefitsController = TextEditingController();
-  final TextEditingController _qualificationsController = TextEditingController();
+  final TextEditingController _qualificationsController =
+      TextEditingController();
   final TextEditingController _skillsController = TextEditingController();
   final TextEditingController _requirementsController = TextEditingController();
   final TextEditingController _ageRangeController = TextEditingController();
@@ -36,12 +38,12 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
   // Experience options
   final List<String> experienceOptions = [
     '0-1 years',
-    '1-2 years', 
+    '1-2 years',
     '2-3 years',
     '3-5 years',
     '5-7 years',
     '7-10 years',
-    '10+ years'
+    '10+ years',
   ];
   String selectedJobType = 'Full-time';
   final List<String> jobTypeOptions = [
@@ -49,13 +51,12 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
     'Part-time',
     'Internship',
     'Contract',
-    'Remote'
+    'Remote',
   ];
 
   @override
   void initState() {
     super.initState();
-    // No need to pre-fill since we're only creating new jobs
   }
 
   @override
@@ -102,22 +103,52 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
     );
   }
 
-  Widget _buildCategorySelection(double width, double height, 
-      ColorScheme colorScheme, TextTheme textTheme) {
+  Widget _buildCategorySelection(
+    double width,
+    double height,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+  ) {
     return Row(
       children: [
-        _buildCategoryButton(height, width, 'Airline', colorScheme, textTheme, 1),
-        _buildCategoryButton(height, width, 'Hospitality', colorScheme, textTheme, 2),
+        _buildCategoryButton(
+          height,
+          width,
+          'Airline',
+          colorScheme,
+          textTheme,
+          1,
+        ),
+        _buildCategoryButton(
+          height,
+          width,
+          'Hospitality',
+          colorScheme,
+          textTheme,
+          2,
+        ),
       ],
     );
   }
 
-  Widget _buildCategoryButton(double height, double width, String text,
-      ColorScheme colorScheme, TextTheme textTheme, int index) {
+  Widget _buildCategoryButton(
+    double height,
+    double width,
+    String text,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+    int index,
+  ) {
     return GestureDetector(
       onTap: () => _handleCategorySelection(index),
       child: _buildChoiceContainer(
-        height, width, text, colorScheme, textTheme, selectedIndex == index),
+        height,
+        width,
+        text,
+        colorScheme,
+        textTheme,
+        selectedIndex == index,
+      ),
     );
   }
 
@@ -127,8 +158,12 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
     });
   }
 
-  Widget _buildSelectedContainer(double height, double width, 
-      ColorScheme colorscheme, JobState jobState) {
+  Widget _buildSelectedContainer(
+    double height,
+    double width,
+    ColorScheme colorscheme,
+    JobState jobState,
+  ) {
     return Column(
       children: [
         Padding(
@@ -139,43 +174,116 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
     );
   }
 
-  Widget _buildJobForm(double height, double width, 
-      ColorScheme colorschem, JobState jobState) {
+  Widget _buildJobForm(
+    double height,
+    double width,
+    ColorScheme colorschem,
+    JobState jobState,
+  ) {
     return Column(
       children: [
         _buildImagePickerContainer(height, width),
-        _buildTextFormField(height, width, _companyNameController, 'Company Name *',
-            icon: Icon(Iconsax.building, size: 18), isRequired: true),
-        _buildTextFormField(height, width, _designationController, 'Designation *',
-            icon: Icon(Iconsax.briefcase, size: 18), isRequired: true),
-        _buildTextFormField(height, width, _ctcController, 'CTC *',
-            icon: Icon(Iconsax.wallet, size: 18), isRequired: true, isNumber:false),
-        _buildTextFormField(height, width, _noticePeriodController, 'Notice Period *',
-            icon: Icon(Iconsax.calendar, size: 18), isRequired: true),
-        _buildTextFormField(height, width, _locationController, 'Location *',
-            icon: Icon(Iconsax.location, size: 18), isRequired: true),
-         _buildJobTypeSelector(height, width),
-        _buildTextFormField(height, width, _requirementsController, 'Requirements (use commas to separate) *',
-            icon: Icon(Iconsax.task, size: 18), isRequired: true, maxline: 3),
+        _buildTextFormField(
+          height,
+          width,
+          _companyNameController,
+          'Company Name *',
+          icon: Icon(Iconsax.building, size: 18),
+          isRequired: true,
+        ),
+        _buildTextFormField(
+          height,
+          width,
+          _designationController,
+          'Role/Designation *',
+          icon: Icon(Iconsax.briefcase, size: 18),
+          isRequired: true,
+        ),
+        _buildTextFormField(
+          height,
+          width,
+          _ctcController,
+          'CTC *',
+          icon: Icon(Iconsax.wallet, size: 18),
+          isRequired: true,
+          isNumber: false,
+        ),
+        _buildTextFormField(
+          height,
+          width,
+          _noticePeriodController,
+          'Notice Period *',
+          icon: Icon(Iconsax.calendar, size: 18),
+          isRequired: true,
+        ),
+        _buildTextFormField(
+          height,
+          width,
+          _locationController,
+          'Location *',
+          icon: Icon(Iconsax.location, size: 18),
+          isRequired: true,
+        ),
+        _buildJobTypeSelector(height, width),
+        _buildTextFormField(
+          height,
+          width,
+          _requirementsController,
+          'Requirements (use commas to separate) *',
+          icon: Icon(Iconsax.task, size: 18),
+          isRequired: true,
+          maxline: 3,
+        ),
         _buildExperienceSelector(height, width),
-        _buildTextFormField(height, width, _ageRangeController, 'Age Range (e.g., 18-27, 20-30) *',
-            icon: Icon(Iconsax.calendar_1, size: 18), isRequired: true),
-        _buildTextFormField(height, width, _descriptionController, 'Job Description *',
-            icon: Icon(Iconsax.document_text, size: 18), isRequired: true, maxline: 3),
-        _buildTextFormField(height, width, _benefitsController, 'Benefits',
-            icon: Icon(Iconsax.gift, size: 18), maxline: 3),
-        _buildTextFormField(height, width, _qualificationsController, 'Qualifications',
-            icon: Icon(Iconsax.book, size: 18), maxline: 3),
-        _buildTextFormField(height, width, _skillsController, 'Required Skills',
-            icon: Icon(Iconsax.code, size: 18), maxline: 3),
+        _buildTextFormField(
+          height,
+          width,
+          _ageRangeController,
+          'Age Range (e.g., 18-27, 20-30) *',
+          icon: Icon(Iconsax.calendar_1, size: 18),
+          isRequired: true,
+        ),
+        _buildTextFormField(
+          height,
+          width,
+          _descriptionController,
+          'Job Description *',
+          icon: Icon(Iconsax.document_text, size: 18),
+          isRequired: true,
+          maxline: 3,
+        ),
+        _buildTextFormField(
+          height,
+          width,
+          _benefitsController,
+          'Benefits',
+          icon: Icon(Iconsax.gift, size: 18),
+          maxline: 3,
+        ),
+        _buildTextFormField(
+          height,
+          width,
+          _qualificationsController,
+          'Qualifications',
+          icon: Icon(Iconsax.book, size: 18),
+          maxline: 3,
+        ),
+        _buildTextFormField(
+          height,
+          width,
+          _skillsController,
+          'Required Skills',
+          icon: Icon(Iconsax.code, size: 18),
+          maxline: 3,
+        ),
         _buildUrgentHiringToggle(height, width),
         SizedBox(height: height * 0.04),
-        
+
         if (jobState.isLoading)
           CircularProgressIndicator()
         else
           _buildSubmitButton(height, width, colorschem, _handleSubmit),
-        
+
         if (jobState.error != null)
           Padding(
             padding: EdgeInsets.only(top: height * 0.02),
@@ -184,81 +292,81 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
               style: TextStyle(color: Colors.red, fontSize: 12),
             ),
           ),
-          
-        if (jobState.success)
-          Padding(
-            padding: EdgeInsets.only(top: height * 0.02),
-            child: Text(
-              'Job posted successfully!',
-              style: TextStyle(color: Colors.green, fontSize: 12),
-            ),
-          ),
+
+        // if (jobState.success)
+        //   Padding(
+        //     padding: EdgeInsets.only(top: height * 0.02),
+        //     child: Text(
+        //       'Job posted successfully!',
+        //       style: TextStyle(color: Colors.green, fontSize: 12),
+        //     ),
+        //   ),
       ],
     );
   }
+
   Widget _buildJobTypeSelector(double height, double width) {
-  return Padding(
-    padding: EdgeInsets.symmetric(
-      horizontal: width * 0.02,
-      vertical: height * 0.012,
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Job Type *',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-        ),
-        SizedBox(height: 8),
-        SizedBox(
-          height: height * 0.04,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: jobTypeOptions.length,
-            itemBuilder: (context, index) {
-              final jobType = jobTypeOptions[index];
-              final isSelected = selectedJobType == jobType;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedJobType = jobType;
-                  });
-                },
-                child: Container(
-                  margin: EdgeInsets.only(right: 8),
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: isSelected 
-                        ? Theme.of(context).colorScheme.primary 
-                        : Color.fromRGBO(223, 226, 230, 1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isSelected 
-                          ? Theme.of(context).colorScheme.primary 
-                          : Colors.grey,
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: width * 0.02,
+        vertical: height * 0.012,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Job Type *',
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+          SizedBox(height: 8),
+          SizedBox(
+            height: height * 0.04,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: jobTypeOptions.length,
+              itemBuilder: (context, index) {
+                final jobType = jobTypeOptions[index];
+                final isSelected = selectedJobType == jobType;
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedJobType = jobType;
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(right: 8),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary
+                          : Color.fromRGBO(223, 226, 230, 1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.grey,
+                      ),
                     ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      jobType,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: isSelected 
-                            ? Colors.white 
-                            : Colors.black87,
-                        fontWeight: FontWeight.w400,
+                    child: Center(
+                      child: Text(
+                        jobType,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: isSelected ? Colors.white : Colors.black87,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
+
   Widget _buildExperienceSelector(double height, double width) {
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -291,13 +399,13 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
                     margin: EdgeInsets.only(right: 8),
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isSelected 
-                          ? Theme.of(context).colorScheme.primary 
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary
                           : Color.fromRGBO(223, 226, 230, 1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: isSelected 
-                            ? Theme.of(context).colorScheme.primary 
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
                             : Colors.grey,
                       ),
                     ),
@@ -306,9 +414,7 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
                         experience,
                         style: TextStyle(
                           fontSize: 10,
-                          color: isSelected 
-                              ? Colors.white 
-                              : Colors.black87,
+                          color: isSelected ? Colors.white : Colors.black87,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -350,9 +456,7 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
               height: 28,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: isUrgentHiring 
-                    ? Colors.green 
-                    : Colors.grey[300],
+                color: isUrgentHiring ? Colors.green : Colors.grey[300],
               ),
               child: Stack(
                 children: [
@@ -412,8 +516,10 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
                 children: [
                   Icon(Iconsax.camera, size: 32, color: Colors.grey),
                   SizedBox(height: 6),
-                  Text('Tap to add company image *',
-                      style: TextStyle(color: Colors.grey, fontSize: 11)),
+                  Text(
+                    'Tap to add company image *',
+                    style: TextStyle(color: Colors.grey, fontSize: 11),
+                  ),
                 ],
               )
             : ClipRRect(
@@ -427,34 +533,50 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
   Future<void> _pickImage() async {
     try {
       File? image = await ImagePickerUtils.pickImageFromGallery();
-      
+
       if (image != null) {
         bool fileExists = await image.exists();
-        
+
         if (!fileExists) {
           // ignore: use_build_context_synchronously
-          _showSnackBar(context: context, text:'Selected image file is not accessible 👎', textColor: Colors.red);
+          _showSnackBar(
+            context: context,
+            text: 'Selected image file is not accessible 👎',
+            textColor: Colors.red,
+          );
           return;
         }
 
         final fileLength = await image.length();
         if (fileLength > 10 * 1024 * 1024) {
           // ignore: use_build_context_synchronously
-          _showSnackBar(context: context, text: 'Image file is too large. Please select a smaller image.', textColor: Colors.red);
+          _showSnackBar(
+            context: context,
+            text: 'Image file is too large. Please select a smaller image.',
+            textColor: Colors.red,
+          );
           return;
         }
 
         setState(() {
           _selectedImage = image;
         });
-        
+
         // _showSnackBar('Image selected successfully');
         // ignore: use_build_context_synchronously
-        _showSnackBar(context: context, text:'Image selected successfully 👍', textColor: Colors.green);
+        _showSnackBar(
+          context: context,
+          text: 'Image selected successfully 👍',
+          textColor: Colors.green,
+        );
       }
     } catch (e) {
       // ignore: use_build_context_synchronously
-      _showSnackBar(context: context, text: 'Failed to pick image try again', textColor: Colors.red);
+      _showSnackBar(
+        context: context,
+        text: 'Failed to pick image try again',
+        textColor: Colors.red,
+      );
       log('Image picking error: $e');
     }
   }
@@ -521,7 +643,11 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
 
       // Validate required fields
       if (_selectedImage == null) {
-        _showSnackBar(context: context, text: 'Please select a company image', textColor: Colors.red);
+        _showSnackBar(
+          context: context,
+          text: 'Please select a company image',
+          textColor: Colors.red,
+        );
         return;
       }
 
@@ -533,13 +659,21 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
           _descriptionController.text.isEmpty ||
           _requirementsController.text.isEmpty ||
           _ageRangeController.text.isEmpty) {
-        _showSnackBar(context: context, text: 'Please fill all required fields', textColor: Colors.red);
+        _showSnackBar(
+          context: context,
+          text: 'Please fill all required fields',
+          textColor: Colors.red,
+        );
         return;
       }
 
       // Validate age range format
       if (!_isValidAgeRange(_ageRangeController.text)) {
-        _showSnackBar(context: context, text: 'Please enter age range in format like 18-27 or 20-30', textColor: Colors.red);
+        _showSnackBar(
+          context: context,
+          text: 'Please enter age range in format like 18-27 or 20-30',
+          textColor: Colors.red,
+        );
         return;
       }
 
@@ -548,10 +682,10 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
 
       final jobNotifier = ref.read(jobNotifierProvider.notifier);
       final recruiterEmail = ref.read(currentRecruiterUserEmailProvider);
-      
+
       // Upload image
       String imageUrl = await jobNotifier.uploadImage(_selectedImage!);
-       String jobId = 'JOB_${DateTime.now().millisecondsSinceEpoch}';
+      String jobId = 'JOB_${DateTime.now().millisecondsSinceEpoch}';
       // Create job model
       JobModel jobData = JobModel(
         id: jobId,
@@ -576,19 +710,26 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
 
       // Save job
       await jobNotifier.saveJob(jobData);
-      
+
       // Check if successful
       final currentState = ref.read(jobNotifierProvider);
       if (currentState.success) {
         // _showSnackBar('$category Job posted successfully!');
         // ignore: use_build_context_synchronously
-        _showSnackBar(context: context, text:'$category Job posted successfully!', textColor: Colors.green);
+        _showSnackBar(
+          context: context,
+          text: '$category Job posted successfully!',
+          textColor: Colors.green,
+        );
         _clearForm(); // Clear form after successful submission
       }
-      
     } catch (e) {
       // ignore: use_build_context_synchronously
-      _showSnackBar(context: context, textColor: Colors.red, text: 'check all fields and try again');
+      _showSnackBar(
+        context: context,
+        textColor: Colors.red,
+        text: 'check all fields and try again',
+      );
       log('Error submitting job: $e');
     }
   }
@@ -596,11 +737,11 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
   bool _isValidAgeRange(String ageRange) {
     final regex = RegExp(r'^\d{2}-\d{2}$');
     if (!regex.hasMatch(ageRange)) return false;
-    
+
     final parts = ageRange.split('-');
     final start = int.tryParse(parts[0]);
     final end = int.tryParse(parts[1]);
-    
+
     if (start == null || end == null) return false;
     return start < end && start >= 18 && end <= 65;
   }
@@ -617,14 +758,18 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
     _skillsController.clear();
     _requirementsController.clear();
     _ageRangeController.clear();
-    
+
     setState(() {
       _selectedImage = null;
-      selectedExperience = '0-1 years'; // Reset to default
-      isUrgentHiring = false; // Reset to default
-      selectedIndex = 0; // Reset category selection
+      selectedExperience = '0-1 years';
+      isUrgentHiring = false;
+      selectedIndex = 0;
     });
-  _showSnackBar(context: context, text: 'Form cleared. Ready for new job posting.', textColor: Colors.green, );
+    _showSnackBar(
+      context: context,
+      text: 'Form cleared. Ready for new job posting.',
+      textColor: Colors.green,
+    );
   }
 
   void _showSnackBar({
@@ -637,12 +782,14 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(text, 
-        style: TextStyle(
-          color: textColor,
-          fontSize: 10,
-        fontWeight: FontWeight.w500),
-        textAlign: TextAlign.center,
+        content: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
         ),
         backgroundColor: backgroundColor,
         duration: duration,
@@ -712,12 +859,13 @@ class CustomScaffold extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        title: Text(
-          'Create New Job',
-          style: TextStyle(fontSize: 14),
-        ),
+        title: Text('Create New Job', style: TextStyle(fontSize: 14)),
         leading: IconButton(
-          icon: Icon(Iconsax.arrow_left, color: colorScheme.onPrimary, size: 16),
+          icon: Icon(
+            Iconsax.arrow_left,
+            color: colorScheme.onPrimary,
+            size: 16,
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },

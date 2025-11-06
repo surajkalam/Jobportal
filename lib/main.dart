@@ -16,11 +16,11 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate(
     // ignore: deprecated_member_use
-    androidProvider: AndroidProvider.debug,
+    androidProvider: AndroidProvider.playIntegrity,
   );
-  FirebaseAppCheck.instance.getToken(true).then((token) {
-    debugPrint("🔥 Debug Token => $token");
-  });
+  // FirebaseAppCheck.instance.getToken(true).then((token) {
+  //   debugPrint("🔥 Debug Token => $token");
+  // });
   // Initialize local storage service
   await LocalStorageService().init();
   log('message: Firebase Initialized');
@@ -48,7 +48,6 @@ class _MainAppState extends ConsumerState<MainApp> {
     try {
       themeMode = ref.watch(themeModeProvider);
     } catch (e) {
-      // Fallback to system theme if provider is not available
       themeMode = ThemeMode.system;
     }
     return MaterialApp.router(

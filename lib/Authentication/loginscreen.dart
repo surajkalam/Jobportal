@@ -66,16 +66,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await _localStorage.setLoggedIn(true);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '✅ Login successful for: $userEmail',
-              style: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.greenAccent,
-            duration: Duration(seconds: 2),
-            behavior: SnackBarBehavior.floating,
-          ),
+        _showSnackBar(
+          context: context,
+          text: '✅ Login successful for: $userEmail',
         );
       }
 
@@ -87,16 +80,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         }
       });
     } else {
-      // Error is already handled in the auth state
       final error = ref.read(authStateProvider).error;
       if (error != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error, style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
-            behavior: SnackBarBehavior.floating,
-          ),
+        _showSnackBar(
+          context: context,
+          text: 'Check your credential !',
+          textColor: Colors.red,
         );
       }
     }
@@ -137,47 +126,54 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   //     }
   //   }
   //   final authNotifier = ref.read(authStateProvider.notifier);
-  //   final user = await authNotifier.loginWithEmailAndPassword(
-  //     email: email,
-  //     password: password,
-  //   );
+  //   try {
+  //     final user = await authNotifier.loginWithEmailAndPassword(
+  //       email: email,
+  //       password: password,
+  //     );
 
-  //   if (user != null) {
-  //     final userEmail = user.email ?? email;
+  //     if (user != null) {
+  //       // ✅ existing success code (keep it)
+  //       final userEmail = user.email ?? email;
+  //       await _localStorage.setUserEmail(userEmail);
+  //       await _localStorage.setUserType(userType.name);
+  //       await _localStorage.setLoggedIn(true);
 
-  //     // Save user data locally
-  //     await _localStorage.setUserEmail(userEmail);
-  //     await _localStorage.setUserType(userType.name);
-  //     await _localStorage.setLoggedIn(true);
+  //       if (mounted) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(
+  //             content: Text(
+  //               ' Login successful for: $userEmail',
+  //               style: const TextStyle(color: Colors.green),
+  //             ),
+  //             backgroundColor: Colors.white,
+  //             duration: const Duration(seconds: 2),
+  //             behavior: SnackBarBehavior.floating,
+  //             shape: Border.all(color: Colors.green),
+  //           ),
+  //         );
+  //       }
+
+  //       WidgetsBinding.instance.addPostFrameCallback((_) {
+  //         if (userType == UserType.jobseeker) {
+  //           context.go('/job-nav');
+  //         } else {
+  //           context.go('/recuiter-nav');
+  //         }
+  //       });
+  //     }
+  //   } on FirebaseAuthException catch (e) {
+  //     // ✅ THIS prints real Firebase error to debug console
+  //     log("🔴 FIREBASE ERROR CODE: ${e.code}");
+  //     log("🔴 FIREBASE ERROR MESSAGE: ${e.message}");
 
   //     if (mounted) {
   //       ScaffoldMessenger.of(context).showSnackBar(
   //         SnackBar(
   //           content: Text(
-  //             ' Login successful for: $userEmail',
-  //             style: const TextStyle(color: Colors.green),
+  //             e.message ?? "Login failed",
+  //             style: const TextStyle(color: Colors.red),
   //           ),
-  //           backgroundColor: Colors.white,
-  //           duration: const Duration(seconds: 2),
-  //           behavior: SnackBarBehavior.floating,
-  //           shape: Border.all(color: Colors.green),
-  //         ),
-  //       );
-  //     }
-
-  //     WidgetsBinding.instance.addPostFrameCallback((_) {
-  //       if (userType == UserType.jobseeker) {
-  //         context.go('/job-nav');
-  //       } else {
-  //         context.go('/recuiter-nav');
-  //       }
-  //     });
-  //   } else {
-  //     final error = ref.read(authStateProvider).error;
-  //     if (error != null && mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text(error, style: const TextStyle(color: Colors.red)),
   //           backgroundColor: Colors.white,
   //           duration: const Duration(seconds: 3),
   //           behavior: SnackBarBehavior.floating,
@@ -185,6 +181,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   //         ),
   //       );
   //     }
+  //   } catch (e) {
+  //     log("🔴 UNKNOWN ERROR: $e");
   //   }
   // }
 
@@ -322,7 +320,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Please enter your email";
-                    } else if (!value.contains("@")) {
+                      // } else if (!value.contains("@")) {
+                      //   return "Please enter a valid email";
+                      // }
+                    } else if (!RegExp(
+                      r'^[^@]+@[^@]+\.[^@]+',
+                    ).hasMatch(value)) {
                       return "Please enter a valid email";
                     }
                     return null;
@@ -408,7 +411,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      //Implement forgot password functionality
+                      context.push('/forgot-password');
                     },
                     child: Text(
                       "Forgot Password?",
@@ -486,6 +489,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 4),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
         ),
       ),
     );

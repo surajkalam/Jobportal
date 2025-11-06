@@ -751,13 +751,13 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Row(
+                    SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
                       children: [
                         _buildJobTag(job.noticePeriod, colorScheme),
-                        SizedBox(width: 8),
                         _buildJobTag(job.jobType, colorScheme),
-                        SizedBox(width: 8),
                         _buildJobTag(job.experience, colorScheme),
                       ],
                     ),

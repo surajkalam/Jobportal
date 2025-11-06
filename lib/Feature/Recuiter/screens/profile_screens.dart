@@ -5,7 +5,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:jobapp/Authentication/user_provider.dart';
 import 'package:jobapp/core/providers/theme_provider.dart';
 import 'package:jobapp/Authentication/auth_state.dart';
-import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/contactus_screen.dart';
 import 'package:jobapp/Feature/Recuiter/screens/RecruiterContactUsScreen.dart';
 import 'package:jobapp/Feature/Recuiter/screens/RecruiterMyIssuesScreen.dart';
 import '../provider/provider.dart';
@@ -394,7 +393,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant, // Changed from Colors.orange[50]
+        color: colorScheme.surfaceContainerHighest, // Changed from Colors.orange[50]
         borderRadius: BorderRadius.circular(16),
       ),
       padding: EdgeInsets.all(16),

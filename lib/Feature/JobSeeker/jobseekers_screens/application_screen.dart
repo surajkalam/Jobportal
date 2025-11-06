@@ -10,7 +10,7 @@ class AppliedJobsScreen extends ConsumerWidget {
   const AppliedJobsScreen({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-   ColorScheme colorScheme = Theme.of(context).colorScheme;
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text('My Applications'),
@@ -19,13 +19,13 @@ class AppliedJobsScreen extends ConsumerWidget {
       ),
       body: Container(
         decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [colorScheme.primary, colorScheme.surfaceContainerHighest],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-               stops: [0.06, 0.4],
-              ),
-            ),
+          gradient: LinearGradient(
+            colors: [colorScheme.primary, colorScheme.surfaceContainerHighest],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0.06, 0.4],
+          ),
+        ),
         child: Column(
           children: [
             // Statistics Section
@@ -180,6 +180,7 @@ class AppliedJobsScreen extends ConsumerWidget {
               SizedBox(height: 8),
               Text(
                 'Company: ${application['recruiter_email']?.split('@').first ?? 'Unknown'}',
+
                 style: TextStyle(fontSize: 14, color: AppColors.grey),
               ),
               SizedBox(height: 8),
@@ -218,7 +219,7 @@ class AppliedJobsScreen extends ConsumerWidget {
     jobDetailsFuture
         .then((job) {
           // ignore: use_build_context_synchronously
-          Navigator.pop(context); // Close loading dialog
+          Navigator.pop(context);
 
           if (job != null) {
             // Navigate to job details screen

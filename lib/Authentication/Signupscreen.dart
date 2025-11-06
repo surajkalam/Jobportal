@@ -55,12 +55,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (userType == UserType.jobseeker) {
-        // Pass email, password, and phone to jobseeker info screen using Navigator
-        // Navigator.of(context).pushNamed('/jobseeker-info', arguments: {
-        //   'email': _emailOrMobileController.text.trim(),
-        //   'phone': _phoneController.text,
-        //   'password': _passwordController.text,
-        // });
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => JobseekerInfo(
@@ -70,12 +64,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           ),
         );
       } else {
-        // Pass email, password, and phone to recruiter info screen using Navigator
-        // Navigator.of(context).pushNamed('/recuiter-info', arguments: {
-        //   'email': _emailOrMobileController.text.trim(),
-        //   'password': _passwordController.text,
-        //   'phone': _phoneController.text,
-        // });
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => RecuiterInfo(
@@ -126,17 +114,62 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     return true;
   }
 
+  Future<void> _handleSignup() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    if (!_validateForm()) {
+      return;
+    }
+    _navigateBasedOnUserType();
+    final userType = ref.read(selectionProvider);
+    await _localStorage.setUserType(userType.name);
+    if (mounted) {
+      _showSnackBar(
+        context: context,
+        text: '✅ Please complete your profile information',
+        textColor: Colors.red,
+      );
+    }
+  }
   // Future<void> _handleSignup() async {
-  //   if (!_formKey.currentState!.validate()) {
-  //     return;
+  //   if (!_formKey.currentState!.validate()) return;
+  //   if (!_validateForm()) return;
+
+  //   final userType = ref.read(selectionProvider);
+  //   final email = _emailOrMobileController.text.trim();
+  //   // 🔒 Domain restriction for recruiter
+  //   final disallowedDomains = [
+  //     '@gmail.com',
+  //     '@yahoo.com',
+  //     '@hotmail.com',
+  //     '@outlook.com',
+  //     '@icloud.com',
+  //   ];
+  //   // ✅ Domain restriction logic
+  //   if (userType == UserType.recruiter) {
+  //     if (disallowedDomains.any((domain) => email.endsWith(domain))) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text(
+  //             'Recruiters must use a company email (not Gmail, Yahoo, etc.)',
+  //           ),
+  //           backgroundColor: Colors.redAccent,
+  //           behavior: SnackBarBehavior.floating,
+  //           duration: Duration(seconds: 3),
+  //         ),
+  //       );
+  //       return;
+  //     }
   //   }
 
-  //   if (!_validateForm()) {
-  //     return;
-  //   }
+  //   // ✅ Proceed only if email domain is valid
   //   _navigateBasedOnUserType();
-  //   final userType = ref.read(selectionProvider);
+
+  //   // Save user type to local storage
   //   await _localStorage.setUserType(userType.name);
+
   //   if (mounted) {
   //     ScaffoldMessenger.of(context).showSnackBar(
   //       SnackBar(
@@ -151,69 +184,34 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   //     );
   //   }
   // }
-  Future<void> _handleSignup() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (!_validateForm()) return;
-
-    final userType = ref.read(selectionProvider);
-    final email = _emailOrMobileController.text.trim();
-    // 🔒 Domain restriction for recruiter
-    final disallowedDomains = [
-      '@gmail.com',
-      '@yahoo.com',
-      '@hotmail.com',
-      '@outlook.com',
-      '@icloud.com',
-    ];
-    // ✅ Domain restriction logic
-    if (userType == UserType.recruiter) {
-      if (disallowedDomains.any((domain) => email.endsWith(domain))) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Recruiters must use a company email (not Gmail, Yahoo, etc.)',
-            ),
-            backgroundColor: Colors.redAccent,
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 3),
-          ),
-        );
-        return;
-      }
-    }
-
-    // ✅ Proceed only if email domain is valid
-    _navigateBasedOnUserType();
-
-    // Save user type to local storage
-    await _localStorage.setUserType(userType.name);
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            '✅ Please complete your profile information',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-  }
 
   void _showSnackBar({
     required BuildContext context,
     required String text,
-    required Color textColor,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 4),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(text, style: TextStyle(color: textColor)),
-        backgroundColor: Theme.of(context).colorScheme.inverseSurface,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
+        content: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
+        ),
       ),
     );
   }

@@ -66,8 +66,10 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     if (recentJobsAsync.hasError && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error loading recent jobs: ${recentJobsAsync.error}', 
-              style: TextStyle(color: Colors.white)),
+          content: Text(
+            'Error loading recent jobs: ${recentJobsAsync.error}',
+            style: TextStyle(color: Colors.white),
+          ),
           backgroundColor: Colors.red,
           duration: Duration(seconds: 3),
           behavior: SnackBarBehavior.floating,
@@ -117,7 +119,12 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
               _buildRecentJobsHeader(hasRecentJobs, recentJobsAsync),
               const SizedBox(height: 8),
               // Recent Jobs List - Now part of the main scroll
-              _buildRecentJobsList(recentJobsAsync, recruiterEmail,height,width),
+              _buildRecentJobsList(
+                recentJobsAsync,
+                recruiterEmail,
+                height,
+                width,
+              ),
             ],
           ),
         ),
@@ -356,14 +363,12 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
         }
         return Column(
           children: [
-            ...jobs
-                .map(
-                  (job) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: _buildJobItem(job, recruiterEmail,height,width),
-                  ),
-                )
-                ,
+            ...jobs.map(
+              (job) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: _buildJobItem(job, recruiterEmail, height, width),
+              ),
+            ),
           ],
         );
       },
@@ -402,20 +407,23 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     );
   }
 
-  Widget _buildJobItem(JobModel job, String recruiterEmail,double height,double width) {
+  Widget _buildJobItem(
+    JobModel job,
+    String recruiterEmail,
+    double height,
+    double width,
+  ) {
     final jobStatusAsync = ref.watch(jobStatusProvider(job.id));
     final urgentHiringAsync = ref.watch(urgentHiringProvider(job.id));
     return InkWell(
       onLongPress: () {
         _showDeleteDialog(job);
       },
-      onTap: (){
-         Navigator.push(
+      onTap: () {
+        Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => ApplicationsScreen(job: job),
-          ),
-         );
+          MaterialPageRoute(builder: (context) => ApplicationsScreen(job: job)),
+        );
       },
       child: Card(
         elevation: 1,
@@ -446,7 +454,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                 : Icon(Iconsax.building, color: Colors.blue[600], size: 20),
           ),
           title: SizedBox(
-            width: width*0.42,
+            width: width * 0.42,
             child: Text(
               job.designation,
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
@@ -459,7 +467,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
             children: [
               SizedBox(height: 2),
               SizedBox(
-                width: width*0.42,
+                width: width * 0.42,
                 child: Text(
                   job.companyName,
                   style: TextStyle(fontSize: 10),
@@ -468,12 +476,12 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                 ),
               ),
               SizedBox(height: 2),
-                  Row(
+              Row(
                 children: [
                   Icon(Iconsax.location, size: 10, color: Colors.grey[600]),
                   SizedBox(width: 2),
                   SizedBox(
-                    width:width * 0.35,
+                    width: width * 0.35,
                     child: Text(
                       job.location,
                       style: TextStyle(fontSize: 10, color: Colors.grey[600]),
@@ -484,16 +492,16 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
               ),
               Row(
                 children: [
-                   Icon(Iconsax.category, size: 10, color: Colors.grey[600]),
-                  SizedBox(width: width*0.014),
+                  Icon(Iconsax.category, size: 10, color: Colors.grey[600]),
+                  SizedBox(width: width * 0.014),
                   SizedBox(
-                        width:width * 0.25,
-                        child: Text(
-                          job.category,
-                          style: TextStyle(fontSize: 10, color: Colors.grey[600]),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
+                    width: width * 0.25,
+                    child: Text(
+                      job.category,
+                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -503,6 +511,19 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                // Status chip: Active / Inactive
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  margin: EdgeInsets.only(bottom: 6),
+                  decoration: BoxDecoration(
+                    color: job.isActive ? Colors.green : Colors.orange,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    job.isActive ? 'Active' : 'Inactive',
+                    style: TextStyle(color: Colors.white, fontSize: 8),
+                  ),
+                ),
                 urgentHiringAsync.when(
                   data: (isUrgent) => GestureDetector(
                     onTap: () =>
@@ -544,43 +565,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                     ),
                   ),
                 ),
-                jobStatusAsync.when(
-                  data: (isActive) => GestureDetector(
-                    onTap: () =>
-                        _toggleJobStatus(job.id, isActive, recruiterEmail),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: isActive ? Colors.green : Colors.grey,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        isActive ? 'Active' : 'Inactive',
-                        style: TextStyle(color: Colors.white, fontSize: 9),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  loading: () => const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                  error: (error, stack) => GestureDetector(
-                    onTap: () => _refreshJobStatus(job.id),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        'Error',
-                        style: TextStyle(color: Colors.white, fontSize: 9),
-                      ),
-                    ),
-                  ),
-                ),
+
                 SizedBox(height: 2),
                 Text(
                   _formatTimeAgo(job.createdAt),
@@ -718,41 +703,6 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
         ),
       ),
     );
-  }
-
-  void _toggleJobStatus(
-    String jobId,
-    bool currentStatus,
-    String recruiterEmail,
-  ) {
-    ref
-        .read(jobNotifierProvider.notifier)
-        .toggleJobStatus(jobId, currentStatus)
-        .then((_) {
-          // Invalidate the provider to refresh the status
-          ref.invalidate(jobStatusProvider(jobId));
-
-          // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Job status updated to ${!currentStatus ? 'Active' : 'Inactive'}',
-              ),
-              backgroundColor: Colors.green,
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        })
-        .catchError((error) {
-          // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to update job status: $error'),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
-            ),
-          );
-        });
   }
 
   String _formatTimeAgo(DateTime date) {
