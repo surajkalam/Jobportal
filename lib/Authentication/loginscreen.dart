@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,7 +12,6 @@ import 'package:jobapp/core/services/local_storage_service.dart';
 class LoginScreen extends ConsumerStatefulWidget {
   final String option;
   const LoginScreen({super.key, required this.option});
-
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
@@ -23,7 +24,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final LocalStorageService _localStorage = LocalStorageService();
 
   bool _obscurePassword = true;
-
   @override
   void initState() {
     super.initState();
@@ -44,50 +44,130 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     context.go('/signup', extra: userType.name);
   }
 
+  // Future<void> _handleLogin() async {
+  //   if (!_formKey.currentState!.validate()) {
+  //     return;
+  //   }
+
+  //   final authNotifier = ref.read(authStateProvider.notifier);
+
+  //   final user = await authNotifier.loginWithEmailAndPassword(
+  //     email: _emailOrMobileController.text.trim(),
+  //     password: _passwordController.text,
+  //   );
+
+  //   if (user != null) {
+  //     final userEmail = user.email ?? _emailOrMobileController.text.trim();
+  //     final userType = ref.read(selectionProvider);
+
+  //     // Save user data to local storage
+  //     await _localStorage.setUserEmail(userEmail);
+  //     await _localStorage.setUserType(userType.name);
+  //     await _localStorage.setLoggedIn(true);
+
+  //     if (mounted) {
+  //       _showSnackBar(
+  //         context: context,
+  //         text: '✅ Login successful for: $userEmail',
+  //       );
+  //     }
+
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       if (userType == UserType.jobseeker) {
+  //         context.go('/job-nav');
+  //       } else {
+  //         context.go('/recuiter-nav');
+  //       }
+  //     });
+  //   } else {
+  //     final error = ref.read(authStateProvider).error;
+  //     if (error != null && mounted) {
+  //       _showSnackBar(
+  //         context: context,
+  //         text: 'Check your credential !',
+  //         textColor: Colors.red,
+  //       );
+  //     }
+  //   }
+  // }
+
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
+    final userType = ref.read(selectionProvider);
+    final email = _emailOrMobileController.text.trim();
+    final password = _passwordController.text.trim();
+
     final authNotifier = ref.read(authStateProvider.notifier);
 
-    final user = await authNotifier.loginWithEmailAndPassword(
-      email: _emailOrMobileController.text.trim(),
-      password: _passwordController.text,
-    );
+    try {
+      log("🔄 Attempting login as: $userType with email: $email");
 
-    if (user != null) {
-      final userEmail = user.email ?? _emailOrMobileController.text.trim();
-      final userType = ref.read(selectionProvider);
+      final user = await authNotifier.loginWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      if (user != null) {
+        log("✅ Login successful for: ${user.email}");
+        final userEmail = user.email ?? email;
 
-      // Save user data to local storage
-      await _localStorage.setUserEmail(userEmail);
-      await _localStorage.setUserType(userType.name);
-      await _localStorage.setLoggedIn(true);
+        // Save user data to local storage
+        await _localStorage.setUserEmail(userEmail);
+        await _localStorage.setUserType(userType.name);
+        await _localStorage.setLoggedIn(true);
+        if (mounted) {
+          _showSnackBar(
+            context: context,
+            text: '✅ Login successful for: $userEmail',
+          );
+        }
 
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (userType == UserType.jobseeker) {
+            context.go('/job-nav');
+          } else {
+            context.go('/recuiter-nav');
+          }
+        });
+      } else {
+        final error = ref.read(authStateProvider).error;
+        log("🔴 Login failed with error: $error");
+        if (error != null && mounted) {
+          _showSnackBar(
+            context: context,
+            text: 'Login failed: ${_getErrorMessage(error)}',
+            textColor: Colors.red,
+          );
+        }
+      }
+    } catch (e) {
+      print("🔴 Exception during login: $e");
       if (mounted) {
         _showSnackBar(
           context: context,
-          text: '✅ Login successful for: $userEmail',
-        );
-      }
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (userType == UserType.jobseeker) {
-          context.go('/job-nav');
-        } else {
-          context.go('/recuiter-nav');
-        }
-      });
-    } else {
-      final error = ref.read(authStateProvider).error;
-      if (error != null && mounted) {
-        _showSnackBar(
-          context: context,
-          text: 'Check your credential !',
+          text: 'Login error: ${_getErrorMessage(e.toString())}',
           textColor: Colors.red,
         );
       }
+    }
+  }
+
+  String _getErrorMessage(dynamic error) {
+    final errorString = error.toString();
+
+    if (errorString.contains('invalid-credential') ||
+        errorString.contains('supplied auth credential is incorrect')) {
+      return 'Invalid email or password';
+    } else if (errorString.contains('user-not-found')) {
+      return 'No account found with this email';
+    } else if (errorString.contains('wrong-password')) {
+      return 'Incorrect password';
+    } else if (errorString.contains('network-request-failed')) {
+      return 'Network error. Please check your connection';
+    } else {
+      return 'Login failed. Please try again';
     }
   }
 
@@ -320,15 +400,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Please enter your email";
-                      // } else if (!value.contains("@")) {
-                      //   return "Please enter a valid email";
-                      // }
-                    } else if (!RegExp(
-                      r'^[^@]+@[^@]+\.[^@]+',
-                    ).hasMatch(value)) {
+                    } else if (!value.contains("@")) {
                       return "Please enter a valid email";
                     }
-                    return null;
+                    //   } else if (!RegExp(
+                    //     r'^[^@]+@[^@]+\.[^@]+',
+                    //   ).hasMatch(value)) {
+                    //     return "Please enter a valid email";
+                    //   }
+                    //   return null;
                   },
                 ),
                 SizedBox(height: height * 0.02),
@@ -486,6 +566,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
                 SizedBox(height: height * 0.04),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: InkWell(
+                        onTap: () {
+                          context.pushReplacement('/check-login');
+                        },
+                        child: Text(
+                          'change role',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

@@ -27,17 +27,30 @@ class _AdminRecruiterJobsScreenState
       jobs.getAllJobsForRecruiterProvider(widget.recruiterEmail),
     );
     final colorScheme = Theme.of(context).colorScheme;
-
+    final texttheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.recruiterName}\'s Jobs'),
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
+        title: Text(
+          '${widget.recruiterName}\'s Jobs',
+          style: texttheme.labelMedium?.copyWith(
+            color: colorScheme.onPrimaryContainer,
+            fontSize: 14,
+          ),
+        ),
+        backgroundColor: colorScheme.primary.withValues(alpha: 0.7),
       ),
       body: jobsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) =>
-            Center(child: Text('Error loading jobs: $error')),
+        loading: () => Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(
+          child: Text(
+            'Error loading jobs: $error',
+            style: texttheme.labelMedium?.copyWith(
+              color: colorScheme.onPrimaryContainer,
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+        ),
         data: (jobs) {
           if (jobs.isEmpty) {
             return Center(
@@ -52,9 +65,10 @@ class _AdminRecruiterJobsScreenState
                   const SizedBox(height: 16),
                   Text(
                     'No jobs found',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: colorScheme.onSurfaceVariant,
+                    style: texttheme.labelMedium?.copyWith(
+                      color: colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
                     ),
                   ),
                 ],
@@ -67,7 +81,7 @@ class _AdminRecruiterJobsScreenState
             itemCount: jobs.length,
             itemBuilder: (context, index) {
               final job = jobs[index];
-              return _buildJobCard(job, colorScheme);
+              return _buildJobCard(job, colorScheme, texttheme);
             },
           );
         },
@@ -75,7 +89,11 @@ class _AdminRecruiterJobsScreenState
     );
   }
 
-  Widget _buildJobCard(JobModel job, ColorScheme colorScheme) {
+  Widget _buildJobCard(
+    JobModel job,
+    ColorScheme colorScheme,
+    TextTheme texttheme,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
@@ -95,49 +113,49 @@ class _AdminRecruiterJobsScreenState
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
+                          color: colorScheme.onPrimaryContainer,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         job.companyName,
                         style: TextStyle(
-                          fontSize: 14,
-                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 13,
+                          color: colorScheme.onSecondaryContainer.withValues(
+                            alpha: 0.8,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '${job.location} • ${job.category}',
                         style: TextStyle(
-                          fontSize: 12,
-                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 10,
+                          color: colorScheme.secondary.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: job.isActive ? Colors.green : Colors.orange,
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: colorScheme.onPrimary),
                   ),
                   child: Text(
                     job.isActive ? 'Active' : 'Inactive',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             if (!job.isActive)
               SizedBox(
                 width: double.infinity,
@@ -147,7 +165,10 @@ class _AdminRecruiterJobsScreenState
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('Activate Job'),
+                  child: const Text(
+                    'Activate Job',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                  ),
                 ),
               ),
           ],
@@ -170,10 +191,7 @@ class _AdminRecruiterJobsScreenState
           ),
         );
       }
-
-      // Refresh the jobs list - since it's a direct stream, it should update automatically
     } catch (e) {
-      // Show error message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

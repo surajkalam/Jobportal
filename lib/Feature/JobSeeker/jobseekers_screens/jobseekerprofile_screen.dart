@@ -355,12 +355,8 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: colorScheme.onPrimary,
-          ), // Changed from AppColors.white
-          color: colorScheme.onPrimary.withValues(
-            alpha: 0.1,
-          ), // Changed from AppColors.white
+          border: Border.all(color: colorScheme.onPrimary),
+          color: colorScheme.onPrimary.withValues(alpha: 0.1),
         ),
         child: Center(
           child: Padding(
@@ -370,7 +366,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w400,
-                color: colorScheme.onPrimary, // Changed from AppColors.white
+                color: colorScheme.onPrimary,
               ),
               overflow: TextOverflow.ellipsis,
             ),
@@ -395,7 +391,6 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: colorScheme.outline),
           gradient: LinearGradient(
-            // ignore: deprecated_member_use
             colors: [
               colorScheme.primary.withValues(alpha: 0.04),
               colorScheme.primary.withValues(alpha: 0.6),
@@ -413,10 +408,8 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
       width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: colorScheme.surface, // Changed from AppColors.white
-        border: Border.all(
-          color: colorScheme.outline,
-        ), // Changed from AppColors.grey
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outline),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -428,7 +421,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: colorScheme.onSurface, // Changed from AppColors.black
+                color: colorScheme.onSurface,
               ),
             ),
             SizedBox(height: height * 0.01),
@@ -444,7 +437,6 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Column(
                   children: [
-                    // Row 1: Profile Information - WITH ACTION
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -567,7 +559,6 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                 ),
               ),
             ),
-            SizedBox(height: height * 0.2),
           ],
         ),
       ),

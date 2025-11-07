@@ -2,7 +2,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:jobapp/Feature/JobSeeker/firebase_crud/jobaccess_repository.dart';
-import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
@@ -23,11 +22,9 @@ final appliedJobsProvider =
       final repository = ref.read(jobRepositoryProvider);
       return repository.getJobseekerApplications(jobseekerEmail);
     });
-
 // Application Status Count Provider
 final applicationStatsProvider = Provider.autoDispose<ApplicationStats>((ref) {
   final applicationsAsync = ref.watch(appliedJobsProvider);
-
   return applicationsAsync.when(
     data: (applications) {
       final total = applications.length;

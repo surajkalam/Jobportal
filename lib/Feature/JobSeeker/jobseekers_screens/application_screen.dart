@@ -10,11 +10,20 @@ class AppliedJobsScreen extends ConsumerWidget {
   const AppliedJobsScreen({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    TextTheme texttheme = Theme.of(context).textTheme;
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Applications'),
-        backgroundColor: AppColors.faintbackblue,
+        title: Text(
+          'My Applications',
+          style: texttheme.labelMedium?.copyWith(
+            color: colorScheme.onPrimaryContainer,
+            fontSize: 14,
+          ),
+        ),
+        backgroundColor: colorScheme.primary.withValues(alpha: 0.7),
         elevation: 0,
       ),
       body: Container(
@@ -29,28 +38,42 @@ class AppliedJobsScreen extends ConsumerWidget {
         child: Column(
           children: [
             // Statistics Section
-            _buildStatisticsSection(ref),
+            _buildStatisticsSection(ref, colorScheme, texttheme, height, width),
             SizedBox(height: 16),
             // Applications List
-            Expanded(child: _buildApplicationsList(ref)),
+            Expanded(
+              child: _buildApplicationsList(
+                ref,
+                colorScheme,
+                texttheme,
+                height,
+                width,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatisticsSection(WidgetRef ref) {
+  Widget _buildStatisticsSection(
+    WidgetRef ref,
+    ColorScheme colorscheme,
+    TextTheme texttheme,
+    double height,
+    double width,
+  ) {
     final stats = ref.watch(applicationStatsProvider);
     return Container(
       margin: EdgeInsets.all(16),
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(08),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorscheme.onError,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             // ignore: deprecated_member_use
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: colorscheme.secondary.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -59,22 +82,51 @@ class AppliedJobsScreen extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem('Total', stats.total, Colors.blue),
-          _buildStatItem('Pending', stats.pending, Colors.orange),
-          _buildStatItem('Shortlisted', stats.shortlisted, Colors.green),
-          _buildStatItem('Rejected', stats.rejected, Colors.red),
+          _buildStatItem(
+            'Total',
+            stats.total,
+            colorscheme.onSecondary,
+            height,
+            width,
+          ),
+          _buildStatItem(
+            'Pending',
+            stats.pending,
+            colorscheme.tertiary,
+            height,
+            width,
+          ),
+          _buildStatItem(
+            'Shortlisted',
+            stats.shortlisted,
+            colorscheme.tertiaryFixed,
+            height,
+            width,
+          ),
+          _buildStatItem(
+            'Rejected',
+            stats.rejected,
+            colorscheme.error,
+            height,
+            width,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStatItem(String title, int count, Color color) {
+  Widget _buildStatItem(
+    String title,
+    int count,
+    Color color,
+    double height,
+    double width,
+  ) {
     return Column(
       children: [
         Container(
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
-            // ignore: deprecated_member_use
             color: color.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
@@ -87,7 +139,7 @@ class AppliedJobsScreen extends ConsumerWidget {
             ),
           ),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: height * 0.01),
         Text(
           title,
           style: TextStyle(
@@ -100,7 +152,13 @@ class AppliedJobsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildApplicationsList(WidgetRef ref) {
+  Widget _buildApplicationsList(
+    WidgetRef ref,
+    ColorScheme colorscheme,
+    TextTheme texttheme,
+    double height,
+    double width,
+  ) {
     final applicationsAsync = ref.watch(appliedJobsProvider);
 
     return applicationsAsync.when(
@@ -109,16 +167,21 @@ class AppliedJobsScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, color: Colors.red, size: 48),
+            Icon(Icons.error_outline, color: colorscheme.error, size: 48),
             SizedBox(height: 16),
             Text(
               'Error loading applications',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: colorscheme.error),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: height * 0.01),
             ElevatedButton(
               onPressed: () => ref.refresh(appliedJobsProvider),
-              child: Text('Retry'),
+              child: Text(
+                'Retry',
+                style: texttheme.labelLarge?.copyWith(
+                  color: colorscheme.onPrimaryContainer,
+                ),
+              ),
             ),
           ],
         ),
@@ -132,7 +195,15 @@ class AppliedJobsScreen extends ConsumerWidget {
           padding: EdgeInsets.all(16),
           itemCount: applications.length,
           itemBuilder: (context, index) {
-            return _buildApplicationCard(context, applications[index], ref);
+            return _buildApplicationCard(
+              context,
+              applications[index],
+              ref,
+              height,
+              width,
+              colorscheme,
+              texttheme,
+            );
           },
         );
       },
@@ -143,20 +214,23 @@ class AppliedJobsScreen extends ConsumerWidget {
     BuildContext context,
     Map<String, dynamic> application,
     WidgetRef ref,
+    double height,
+    double width,
+    ColorScheme colorscheme,
+    TextTheme texttheme,
   ) {
     final jobId = application['job_id'];
     final recruiterEmail = application['recruiter_email'];
-
     return Card(
       elevation: 2,
-      margin: EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: height * 0.03),
       child: InkWell(
         onTap: () {
           _navigateToJobDetails(context, jobId, recruiterEmail, ref);
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(height * 0.018),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -166,9 +240,13 @@ class AppliedJobsScreen extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       application['job_title'] ?? 'Unknown Job',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                      // style: TextStyle(
+                      //   fontSize: 14,
+                      //   fontWeight: FontWeight.w600,
+                      // ),
+                      style: texttheme.labelLarge?.copyWith(
+                        color: colorscheme.onPrimaryContainer,
+                        fontWeight: FontWeight.w500,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -177,11 +255,13 @@ class AppliedJobsScreen extends ConsumerWidget {
                   _buildStatusBadge(application['status'] ?? 'pending'),
                 ],
               ),
-              SizedBox(height: 8),
+              SizedBox(height: height * 0.01),
               Text(
                 'Company: ${application['recruiter_email']?.split('@').first ?? 'Unknown'}',
 
-                style: TextStyle(fontSize: 14, color: AppColors.grey),
+                style: texttheme.labelMedium?.copyWith(
+                  color: colorscheme.secondary,
+                ),
               ),
               SizedBox(height: 8),
               Row(
@@ -190,7 +270,9 @@ class AppliedJobsScreen extends ConsumerWidget {
                   SizedBox(width: 4),
                   Text(
                     _formatDate(application['applied_at']),
-                    style: TextStyle(fontSize: 12, color: AppColors.grey),
+                    style: texttheme.labelMedium?.copyWith(
+                      color: colorscheme.secondary,
+                    ),
                   ),
                 ],
               ),
@@ -255,7 +337,8 @@ class AppliedJobsScreen extends ConsumerWidget {
     Color backgroundColor;
     Color textColor;
     String statusText;
-
+    // ColorScheme colorscheme;
+    // TextTheme texttheme;
     switch (status) {
       case 'shortlisted':
         // ignore: deprecated_member_use
@@ -276,7 +359,7 @@ class AppliedJobsScreen extends ConsumerWidget {
         statusText = 'Pending';
     }
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 06, vertical: 4),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(20),
@@ -286,9 +369,9 @@ class AppliedJobsScreen extends ConsumerWidget {
       child: Text(
         statusText,
         style: TextStyle(
-          fontSize: 12,
+          fontSize: 10,
           color: textColor,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w400,
         ),
       ),
     );
@@ -304,7 +387,7 @@ class AppliedJobsScreen extends ConsumerWidget {
           Text(
             'No Applications Yet',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.w600,
               color: AppColors.grey,
             ),

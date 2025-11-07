@@ -225,7 +225,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               style: TextStyle(
                 fontSize: 14,
                 color: colorScheme.onSurfaceVariant,
-              ), // Changed from Colors.grey[600]
+              ),
             ),
             SizedBox(height: height * 0.016),
             ElevatedButton.icon(
@@ -233,10 +233,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               icon: const Icon(Iconsax.refresh),
               label: const Text('Retry'),
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    colorScheme.primary, // Changed from Colors.orange
-                foregroundColor:
-                    colorScheme.onPrimary, // Added foreground color
+                backgroundColor: colorScheme.primary,
+                foregroundColor: colorScheme.onPrimary,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
                   vertical: 12,
@@ -393,7 +391,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest, // Changed from Colors.orange[50]
+        color: colorScheme
+            .surfaceContainerHighest, // Changed from Colors.orange[50]
         borderRadius: BorderRadius.circular(16),
       ),
       padding: EdgeInsets.all(16),
