@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/editcandidateinfo_screen.dart';
 import 'package:jobapp/Feature/combomodel/resumeview_screen.dart';
 
 import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
@@ -31,7 +32,7 @@ class _ProfileInformationScreenState
       // Fallback to default colors if theme is not available
       colorScheme = ColorScheme.light();
     }
-    
+
     log('Building ProfileInformationScreen');
     final jobseekerState = ref.watch(jobseekerProvider);
     final jobseekerInfo = jobseekerState.jobseekerInfo;
@@ -40,7 +41,7 @@ class _ProfileInformationScreenState
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-         backgroundColor: colorScheme.surfaceContainerHighest,
+        backgroundColor: colorScheme.surfaceContainerHighest,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
@@ -55,6 +56,15 @@ class _ProfileInformationScreenState
           ),
         ),
         centerTitle: true,
+        actions: [
+          // Add Edit Button in AppBar
+          IconButton(
+            icon: Icon(Icons.edit, color: colorScheme.primary),
+            onPressed: () {
+              _showEditBottomSheet(jobseekerInfo!);
+            },
+          ),
+        ],
       ),
       body: jobseekerState.isLoading
           ? Center(child: CircularProgressIndicator(color: colorScheme.primary))
@@ -63,7 +73,11 @@ class _ProfileInformationScreenState
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.person_outline, size: 64, color: colorScheme.onSurfaceVariant),
+                  Icon(
+                    Icons.person_outline,
+                    size: 64,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                   SizedBox(height: 16),
                   Text(
                     'No Profile Information',
@@ -76,7 +90,10 @@ class _ProfileInformationScreenState
                   SizedBox(height: height * 0.009),
                   Text(
                     'Please complete your profile',
-                    style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -186,7 +203,13 @@ class _ProfileInformationScreenState
                           colorScheme,
                         )
                       else
-                        _buildInfoRow('Resume', 'Not uploaded', height, width, colorScheme),
+                        _buildInfoRow(
+                          'Resume',
+                          'Not uploaded',
+                          height,
+                          width,
+                          colorScheme,
+                        ),
                     ],
                     context: context,
                     height: height,
@@ -198,6 +221,7 @@ class _ProfileInformationScreenState
             ),
     );
   }
+
   Widget _buildInfoCard({
     required String title,
     required IconData icon,
@@ -241,6 +265,7 @@ class _ProfileInformationScreenState
       ),
     );
   }
+
   Widget _buildInfoRow(
     String label,
     String value,
@@ -281,6 +306,7 @@ class _ProfileInformationScreenState
       ),
     );
   }
+
   Widget _buildResumeSection(
     JobseekerModel jobseekerInfo,
     BuildContext context,
@@ -328,13 +354,19 @@ class _ProfileInformationScreenState
                       // ? 'View ${jobseekerInfo.resumeFileName}'
                       ? 'View'
                       : 'Upload Resume',
-                  style: TextStyle(fontSize: 11, color: colorScheme.onSurface,  fontWeight: FontWeight.w700,),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colorScheme.surface,
                   foregroundColor: colorScheme.primary,
                   // ignore: deprecated_member_use
-                  side: BorderSide(color: colorScheme.primary.withValues(alpha: 0.6)),
+                  side: BorderSide(
+                    color: colorScheme.primary.withValues(alpha: 0.6),
+                  ),
                   padding: EdgeInsets.symmetric(vertical: 8),
                 ),
               ),
@@ -357,7 +389,11 @@ class _ProfileInformationScreenState
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Icon(Icons.edit, size: 16, color: colorScheme.onPrimary),
+                  child: Icon(
+                    Icons.edit,
+                    size: 16,
+                    color: colorScheme.onPrimary,
+                  ),
                 ),
               ),
               SizedBox(width: 4),
@@ -378,7 +414,11 @@ class _ProfileInformationScreenState
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Icon(Icons.delete_outline, size: 16, color: colorScheme.onError),
+                  child: Icon(
+                    Icons.delete_outline,
+                    size: 16,
+                    color: colorScheme.onError,
+                  ),
                 ),
               ),
             ],
@@ -398,6 +438,7 @@ class _ProfileInformationScreenState
       ],
     );
   }
+
   Future<void> _uploadResumeWithProvider() async {
     // Safely access theme colors with fallbacks
     ColorScheme? colorScheme;
@@ -407,7 +448,7 @@ class _ProfileInformationScreenState
       // Fallback to default colors if theme is not available
       colorScheme = ColorScheme.light();
     }
-    
+
     try {
       final pdfService = ref.read(pdfUploadServiceProvider);
 
@@ -415,10 +456,20 @@ class _ProfileInformationScreenState
       final File? pdfFile = await pdfService.pickPdf();
       if (pdfFile == null) return;
       // ignore: use_build_context_synchronously
-      _showSnackBar(context: context, text: 'Uploading resume...', backgroundColor: colorScheme.surface, textColor: colorScheme.primary);
+      _showSnackBar(
+        context: context,
+        text: 'Uploading resume...',
+        backgroundColor: colorScheme.surface,
+        textColor: colorScheme.primary,
+      );
       await ref.read(jobseekerProvider.notifier).uploadResume(pdfFile);
       // ignore: use_build_context_synchronously
-      _showSnackBar(context: context, text: 'Resume uploaded successfully!', backgroundColor: colorScheme.surface, textColor: Colors.green);
+      _showSnackBar(
+        context: context,
+        text: 'Resume uploaded successfully!',
+        backgroundColor: colorScheme.surface,
+        textColor: Colors.green,
+      );
     } catch (e) {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
@@ -430,6 +481,7 @@ class _ProfileInformationScreenState
       );
     }
   }
+
   void _showDeleteResumeDialog(JobseekerModel jobseekerInfo) {
     showDialog(
       context: context,
@@ -461,6 +513,7 @@ class _ProfileInformationScreenState
       ),
     );
   }
+
   Future<void> _deleteResume() async {
     // Safely access theme colors with fallbacks
     ColorScheme? colorScheme;
@@ -470,11 +523,16 @@ class _ProfileInformationScreenState
       // Fallback to default colors if theme is not available
       colorScheme = ColorScheme.light();
     }
-    
+
     try {
       await ref.read(jobseekerProvider.notifier).deleteResume();
       // ignore: use_build_context_synchronously
-      _showSnackBar(context: context, text: 'Resume deleted successfully', backgroundColor: colorScheme.surface, textColor: Colors.green);
+      _showSnackBar(
+        context: context,
+        text: 'Resume deleted successfully',
+        backgroundColor: colorScheme.surface,
+        textColor: Colors.green,
+      );
     } catch (e) {
       // ignore: use_build_context_synchronously
       _showSnackBar(
@@ -486,6 +544,40 @@ class _ProfileInformationScreenState
       );
     }
   }
+
+  void _showEditBottomSheet(JobseekerModel jobseekerInfo) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => EditProfileBottomSheet(
+        jobseekerInfo: jobseekerInfo,
+        onSave: (updatedInfo) async {
+          try {
+            await ref
+                .read(jobseekerProvider.notifier)
+                .updateJobseekerInfo(updatedInfo);
+            // ignore: use_build_context_synchronously
+            Navigator.pop(context);
+            _showSnackBar(
+              context: context,
+              text: 'Profile updated successfully!',
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              textColor: Colors.green,
+            );
+          } catch (e) {
+            _showSnackBar(
+              context: context,
+              text: 'Failed to update profile: $e',
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              textColor: Colors.red,
+            );
+          }
+        },
+      ),
+    );
+  }
+
   void _showSnackBar({
     required BuildContext context,
     required String text,

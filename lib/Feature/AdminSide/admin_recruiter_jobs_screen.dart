@@ -13,7 +13,6 @@ class AdminRecruiterJobsScreen extends ConsumerStatefulWidget {
     required this.recruiterEmail,
     required this.recruiterName,
   });
-
   @override
   ConsumerState<AdminRecruiterJobsScreen> createState() =>
       _AdminRecruiterJobsScreenState();
@@ -75,7 +74,6 @@ class _AdminRecruiterJobsScreenState
               ),
             );
           }
-
           return ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: jobs.length,
