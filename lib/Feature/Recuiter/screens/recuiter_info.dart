@@ -134,7 +134,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
                   height,
                   width,
                   designationController,
-                  'Designation',
+                  'Designation/Skills',
                   icon: const Icon(Icons.domain),
                   isRequired: true,
                 ),
@@ -235,8 +235,8 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
                         'Upload Photo',
                         style: TextStyle(
                           fontSize: 10,
-                          color: colorScheme.onSurfaceVariant.withValues(alpha: 
-                            0.6,
+                          color: colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.6,
                           ), // Changed from AppColors.black.withValues(alpha: 0.6)
                         ),
                       ),
@@ -333,11 +333,12 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
       }
     } catch (e) {
       // Show error in snackbar instead of logging
+      print('Error picking image: ${e.toString()}'); // Log detailed error
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Error picking image: ${e.toString()}',
+              'Error picking image: ${_getErrorMessage(e)}',
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.red,
@@ -419,15 +420,20 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
             );
           } catch (e) {
             if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Failed to upload image: ${e.toString()}',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  backgroundColor: Colors.red,
-                  duration: Duration(seconds: 3),
-                ),
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //   SnackBar(
+              //     content: Text(
+              //       'Failed to upload image: ${_getErrorMessage(e)}',
+              //       style: TextStyle(color: Colors.white),
+              //     ),
+              //     backgroundColor: Colors.red,
+              //     duration: Duration(seconds: 3),
+              //   ),
+              // );
+              _showSnackBar(
+                context: context,
+                text: 'Failed to upload image',
+                textColor: Colors.red,
               );
             }
             // Continue with submission even if image upload fails
@@ -457,18 +463,21 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
             .saveRecruiter(recruiterInfo);
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '✅ Profile submitted successfully!',
-                style: TextStyle(color: Colors.white),
-              ),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-            ),
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content: Text(
+          //       '✅ Profile submitted successfully!',
+          //       style: TextStyle(color: Colors.white),
+          //     ),
+          //     backgroundColor: Colors.green,
+          //     duration: Duration(seconds: 2),
+          //     behavior: SnackBarBehavior.floating,
+          //   ),
+          // );
+          _showSnackBar(
+            context: context,
+            text: '✅ Profile submitted successfully!',
           );
-
           // Navigate to recruiter home after successful submission
           WidgetsBinding.instance.addPostFrameCallback((_) {
             context.go('/recuiter-nav');
@@ -476,16 +485,21 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Failed to submit profile: ${e.toString()}',
-                style: TextStyle(color: Colors.white),
-              ),
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 3),
-              behavior: SnackBarBehavior.floating,
-            ),
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content: Text(
+          //       'Failed to submit profile: ${_getErrorMessage(e)}',
+          //       style: TextStyle(color: Colors.white),
+          //     ),
+          //     backgroundColor: Colors.red,
+          //     duration: Duration(seconds: 3),
+          //     behavior: SnackBarBehavior.floating,
+          //   ),
+          // );
+          _showSnackBar(
+            context: context,
+            text: 'Failed to submit profile try again',
+            textColor: Colors.red,
           );
         }
       }
@@ -530,8 +544,8 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
           hintText: 'Enter $hinttext',
           hintStyle: TextStyle(
             fontSize: 12,
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 
-              0.6,
+            color: colorScheme.onSurfaceVariant.withValues(
+              alpha: 0.6,
             ), // Changed from AppColors.black.withValues(alpha: 0.6)
           ),
           filled: true,
@@ -583,6 +597,60 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
           }
           return null;
         },
+      ),
+    );
+  }
+
+  String _getErrorMessage(dynamic error) {
+    final errorString = error.toString();
+
+    if (errorString.contains('permission-denied') ||
+        errorString.contains('access-denied')) {
+      return 'Permission denied. Please check your file access permissions';
+    } else if (errorString.contains('file-not-found') ||
+               errorString.contains('path-not-found')) {
+      return 'File not found. Please select a valid file';
+    } else if (errorString.contains('file-too-large') ||
+               errorString.contains('size-limit')) {
+      return 'File is too large. Please choose a smaller file';
+    } else if (errorString.contains('network') ||
+               errorString.contains('connection')) {
+      return 'Network error. Please check your internet connection';
+    } else if (errorString.contains('invalid-format') ||
+               errorString.contains('unsupported')) {
+      return 'Invalid file format. Please choose a supported file type';
+    } else {
+      return 'An unexpected error occurred. Please try again';
+    }
+  }
+
+  void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 4),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jobapp/Feature/combomodel/combo_gorouter.dart';
@@ -16,7 +17,11 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate(
     // ignore: deprecated_member_use
-    androidProvider: AndroidProvider.playIntegrity,
+    androidProvider: kDebugMode
+        ? AndroidProvider.debug
+        : AndroidProvider.playIntegrity,
+    // ignore: deprecated_member_use
+    appleProvider: AppleProvider.deviceCheck,
   );
   // FirebaseAppCheck.instance.getToken(true).then((token) {
   //   debugPrint("🔥 Debug Token => $token");

@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -49,21 +40,54 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyClN81sj1bjQQtE3gffX40gGcMhL4kGmzw',
+    appId: '1:273633366599:web:2c6cd22ad95994a6f4d762',
+    messagingSenderId: '273633366599',
+    projectId: 'airigo-jobs',
+    authDomain: 'airigo-jobs.firebaseapp.com',
+    storageBucket: 'airigo-jobs.firebasestorage.app',
+    measurementId: 'G-KTGJK1GKH3',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCCvoTD7SbBmOlOhUga0psaOMkZ05-uvIU',
-    appId: '1:699709353509:android:7130fa52b26744b75419cc',
-    messagingSenderId: '699709353509',
-    projectId: 'coffeeshop-3270e',
-    storageBucket: 'coffeeshop-3270e.firebasestorage.app',
+    apiKey: 'AIzaSyBbU3xaTaB9hjBlNa3PR-WJlKpmbVzcXPE',
+    appId: '1:273633366599:android:47dcbf7b76c169dbf4d762',
+    messagingSenderId: '273633366599',
+    projectId: 'airigo-jobs',
+    storageBucket: 'airigo-jobs.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyARnoP_c-3NHE5c1cbcK-AFxuZtmy2gMrs',
-    appId: '1:699709353509:ios:9270de5182870e665419cc',
-    messagingSenderId: '699709353509',
-    projectId: 'coffeeshop-3270e',
-    storageBucket: 'coffeeshop-3270e.firebasestorage.app',
-    androidClientId: '699709353509-81eff9gakc81pmhobvicfkiis856a0oq.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBaCRyLKsgemEjD-5lhNzR4YUX_BJsZVyE',
+    appId: '1:273633366599:ios:baeabbea59a61adaf4d762',
+    messagingSenderId: '273633366599',
+    projectId: 'airigo-jobs',
+    storageBucket: 'airigo-jobs.firebasestorage.app',
+    androidClientId: '273633366599-p67jj3vgurkr8f3j5k2cstj9q5hbvmgd.apps.googleusercontent.com',
+    iosClientId: '273633366599-rc3pl101e6ahrbnlgrndrauk71jneo4h.apps.googleusercontent.com',
     iosBundleId: 'com.example.jobapp',
   );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBaCRyLKsgemEjD-5lhNzR4YUX_BJsZVyE',
+    appId: '1:273633366599:ios:baeabbea59a61adaf4d762',
+    messagingSenderId: '273633366599',
+    projectId: 'airigo-jobs',
+    storageBucket: 'airigo-jobs.firebasestorage.app',
+    androidClientId: '273633366599-p67jj3vgurkr8f3j5k2cstj9q5hbvmgd.apps.googleusercontent.com',
+    iosClientId: '273633366599-rc3pl101e6ahrbnlgrndrauk71jneo4h.apps.googleusercontent.com',
+    iosBundleId: 'com.example.jobapp',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyClN81sj1bjQQtE3gffX40gGcMhL4kGmzw',
+    appId: '1:273633366599:web:4fd0eea263cd23d2f4d762',
+    messagingSenderId: '273633366599',
+    projectId: 'airigo-jobs',
+    authDomain: 'airigo-jobs.firebaseapp.com',
+    storageBucket: 'airigo-jobs.firebasestorage.app',
+    measurementId: 'G-DXDL5BG8RX',
+  );
+
 }

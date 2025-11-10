@@ -590,25 +590,35 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
         .then((_) {
           // Show success message
           // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Job marked as ${!currentStatus ? 'Urgent' : 'Normal'}',
-              ),
-              backgroundColor: Colors.orange,
-              duration: const Duration(seconds: 2),
-            ),
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content: Text(
+          //       'Job marked as ${!currentStatus ? 'Urgent' : 'Normal'}',
+          //     ),
+          //     backgroundColor: Colors.orange,
+          //     duration: const Duration(seconds: 2),
+          //   ),
+          // );
+          _showSnackBar(
+            context: context,
+            text: 'Job marked as ${!currentStatus ? 'Urgent' : 'Normal'}',
+            backgroundColor: Colors.orange,
           );
         })
         .catchError((error) {
           // Show error message
           // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to update urgent status: $error'),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
-            ),
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content: Text('Failed to update urgent status: $error'),
+          //     backgroundColor: Colors.red,
+          //     duration: const Duration(seconds: 3),
+          //   ),
+          // );
+          _showSnackBar(
+            context: context,
+            text: 'Failed to update urgent status',
+            textColor: Colors.red,
           );
         });
   }
@@ -649,21 +659,16 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     try {
       final jobNotifier = ref.read(jobNotifierProvider.notifier);
       await jobNotifier.deleteJob(jobId);
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Job deleted successfully!'),
-          backgroundColor: Colors.green,
-        ),
+      _showSnackBar(
+        context: context,
+        text: 'Job deleted successfully!',
+        textColor: Colors.green,
       );
     } catch (e) {
-      // Show error message
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to delete job: $e'),
-          backgroundColor: Colors.red,
-        ),
+      _showSnackBar(
+        context: context,
+        text: 'Failed to delete job',
+        textColor: Colors.red,
       );
     }
   }
@@ -719,5 +724,36 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
 
     final months = (difference.inDays / 30).floor();
     return '${months}m ago';
+  }
+
+  void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 4),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
+        ),
+      ),
+    );
   }
 }

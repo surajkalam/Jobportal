@@ -133,57 +133,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       );
     }
   }
-  // Future<void> _handleSignup() async {
-  //   if (!_formKey.currentState!.validate()) return;
-  //   if (!_validateForm()) return;
 
-  //   final userType = ref.read(selectionProvider);
-  //   final email = _emailOrMobileController.text.trim();
-  //   // 🔒 Domain restriction for recruiter
-  //   final disallowedDomains = [
-  //     '@gmail.com',
-  //     '@yahoo.com',
-  //     '@hotmail.com',
-  //     '@outlook.com',
-  //     '@icloud.com',
-  //   ];
-  //   // ✅ Domain restriction logic
-  //   if (userType == UserType.recruiter) {
-  //     if (disallowedDomains.any((domain) => email.endsWith(domain))) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(
-  //           content: Text(
-  //             'Recruiters must use a company email (not Gmail, Yahoo, etc.)',
-  //           ),
-  //           backgroundColor: Colors.redAccent,
-  //           behavior: SnackBarBehavior.floating,
-  //           duration: Duration(seconds: 3),
-  //         ),
-  //       );
-  //       return;
-  //     }
-  //   }
-
-  //   // ✅ Proceed only if email domain is valid
-  //   _navigateBasedOnUserType();
-
-  //   // Save user type to local storage
-  //   await _localStorage.setUserType(userType.name);
-
-  //   if (mounted) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text(
-  //           '✅ Please complete your profile information',
-  //           style: TextStyle(color: Colors.white),
-  //         ),
-  //         backgroundColor: Colors.green,
-  //         duration: Duration(seconds: 2),
-  //         behavior: SnackBarBehavior.floating,
-  //       ),
-  //     );
-  //   }
-  // }
 
   void _showSnackBar({
     required BuildContext context,

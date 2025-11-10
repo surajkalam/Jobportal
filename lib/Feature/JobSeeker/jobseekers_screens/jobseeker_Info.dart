@@ -144,7 +144,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                   height,
                   width,
                   jobdesignationController,
-                  'Job Designation',
+                  'Skills',
                   icon: const Icon(Icons.work_history_outlined),
                   isRequired: true,
                 ),
@@ -331,8 +331,8 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                         'Upload Resume',
                         style: TextStyle(
                           fontSize: 12,
-                          color: colorScheme.onSurfaceVariant.withValues(alpha: 
-                            0.6,
+                          color: colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.6,
                           ), // Changed from AppColors.black.withValues(alpha: 0.6)
                         ),
                       ),
@@ -398,11 +398,12 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
       }
     } catch (e) {
       // Show error in snackbar instead of logging
+      print('Error picking resume: ${e.toString()}'); // Log detailed error
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Error picking resume: ${e.toString()}',
+              'Error picking resume: ${_getErrorMessage(e)}',
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.red,
@@ -491,11 +492,12 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
               email,
             );
           } catch (e) {
+            print('Failed to upload profile image: ${e.toString()}'); // Log detailed error
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    'Failed to upload profile image: ${e.toString()}',
+                    'Failed to upload profile image: ${_getErrorMessage(e)}',
                     style: TextStyle(color: Colors.white),
                   ),
                   backgroundColor: Colors.red,
@@ -546,10 +548,11 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           });
         }
       } catch (e) {
+        print('Failed to submit profile: ${e.toString()}'); // Log detailed error
         if (mounted) {
           _showSnackBar(
             context: context,
-            text: 'Failed to submit profile: ${e.toString()}',
+            text: 'Failed to submit profile: ${_getErrorMessage(e)}',
             textColor: Colors.red,
           );
         }
@@ -571,11 +574,12 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
         });
       }
     } catch (e) {
+      print('Error picking image: ${e.toString()}'); // Log detailed error
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Error picking image: ${e.toString()}',
+              'Error picking image: ${_getErrorMessage(e)}',
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.red,
@@ -583,6 +587,29 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           ),
         );
       }
+    }
+  }
+
+  String _getErrorMessage(dynamic error) {
+    final errorString = error.toString();
+
+    if (errorString.contains('permission-denied') ||
+        errorString.contains('access-denied')) {
+      return 'Permission denied. Please check your file access permissions';
+    } else if (errorString.contains('file-not-found') ||
+               errorString.contains('path-not-found')) {
+      return 'File not found. Please select a valid file';
+    } else if (errorString.contains('file-too-large') ||
+               errorString.contains('size-limit')) {
+      return 'File is too large. Please choose a smaller file';
+    } else if (errorString.contains('network') ||
+               errorString.contains('connection')) {
+      return 'Network error. Please check your internet connection';
+    } else if (errorString.contains('invalid-format') ||
+               errorString.contains('unsupported')) {
+      return 'Invalid file format. Please choose a supported file type';
+    } else {
+      return 'An unexpected error occurred. Please try again';
     }
   }
 
@@ -641,13 +668,14 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
         maxLines: maxline,
         readOnly: isDate, // Make field read-only for date selection
         onTap: isDate
-            ? () => _selectDate(context, controller) // Open date picker on tap
+            ? () =>
+                  _selectDate(context, controller) // Open date picker on tap
             : null,
         keyboardType: isPhone
             ? TextInputType.phone
             : isEmail
-                ? TextInputType.emailAddress
-                : TextInputType.text,
+            ? TextInputType.emailAddress
+            : TextInputType.text,
         decoration: InputDecoration(
           labelText: isRequired ? '$hinttext *' : hinttext,
           labelStyle: TextStyle(
@@ -658,8 +686,8 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           hintText: 'Enter $hinttext',
           hintStyle: TextStyle(
             fontSize: 12,
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 
-              0.6,
+            color: colorScheme.onSurfaceVariant.withValues(
+              alpha: 0.6,
             ), // Changed from AppColors.black.withValues(alpha: 0.6)
           ),
           filled: true,
@@ -738,7 +766,9 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
 
   // Date picker function
   Future<void> _selectDate(
-      BuildContext context, TextEditingController controller) async {
+    BuildContext context,
+    TextEditingController controller,
+  ) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -748,11 +778,11 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: Theme.of(context).colorScheme.primary,
-                  onPrimary: Theme.of(context).colorScheme.onPrimary,
-                  surface: Theme.of(context).colorScheme.surface,
-                  onSurface: Theme.of(context).colorScheme.onSurface,
-                ),
+              primary: Theme.of(context).colorScheme.primary,
+              onPrimary: Theme.of(context).colorScheme.onPrimary,
+              surface: Theme.of(context).colorScheme.surface,
+              onSurface: Theme.of(context).colorScheme.onSurface,
+            ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Theme.of(context).colorScheme.primary,

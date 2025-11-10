@@ -243,15 +243,7 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Welcome back 😊',
-            style: TextStyle(
-              fontSize: 15,
-              color: colorScheme.scrim,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          Text(
-            name,
+            'Hello, $name',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,
