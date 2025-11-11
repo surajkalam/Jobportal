@@ -44,64 +44,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     context.go('/signup', extra: userType.name);
   }
 
-  // Future<void> _handleLogin() async {
-  //   if (!_formKey.currentState!.validate()) {
-  //     return;
-  //   }
-
-  //   final authNotifier = ref.read(authStateProvider.notifier);
-
-  //   final user = await authNotifier.loginWithEmailAndPassword(
-  //     email: _emailOrMobileController.text.trim(),
-  //     password: _passwordController.text,
-  //   );
-
-  //   if (user != null) {
-  //     final userEmail = user.email ?? _emailOrMobileController.text.trim();
-  //     final userType = ref.read(selectionProvider);
-
-  //     // Save user data to local storage
-  //     await _localStorage.setUserEmail(userEmail);
-  //     await _localStorage.setUserType(userType.name);
-  //     await _localStorage.setLoggedIn(true);
-
-  //     if (mounted) {
-  //       _showSnackBar(
-  //         context: context,
-  //         text: '✅ Login successful for: $userEmail',
-  //       );
-  //     }
-
-  //     WidgetsBinding.instance.addPostFrameCallback((_) {
-  //       if (userType == UserType.jobseeker) {
-  //         context.go('/job-nav');
-  //       } else {
-  //         context.go('/recuiter-nav');
-  //       }
-  //     });
-  //   } else {
-  //     final error = ref.read(authStateProvider).error;
-  //     if (error != null && mounted) {
-  //       _showSnackBar(
-  //         context: context,
-  //         text: 'Check your credential !',
-  //         textColor: Colors.red,
-  //       );
-  //     }
-  //   }
-  // }
-
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-
     final userType = ref.read(selectionProvider);
     final email = _emailOrMobileController.text.trim();
     final password = _passwordController.text.trim();
-
     final authNotifier = ref.read(authStateProvider.notifier);
-
     try {
       log("🔄 Attempting login as: $userType with email: $email");
 
@@ -123,7 +73,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             text: '✅ Login successful for: $userEmail',
           );
         }
-
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (userType == UserType.jobseeker) {
             context.go('/job-nav');
@@ -143,7 +92,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         }
       }
     } catch (e) {
-      print("🔴 Exception during login: $e");
+      log("🔴 Exception during login: $e");
       if (mounted) {
         _showSnackBar(
           context: context,
@@ -170,8 +119,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return 'Login failed. Please try again';
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {

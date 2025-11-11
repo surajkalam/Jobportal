@@ -13,7 +13,8 @@ import 'package:file_picker/file_picker.dart';
 class JobseekerInfo extends ConsumerStatefulWidget {
   final String email;
   final String phone;
-  const JobseekerInfo({super.key, required this.email, required this.phone});
+  final String password;
+  const JobseekerInfo({super.key, required this.email, required this.phone, required this.password});
 
   @override
   ConsumerState<JobseekerInfo> createState() => _JobseekerInfoState();
@@ -48,6 +49,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
     // Pre-fill email and phone passed from constructor
     emailController.text = widget.email;
     contactController.text = widget.phone;
+    _signupPassword = widget.password;
     // Pre-fill email and phone from local storage
     _loadSignupData();
   }
@@ -60,7 +62,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           GoRouterState.of(context).extra as Map<String, dynamic>?;
       if (extraData != null) {
         _signupEmail = extraData['email']?.toString() ?? '';
-        _signupPassword = extraData['password']?.toString() ?? '';
+        _signupPassword = extraData['password']?.toString() ?? _signupPassword; // Use constructor password if extra data doesn't have it
         _signupPhone = extraData['phone']?.toString() ?? '';
         debugPrint("🎯 Loaded signup data:");
         debugPrint("   Email: $_signupEmail");
@@ -439,9 +441,7 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           email: _signupEmail.isNotEmpty
               ? _signupEmail
               : emailController.text.trim(),
-          password: _signupPassword.isNotEmpty
-              ? _signupPassword
-              : 'defaultPassword123', // Fallback password
+          password: _signupPassword,
           phoneNumber: _signupPhone.isNotEmpty
               ? _signupPhone
               : contactController.text,

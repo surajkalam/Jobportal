@@ -14,7 +14,8 @@ import 'package:jobapp/Authentication/auth_state.dart'; // Added import
 class RecuiterInfo extends ConsumerStatefulWidget {
   final String email;
   final String phone;
-  const RecuiterInfo({super.key, required this.email, required this.phone});
+  final String password;
+  const RecuiterInfo({super.key, required this.email, required this.phone, required this.password});
 
   @override
   ConsumerState<RecuiterInfo> createState() => _RecuiterInfoState();
@@ -47,6 +48,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
     // Pre-fill email and phone passed from constructor
     emailController.text = widget.email;
     contactController.text = widget.phone;
+    _signupPassword = widget.password;
     // Pre-fill email and phone from local storage
     _loadSignupData();
   }
@@ -56,7 +58,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
     final extraData = GoRouterState.of(context).extra as Map<String, dynamic>?;
     if (extraData != null) {
       _signupEmail = extraData['email'] ?? '';
-      _signupPassword = extraData['password'] ?? '';
+      _signupPassword = extraData['password'] ?? _signupPassword; // Use constructor password if extra data doesn't have it
       _signupPhone = extraData['phone'] ?? '';
     }
   }
@@ -365,9 +367,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
           email: _signupEmail.isNotEmpty
               ? _signupEmail
               : emailController.text.trim(),
-          password: _signupPassword.isNotEmpty
-              ? _signupPassword
-              : 'defaultPassword123', // Fallback password
+          password: _signupPassword,
           phoneNumber: _signupPhone.isNotEmpty
               ? _signupPhone
               : contactController.text,

@@ -60,6 +60,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             builder: (context) => JobseekerInfo(
               email: _emailOrMobileController.text.trim(),
               phone: _phoneController.text,
+              password: _passwordController.text.trim(),
             ),
           ),
         );
@@ -69,6 +70,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             builder: (context) => RecuiterInfo(
               email: _emailOrMobileController.text.trim(),
               phone: _phoneController.text,
+              password: _passwordController.text.trim(),
             ),
           ),
         );
