@@ -24,6 +24,7 @@ class JobDetailsScreen extends ConsumerWidget {
     var width = MediaQuery.of(context).size.width;
     final jobseekerState = ref.watch(jobseekerProvider);
     final jobseekerInfo = jobseekerState.jobseekerInfo;
+    final Colorscheme = Theme.of(context).colorScheme;
     log('Jobseeker Info: $jobseekerInfo');
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -31,11 +32,7 @@ class JobDetailsScreen extends ConsumerWidget {
         backgroundColor: AppColors.faintbackblue,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
-            Iconsax.arrow_left_2,
-            color: AppColors.black,
-            size: 18,
-          ),
+          icon: Icon(Iconsax.arrow_left_2, color: AppColors.black, size: 18),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -64,9 +61,10 @@ class JobDetailsScreen extends ConsumerWidget {
                       _shareJobDetails(job);
                     } catch (e) {
                       log('Share error: $e');
-                      // Show error message
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to share')),
+                      _showSnackBar(
+                        context: context,
+                        text: 'Failed to share',
+                        textColor: Colorscheme.error,
                       );
                     }
                   },
@@ -113,25 +111,30 @@ class JobDetailsScreen extends ConsumerWidget {
             SizedBox(height: 30),
 
             // Apply Button
-            _buildApplyButton(context, ref,job,height,width),
+            _buildApplyButton(context, ref, job, height, width, Colorscheme),
             SizedBox(height: height * 0.1),
           ],
         ),
       ),
     );
   }
+
   void _shareJobDetails(JobModel job) {
-  // Build requirements list
-  final requirements = job.requirements.isNotEmpty 
-      ? job.requirements.split(',').map((req) => '• ${req.trim()}').join('\n')
-      : '• Good communication skills\n• Relevant experience\n• Positive attitude';
+    // Build requirements list
+    final requirements = job.requirements.isNotEmpty
+        ? job.requirements.split(',').map((req) => '• ${req.trim()}').join('\n')
+        : '• Good communication skills\n• Relevant experience\n• Positive attitude';
 
-  // Build benefits list
-  final benefits = job.benefits.isNotEmpty 
-      ? job.benefits.split('.').map((benefit) => '• ${benefit.trim()}').join('\n')
-      : '• Competitive salary\n• Growth opportunities\n• Friendly work environment';
+    // Build benefits list
+    final benefits = job.benefits.isNotEmpty
+        ? job.benefits
+              .split('.')
+              .map((benefit) => '• ${benefit.trim()}')
+              .join('\n')
+        : '• Competitive salary\n• Growth opportunities\n• Friendly work environment';
 
-  final shareText = '''
+    final shareText =
+        '''
 🌟 *JOB OPPORTUNITY ALERT* 🌟
 
 *Position:* ${job.designation.isNotEmpty ? job.designation : 'Multiple Positions'}
@@ -161,19 +164,17 @@ Interested candidates can apply now!
 #JobOpportunity #Hiring #CareerGrowth
   ''';
 
-  // ignore: deprecated_member_use
-  Share.share(
-    shareText,
-    subject: 'Job: ${job.designation} at ${job.companyName}',
-  );
-}
+    // ignore: deprecated_member_use
+    Share.share(
+      shareText,
+      subject: 'Job: ${job.designation} at ${job.companyName}',
+    );
+  }
 
   Widget _buildCompanyHeader(double height, double width, JobModel job) {
     return Container(
       padding: EdgeInsets.all(width * 0.018),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
       child: Row(
         children: [
           Container(
@@ -207,11 +208,13 @@ Interested candidates can apply now!
                       SizedBox(
                         width: width * 0.6,
                         child: Text(
-                          job.designation.isNotEmpty ? job.designation : 'Designation not specified',
+                          job.designation.isNotEmpty
+                              ? job.designation
+                              : 'Designation not specified',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w400,
-                            height: 1.3
+                            height: 1.3,
                           ),
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
@@ -223,8 +226,13 @@ Interested candidates can apply now!
                           SizedBox(
                             width: width * 0.4,
                             child: Text(
-                              job.companyName.isNotEmpty ? job.companyName : 'Company not specified',
-                              style: TextStyle(fontSize: 10, color: AppColors.grey),
+                              job.companyName.isNotEmpty
+                                  ? job.companyName
+                                  : 'Company not specified',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: AppColors.grey,
+                              ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -239,8 +247,13 @@ Interested candidates can apply now!
                           SizedBox(
                             width: width * 0.2,
                             child: Text(
-                              job.location.isNotEmpty ? job.location : 'Location not specified',
-                              style: TextStyle(color: AppColors.grey, fontSize: 10),
+                              job.location.isNotEmpty
+                                  ? job.location
+                                  : 'Location not specified',
+                              style: TextStyle(
+                                color: AppColors.grey,
+                                fontSize: 10,
+                              ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -257,6 +270,7 @@ Interested candidates can apply now!
       ),
     );
   }
+
   // Updated Job Tags Section to use actual data
   Widget _buildJobTagsSection(JobModel job, double width, double height) {
     return Wrap(
@@ -264,23 +278,24 @@ Interested candidates can apply now!
       runSpacing: 8,
       children: [
         // Job Type
-        if (job.jobType.isNotEmpty)
-          jdcontainer(job.jobType, width, height),
+        if (job.jobType.isNotEmpty) jdcontainer(job.jobType, width, height),
         // Location
-        jdcontainer(job.location.isNotEmpty ? job.location : 'Location not specified', width, height),
-        
+        jdcontainer(
+          job.location.isNotEmpty ? job.location : 'Location not specified',
+          width,
+          height,
+        ),
+
         // Experience
         if (job.experience.isNotEmpty)
           jdcontainer(job.experience, width, height),
-        
+
         // Age Range
-        if (job.ageRange.isNotEmpty)
-          jdcontainer(job.ageRange, width, height),
-        
+        if (job.ageRange.isNotEmpty) jdcontainer(job.ageRange, width, height),
+
         // CTC
-        if (job.ctc.isNotEmpty)
-          jdcontainer('${job.ctc} CTC', width, height),
-        
+        if (job.ctc.isNotEmpty) jdcontainer('${job.ctc} CTC', width, height),
+
         // Urgent Hiring Badge
         if (job.isUrgentHiring)
           Container(
@@ -416,8 +431,8 @@ Interested candidates can apply now!
             border: Border.all(color: AppColors.grey.withValues(alpha: 0.2)),
           ),
           child: Text(
-            job.application.isNotEmpty 
-                ? job.application 
+            job.application.isNotEmpty
+                ? job.application
                 : 'No job description provided. This position offers great opportunities for growth and development in a dynamic work environment.',
             style: TextStyle(
               fontSize: 12,
@@ -434,15 +449,18 @@ Interested candidates can apply now!
 
   // Updated Requirements Section to use actual data
   Widget _buildRequirementsSection(JobModel job, double height, double width) {
-    final requirements = job.requirements.isNotEmpty 
-        ? job.requirements.split(',').where((req) => req.trim().isNotEmpty).toList()
+    final requirements = job.requirements.isNotEmpty
+        ? job.requirements
+              .split(',')
+              .where((req) => req.trim().isNotEmpty)
+              .toList()
         : [
             '10+2 (Higher Secondary) or equivalent',
             'Fluent in English (and sometimes Hindi or local language)',
             'Age between ${job.ageRange.isNotEmpty ? job.ageRange : "18-30"} years',
             'Minimum ${job.experience.isNotEmpty ? job.experience : "0-1 years"} experience',
             'Medically fit with no visible tattoos/scars',
-            'Normal or corrected to normal vision'
+            'Normal or corrected to normal vision',
           ];
 
     return Column(
@@ -464,30 +482,28 @@ Interested candidates can apply now!
           ),
           child: Column(
             children: [
-              ...requirements.map((requirement) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.check_circle,
-                      size: 16,
-                      color: Colors.green,
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        requirement.trim(),
-                        style: TextStyle(
-                          color: AppColors.grey,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
+              ...requirements.map(
+                (requirement) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.check_circle, size: 16, color: Colors.green),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          requirement.trim(),
+                          style: TextStyle(
+                            color: AppColors.grey,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
         ),
@@ -497,15 +513,18 @@ Interested candidates can apply now!
 
   // Updated Benefits Section to use actual data
   Widget _buildBenefitsSection(JobModel job, double height, double width) {
-    final benefits = job.benefits.isNotEmpty 
-        ? job.benefits.split('.').where((benefit) => benefit.trim().isNotEmpty).toList()
+    final benefits = job.benefits.isNotEmpty
+        ? job.benefits
+              .split('.')
+              .where((benefit) => benefit.trim().isNotEmpty)
+              .toList()
         : [
             'Competitive salary package',
             'Health insurance coverage',
             'Travel allowances and benefits',
             'Professional development opportunities',
             'Flexible work environment',
-            'Performance-based incentives'
+            'Performance-based incentives',
           ];
 
     return Column(
@@ -527,30 +546,32 @@ Interested candidates can apply now!
           ),
           child: Column(
             children: [
-              ...benefits.map((benefit) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.workspace_premium,
-                      size: 16,
-                      color: Colors.blue,
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        benefit.trim(),
-                        style: TextStyle(
-                          color: AppColors.grey,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
+              ...benefits.map(
+                (benefit) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.workspace_premium,
+                        size: 16,
+                        color: Colors.blue,
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          benefit.trim(),
+                          style: TextStyle(
+                            color: AppColors.grey,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
         ),
@@ -594,224 +615,252 @@ Interested candidates can apply now!
   //       .toList();
   // }
 
-  Widget _buildApplyButton(BuildContext context, WidgetRef ref,JobModel job,double height, double width) {
-  return SizedBox(
-    width: double.infinity,
-    child: GestureDetector(
-      onTap: () {
-         _showApplyDialog(context, job, height, width, ref); 
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          border: Border.all(
-            // ignore: deprecated_member_use
-            color: AppColors.black.withValues(alpha:  0.2),
-            width: 1.5,
-          ),
-          gradient: LinearGradient(
-            colors: [
-              AppColors.faintbackblue,
-              AppColors.white
-            ],
-            // colors: job.isUrgentHiring
-            //   ? [Colors.red, Colors.orange] // Urgent hiring gradient
-            //   : [AppColors.lightBlue, AppColors.faintbackblue], // Normal gradient
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            stops: [0.0, 1.0], // Smooth transition from left to right
-          ),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
+  Widget _buildApplyButton(
+    BuildContext context,
+    WidgetRef ref,
+    JobModel job,
+    double height,
+    double width,
+    ColorScheme colorscheme,
+  ) {
+    return SizedBox(
+      width: double.infinity,
+      child: GestureDetector(
+        onTap: () {
+          _showApplyDialog(context, job, height, width, ref, colorscheme);
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            border: Border.all(
               // ignore: deprecated_member_use
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 4,
-              offset: Offset(0, 2),
+              color: AppColors.black.withValues(alpha: 0.2),
+              width: 1.5,
             ),
-          ],
-        ),
-        child: Center(
-          child: Text(
-            // job.isUrgentHiring ? 'Apply Now' : 'Apply Now
-            'Apply Now',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
+            gradient: LinearGradient(
+              colors: [AppColors.faintbackblue, AppColors.white],
+              // colors: job.isUrgentHiring
+              //   ? [Colors.red, Colors.orange] // Urgent hiring gradient
+              //   : [AppColors.lightBlue, AppColors.faintbackblue], // Normal gradient
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              stops: [0.0, 1.0], // Smooth transition from left to right
             ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                // ignore: deprecated_member_use
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              ),
+            ],
           ),
-        ),
-      ),
-    ),
-  );
-}
-
-  void _showApplyDialog(BuildContext context, JobModel job, double height, double width, WidgetRef ref) {
-  final jobseekerState = ref.read(jobseekerProvider);
-  final jobseekerInfo = jobseekerState.jobseekerInfo;
-  log(job.id);
-  
-  // Check if jobseeker has complete profile and resume
-  final hasCompleteProfile = jobseekerInfo != null && 
-      jobseekerInfo.name.isNotEmpty && 
-      jobseekerInfo.resumeUrl.isNotEmpty;
-  
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(
-        'Apply for ${job.designation}',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: Colors.black,
-        ),
-      ),
-      content: hasCompleteProfile 
-          ? Text(
-              job.isUrgentHiring 
-                  ? 'This is an urgent hiring position! Apply now to get priority consideration for ${job.designation} at ${job.companyName}.'
-                  : 'Are you sure you want to apply for ${job.designation} at ${job.companyName}?',
+          child: Center(
+            child: Text(
+              // job.isUrgentHiring ? 'Apply Now' : 'Apply Now
+              'Apply Now',
               style: TextStyle(
                 fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showApplyDialog(
+    BuildContext context,
+    JobModel job,
+    double height,
+    double width,
+    WidgetRef ref,
+    ColorScheme colorscheme,
+  ) {
+    final jobseekerState = ref.read(jobseekerProvider);
+    final jobseekerInfo = jobseekerState.jobseekerInfo;
+    log(job.id);
+
+    // Check if jobseeker has complete profile and resume
+    final hasCompleteProfile =
+        jobseekerInfo != null &&
+        jobseekerInfo.name.isNotEmpty &&
+        jobseekerInfo.resumeUrl.isNotEmpty;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Apply for ${job.designation}',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
+        content: hasCompleteProfile
+            ? Text(
+                job.isUrgentHiring
+                    ? 'This is an urgent hiring position! Apply now to get priority consideration for ${job.designation} at ${job.companyName}.'
+                    : 'Are you sure you want to apply for ${job.designation} at ${job.companyName}?',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                ),
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Complete your profile to apply:',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  if (jobseekerInfo == null || jobseekerInfo.name.isEmpty)
+                    Text(
+                      '• Add your personal information',
+                      style: TextStyle(fontSize: 10),
+                    ),
+                  if (jobseekerInfo?.resumeUrl.isEmpty ?? true)
+                    Text(
+                      '• Upload your resume',
+                      style: TextStyle(fontSize: 10),
+                    ),
+                ],
+              ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 11,
                 fontWeight: FontWeight.w400,
                 color: Colors.black,
               ),
-            )
-          : Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Complete your profile to apply:',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
+            ),
+          ),
+          if (hasCompleteProfile)
+            ElevatedButton(
+              onPressed: () => _submitApplication(
+                context,
+                job,
+                jobseekerInfo,
+                ref,
+                colorscheme,
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: job.isUrgentHiring
+                    ? Colors.red
+                    : AppColors.lightBlue,
+              ),
+              child: Text(
+                job.isUrgentHiring ? 'Apply Urgently' : 'Apply',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
                 ),
-                SizedBox(height: 8),
-                if (jobseekerInfo == null || jobseekerInfo.name.isEmpty)
-                  Text('• Add your personal information', style: TextStyle(fontSize: 10)),
-                if (jobseekerInfo?.resumeUrl.isEmpty ?? true)
-                  Text('• Upload your resume', style: TextStyle(fontSize: 10)),
-              ],
-            ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(
-            'Cancel',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w400,
-              color: Colors.black,
-            ),
-          ),
-        ),
-        if (hasCompleteProfile)
-          ElevatedButton(
-            onPressed: () => _submitApplication(context, job, jobseekerInfo, ref),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: job.isUrgentHiring ? Colors.red : AppColors.lightBlue,
-            ),
-            child: Text(
-              job.isUrgentHiring ? 'Apply Urgently' : 'Apply',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
+              ),
+            )
+          else
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Navigate to profile completion screen
+                _navigateToProfile(context, colorscheme);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.grey),
+              child: Text(
+                'Complete Profile',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
               ),
             ),
-          )
-        else
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // Navigate to profile completion screen
-              _navigateToProfile(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.grey,
-            ),
-            child: Text(
-              'Complete Profile',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
-              ),
-            ),
-          ),
-      ],
-    ),
-  );
-}
-void _submitApplication(BuildContext context, JobModel job, JobseekerModel jobseekerInfo, WidgetRef ref) async {
-  try {
-    final isUpdating = ref.read(applicationUpdateProvider);
-    if (isUpdating) return; // Prevent multiple clicks
-    
-    // Check if already applied
-    final repository = ref.read(jobRepositoryProvider);
-    final hasApplied = await repository.hasAppliedForJob(
-      jobseekerInfo.email,
-      job.id,
-      job.recruiterEmail
+        ],
+      ),
     );
-    
-    if (hasApplied) {
+  }
+
+  void _submitApplication(
+    BuildContext context,
+    JobModel job,
+    JobseekerModel jobseekerInfo,
+    WidgetRef ref,
+    ColorScheme colorscheme,
+  ) async {
+    try {
+      final isUpdating = ref.read(applicationUpdateProvider);
+      if (isUpdating) return; // Prevent multiple clicks
+
+      // Check if already applied
+      final repository = ref.read(jobRepositoryProvider);
+      final hasApplied = await repository.hasAppliedForJob(
+        jobseekerInfo.email,
+        job.id,
+        job.recruiterEmail,
+      );
+
+      if (hasApplied) {
+        _showSnackBar(
+          // ignore: use_build_context_synchronously
+          context: context,
+          text: 'You have already applied for this position!',
+          textColor: colorscheme.tertiary,
+        );
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
+        return;
+      }
+
+      // Submit application using provider
+      await ref
+          .read(applicationUpdateProvider.notifier)
+          .applyForJob(
+            job: job,
+            jobseekerInfo: jobseekerInfo,
+            coverLetter: '', // Add cover letter if needed
+          );
+
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
       _showSnackBar(
         // ignore: use_build_context_synchronously
         context: context,
-        text: 'You have already applied for this position!',
-        textColor: Colors.orange,
+        text: 'Application submitted successfully!',
+        textColor: colorscheme.tertiaryFixed,
       );
+    } catch (e) {
       // ignore: use_build_context_synchronously
       Navigator.pop(context);
-      return;
+      _showSnackBar(
+        // ignore: use_build_context_synchronously
+        context: context,
+        text: 'Failed to submit application: $e',
+        textColor: colorscheme.error,
+      );
     }
-    
-    // Submit application using provider
-    await ref.read(applicationUpdateProvider.notifier).applyForJob(
-      job: job,
-      jobseekerInfo: jobseekerInfo,
-      coverLetter: '', // Add cover letter if needed
-    );
-    
-    // ignore: use_build_context_synchronously
-    Navigator.pop(context);
+  }
+
+  void _navigateToProfile(BuildContext context, ColorScheme colorscheme) {
     _showSnackBar(
-      // ignore: use_build_context_synchronously
       context: context,
-      text: 'Application submitted successfully!',
-      textColor: Colors.green,
-    );
-    
-  } catch (e) {
-    // ignore: use_build_context_synchronously
-    Navigator.pop(context);
-    _showSnackBar(
-      // ignore: use_build_context_synchronously
-      context: context,
-      text: 'Failed to submit application: $e',
-      textColor: Colors.red,
+      text: 'Please complete your profile and upload resume',
+      textColor: colorscheme.tertiary,
     );
   }
-}
-void _navigateToProfile(BuildContext context) {
-  // Navigate to profile screen to complete profile
-  // You can implement this based on your app navigation
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Please complete your profile and upload resume'),
-      backgroundColor: Colors.orange,
-    ),
-  );
-}
-
-
 
   // String _calculateTimeAgo(DateTime? postedDate) {
   //   if (postedDate == null) return 'Recently';
@@ -825,7 +874,7 @@ void _navigateToProfile(BuildContext context) {
   //     return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
   //   }
   // }
-void _showSnackBar({
+  void _showSnackBar({
     required BuildContext context,
     required String text,
     Color backgroundColor = Colors.white,
@@ -835,12 +884,14 @@ void _showSnackBar({
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(text, 
-        style: TextStyle(
-          color: textColor,
-          fontSize: 10,
-        fontWeight: FontWeight.w500),
-        textAlign: TextAlign.center,
+        content: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
         ),
         backgroundColor: backgroundColor,
         duration: duration,
@@ -853,5 +904,4 @@ void _showSnackBar({
       ),
     );
   }
-
 }

@@ -54,7 +54,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     final hasRecentJobs = ref.watch(hasRecentJobsProvider);
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-
+    final colorscheme = Theme.of(context).colorScheme;
     log('=== DEBUG INFO ===');
     log('Recruiter Email: $recruiterEmail');
     // log('Recent Jobs State: ${recentJobsAsync.value}');
@@ -64,16 +64,10 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     // log('Recent Jobs isLoading: ${recentJobsAsync.isLoading}');
     // log('Recent Jobs hasValue: ${recentJobsAsync.hasValue}');
     if (recentJobsAsync.hasError && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Error loading recent jobs: ${recentJobsAsync.error}',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 3),
-          behavior: SnackBarBehavior.floating,
-        ),
+      _showSnackBar(
+        context: context,
+        text: '${recentJobsAsync.error}',
+        textColor: colorscheme.error,
       );
     }
 
@@ -124,6 +118,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                 recruiterEmail,
                 height,
                 width,
+                colorscheme,
               ),
             ],
           ),
@@ -355,6 +350,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     String recruiterEmail,
     double height,
     double width,
+    ColorScheme colorscheme,
   ) {
     return recentJobsAsync.when(
       data: (jobs) {
@@ -366,7 +362,13 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
             ...jobs.map(
               (job) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: _buildJobItem(job, recruiterEmail, height, width),
+                child: _buildJobItem(
+                  job,
+                  recruiterEmail,
+                  height,
+                  width,
+                  colorscheme,
+                ),
               ),
             ),
           ],
@@ -412,6 +414,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     String recruiterEmail,
     double height,
     double width,
+    ColorScheme colorscheme,
   ) {
     final jobStatusAsync = ref.watch(jobStatusProvider(job.id));
     final urgentHiringAsync = ref.watch(urgentHiringProvider(job.id));
@@ -526,8 +529,12 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                 ),
                 urgentHiringAsync.when(
                   data: (isUrgent) => GestureDetector(
-                    onTap: () =>
-                        _toggleUrgentHiring(job.id, isUrgent, recruiterEmail),
+                    onTap: () => _toggleUrgentHiring(
+                      job.id,
+                      isUrgent,
+                      recruiterEmail,
+                      colorscheme,
+                    ),
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       margin: EdgeInsets.only(bottom: 8),
@@ -583,42 +590,23 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     String jobId,
     bool currentStatus,
     String recruiterEmail,
+    ColorScheme colorscheme,
   ) {
     ref
         .read(urgentHiringProvider(jobId).notifier)
         .toggleUrgentHiring()
         .then((_) {
-          // Show success message
-          // ignore: use_build_context_synchronously
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     content: Text(
-          //       'Job marked as ${!currentStatus ? 'Urgent' : 'Normal'}',
-          //     ),
-          //     backgroundColor: Colors.orange,
-          //     duration: const Duration(seconds: 2),
-          //   ),
-          // );
           _showSnackBar(
             context: context,
             text: 'Job marked as ${!currentStatus ? 'Urgent' : 'Normal'}',
-            backgroundColor: Colors.orange,
+            backgroundColor: colorscheme.tertiary,
           );
         })
         .catchError((error) {
-          // Show error message
-          // ignore: use_build_context_synchronously
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     content: Text('Failed to update urgent status: $error'),
-          //     backgroundColor: Colors.red,
-          //     duration: const Duration(seconds: 3),
-          //   ),
-          // );
           _showSnackBar(
             context: context,
             text: 'Failed to update urgent status',
-            textColor: Colors.red,
+            textColor: colorscheme.error,
           );
         });
   }

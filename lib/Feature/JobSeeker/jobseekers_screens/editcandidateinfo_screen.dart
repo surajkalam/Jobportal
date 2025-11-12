@@ -90,16 +90,12 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
         });
         return;
       }
-
       // Show uploading snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Uploading resume...'),
-          backgroundColor: colorScheme.primary,
-          duration: Duration(seconds: 2),
-        ),
+      _showSnackBar(
+        context: context,
+        text: 'Uploading resume...',
+        textColor: colorScheme.tertiary,
       );
-
       // Upload to Firebase Storage using your existing service
       final downloadUrl = await pdfService.uploadPdf(
         pdfFile,
@@ -115,25 +111,20 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
         _resumeFileName = fileName;
         _isUploadingResume = false;
       });
-
-      // Show success snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Resume uploaded successfully!'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
+      _showSnackBar(
+        context: context,
+        text: 'Resume uploaded successfully!',
+        textColor: colorScheme.tertiaryFixed,
       );
     } catch (e) {
       setState(() {
         _isUploadingResume = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to upload resume: $e'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 3),
-        ),
+
+      _showSnackBar(
+        context: context,
+        text: 'Failed to upload resume try again !',
+        textColor: colorScheme.error,
       );
     }
   }
@@ -444,6 +435,37 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                   ),
           ),
       ],
+    );
+  }
+
+  void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 4),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
+        ),
+      ),
     );
   }
 }

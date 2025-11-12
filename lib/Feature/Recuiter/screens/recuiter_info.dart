@@ -15,7 +15,12 @@ class RecuiterInfo extends ConsumerStatefulWidget {
   final String email;
   final String phone;
   final String password;
-  const RecuiterInfo({super.key, required this.email, required this.phone, required this.password});
+  const RecuiterInfo({
+    super.key,
+    required this.email,
+    required this.phone,
+    required this.password,
+  });
 
   @override
   ConsumerState<RecuiterInfo> createState() => _RecuiterInfoState();
@@ -58,7 +63,9 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
     final extraData = GoRouterState.of(context).extra as Map<String, dynamic>?;
     if (extraData != null) {
       _signupEmail = extraData['email'] ?? '';
-      _signupPassword = extraData['password'] ?? _signupPassword; // Use constructor password if extra data doesn't have it
+      _signupPassword =
+          extraData['password'] ??
+          _signupPassword; // Use constructor password if extra data doesn't have it
       _signupPhone = extraData['phone'] ?? '';
     }
   }
@@ -174,7 +181,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
                       ),
                     ),
                     onPressed: () {
-                      _submitForm();
+                      _submitForm(colorScheme);
                     },
                     child: const Text("Submit"),
                   ),
@@ -330,23 +337,14 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
       if (pickedFile != null) {
         setState(() {
           _selectedImage = File(pickedFile.path);
-          // Don't upload immediately, just store the file for later upload during submission
         });
       }
     } catch (e) {
-      // Show error in snackbar instead of logging
-      print('Error picking image: ${e.toString()}'); // Log detailed error
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Error picking image: ${_getErrorMessage(e)}',
-              style: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
-            behavior: SnackBarBehavior.floating,
-          ),
+        _showSnackBar(
+          context: context,
+          text: 'Error picking image: ${_getErrorMessage(e)}',
+          textColor: Colors.red,
         );
       }
     }
@@ -358,7 +356,7 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
     });
   }
 
-  Future<void> _submitForm() async {
+  Future<void> _submitForm(ColorScheme colorscheme) async {
     if (_formKey.currentState!.validate()) {
       try {
         // First, perform Firebase authentication
@@ -377,13 +375,10 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
           // Authentication failed
           final error = ref.read(authStateProvider).error;
           if (error != null && mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(error, style: TextStyle(color: Colors.white)),
-                backgroundColor: Colors.red,
-                duration: Duration(seconds: 3),
-                behavior: SnackBarBehavior.floating,
-              ),
+            _showSnackBar(
+              context: context,
+              text: error,
+              textColor: colorscheme.error,
             );
           }
           return;
@@ -420,19 +415,9 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
             );
           } catch (e) {
             if (mounted) {
-              // ScaffoldMessenger.of(context).showSnackBar(
-              //   SnackBar(
-              //     content: Text(
-              //       'Failed to upload image: ${_getErrorMessage(e)}',
-              //       style: TextStyle(color: Colors.white),
-              //     ),
-              //     backgroundColor: Colors.red,
-              //     duration: Duration(seconds: 3),
-              //   ),
-              // );
               _showSnackBar(
                 context: context,
-                text: 'Failed to upload image',
+                text: 'Failed to upload image  ${_getErrorMessage(e)}',
                 textColor: Colors.red,
               );
             }
@@ -463,20 +448,10 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
             .saveRecruiter(recruiterInfo);
 
         if (mounted) {
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     content: Text(
-          //       '✅ Profile submitted successfully!',
-          //       style: TextStyle(color: Colors.white),
-          //     ),
-          //     backgroundColor: Colors.green,
-          //     duration: Duration(seconds: 2),
-          //     behavior: SnackBarBehavior.floating,
-          //   ),
-          // );
           _showSnackBar(
             context: context,
             text: '✅ Profile submitted successfully!',
+            textColor: colorscheme.tertiaryFixed,
           );
           // Navigate to recruiter home after successful submission
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -485,21 +460,10 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
         }
       } catch (e) {
         if (mounted) {
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     content: Text(
-          //       'Failed to submit profile: ${_getErrorMessage(e)}',
-          //       style: TextStyle(color: Colors.white),
-          //     ),
-          //     backgroundColor: Colors.red,
-          //     duration: Duration(seconds: 3),
-          //     behavior: SnackBarBehavior.floating,
-          //   ),
-          // );
           _showSnackBar(
             context: context,
             text: 'Failed to submit profile try again',
-            textColor: Colors.red,
+            textColor: colorscheme.error,
           );
         }
       }
@@ -608,16 +572,16 @@ class _RecuiterInfoState extends ConsumerState<RecuiterInfo> {
         errorString.contains('access-denied')) {
       return 'Permission denied. Please check your file access permissions';
     } else if (errorString.contains('file-not-found') ||
-               errorString.contains('path-not-found')) {
+        errorString.contains('path-not-found')) {
       return 'File not found. Please select a valid file';
     } else if (errorString.contains('file-too-large') ||
-               errorString.contains('size-limit')) {
+        errorString.contains('size-limit')) {
       return 'File is too large. Please choose a smaller file';
     } else if (errorString.contains('network') ||
-               errorString.contains('connection')) {
+        errorString.contains('connection')) {
       return 'Network error. Please check your internet connection';
     } else if (errorString.contains('invalid-format') ||
-               errorString.contains('unsupported')) {
+        errorString.contains('unsupported')) {
       return 'Invalid file format. Please choose a supported file type';
     } else {
       return 'An unexpected error occurred. Please try again';

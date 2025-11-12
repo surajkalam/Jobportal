@@ -25,18 +25,19 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
     super.dispose();
   }
 
-  void _submitIssueReport() async {
+  void _submitIssueReport(ColorScheme colorScheme) async {
     if (_formKey.currentState!.validate()) {
       final jobseekerState = ref.read(jobseekerProvider);
       final jobseekerInfo = jobseekerState.jobseekerInfo;
 
       if (jobseekerInfo == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please complete your profile first')),
+        _showSnackBar(
+          context: context,
+          text: 'please complete your profile first',
+          textColor: colorScheme.tertiary,
         );
         return;
       }
-
       try {
         // Show loading
         showDialog(
@@ -45,8 +46,6 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
           builder: (context) =>
               const Center(child: CircularProgressIndicator()),
         );
-
-        // Submit the issue/report
         final repository = ref.read(jobRepositoryProvider);
         await repository.submitIssueReport(
           jobseekerEmail: jobseekerInfo.email,
@@ -60,15 +59,11 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
 
         // Hide loading
         if (mounted) Navigator.of(context).pop();
-
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
+        _showSnackBar(
+          context: context,
+          text:
               '${_selectedType == 'issue' ? 'Issue' : 'Report'} submitted successfully!',
-            ),
-            backgroundColor: Colors.green,
-          ),
+          textColor: colorScheme.tertiaryFixed,
         );
 
         // Navigate back
@@ -76,12 +71,10 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
       } catch (e) {
         // Hide loading
         if (mounted) Navigator.of(context).pop();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to submit: $e'),
-            backgroundColor: Colors.red,
-          ),
+        _showSnackBar(
+          context: context,
+          text: 'Failed to submit',
+          textColor: colorScheme.error,
         );
       }
     }
@@ -253,7 +246,7 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _submitIssueReport,
+                  onPressed: () => _submitIssueReport(colorScheme),
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: height * 0.02),
                   ),
@@ -302,6 +295,37 @@ class _ContactUsScreenState extends ConsumerState<ContactUsScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 4),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
         ),
       ),
     );

@@ -9,10 +9,12 @@ class RecruiterContactUsScreen extends ConsumerStatefulWidget {
   const RecruiterContactUsScreen({super.key});
 
   @override
-  ConsumerState<RecruiterContactUsScreen> createState() => _RecruiterContactUsScreenState();
+  ConsumerState<RecruiterContactUsScreen> createState() =>
+      _RecruiterContactUsScreenState();
 }
 
-class _RecruiterContactUsScreenState extends ConsumerState<RecruiterContactUsScreen> {
+class _RecruiterContactUsScreenState
+    extends ConsumerState<RecruiterContactUsScreen> {
   String _selectedType = 'issue';
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -25,14 +27,16 @@ class _RecruiterContactUsScreenState extends ConsumerState<RecruiterContactUsScr
     super.dispose();
   }
 
-  void _submitIssueReport() async {
+  void _submitIssueReport(ColorScheme colorscheme) async {
     if (_formKey.currentState!.validate()) {
       final recruiterAsync = ref.read(recruiterDataProvider);
       final recruiter = recruiterAsync.value;
 
       if (recruiter == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please complete your profile first')),
+        _showSnackBar(
+          context: context,
+          text: 'Please complete your profile first',
+          textColor: colorscheme.error,
         );
         return;
       }
@@ -42,14 +46,17 @@ class _RecruiterContactUsScreenState extends ConsumerState<RecruiterContactUsScr
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (context) => const Center(child: CircularProgressIndicator()),
+          builder: (context) =>
+              const Center(child: CircularProgressIndicator()),
         );
 
         // Submit the issue/report
         final repository = ref.read(jobRepositoryProvider);
         await repository.submitRecruiterIssueReport(
           recruiterEmail: recruiter.email,
-          recruiterName: recruiter.name.isNotEmpty ? recruiter.name : recruiter.email,
+          recruiterName: recruiter.name.isNotEmpty
+              ? recruiter.name
+              : recruiter.email,
           type: _selectedType,
           title: _titleController.text.trim(),
           description: _descriptionController.text.trim(),
@@ -59,25 +66,22 @@ class _RecruiterContactUsScreenState extends ConsumerState<RecruiterContactUsScr
         if (mounted) Navigator.of(context).pop();
 
         // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${_selectedType == 'issue' ? 'Issue' : 'Report'} submitted successfully!'),
-            backgroundColor: Colors.green,
-          ),
+        _showSnackBar(
+          context: context,
+          text:
+              '${_selectedType == 'issue' ? 'Issue' : 'Report'} submitted successfully!',
+          textColor: colorscheme.tertiaryFixed,
         );
-
         // Navigate back
         if (mounted) Navigator.of(context).pop();
-
       } catch (e) {
         // Hide loading
         if (mounted) Navigator.of(context).pop();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to submit: $e'),
-            backgroundColor: Colors.red,
-          ),
+        _showSnackBar(
+          context: context,
+          text:
+              'Failed to submit ${_selectedType == 'issue' ? 'issue' : 'report'}',
+          textColor: colorscheme.error,
         );
       }
     }
@@ -103,10 +107,16 @@ class _RecruiterContactUsScreenState extends ConsumerState<RecruiterContactUsScr
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => RecruiterMyIssuesScreen()),
+                MaterialPageRoute(
+                  builder: (context) => RecruiterMyIssuesScreen(),
+                ),
               );
             },
-            icon: Icon(Icons.report_gmailerrorred, size: 22, color: colorScheme.onPrimaryContainer),
+            icon: Icon(
+              Icons.report_gmailerrorred,
+              size: 22,
+              color: colorScheme.onPrimaryContainer,
+            ),
           ),
         ],
       ),
@@ -150,7 +160,8 @@ class _RecruiterContactUsScreenState extends ConsumerState<RecruiterContactUsScr
                   SizedBox(width: width * 0.01),
                   Expanded(
                     child: ChoiceChip(
-                      label: Text('Report',
+                      label: Text(
+                        'Report',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
@@ -186,8 +197,8 @@ class _RecruiterContactUsScreenState extends ConsumerState<RecruiterContactUsScr
                   ),
                   border: OutlineInputBorder(),
                   hintText: _selectedType == 'issue'
-                    ? 'e.g., App not working properly'
-                    : 'e.g., Report inappropriate content',
+                      ? 'e.g., App not working properly'
+                      : 'e.g., Report inappropriate content',
                   hintStyle: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -218,8 +229,8 @@ class _RecruiterContactUsScreenState extends ConsumerState<RecruiterContactUsScr
                   ),
                   border: OutlineInputBorder(),
                   hintText: _selectedType == 'issue'
-                    ? 'Describe the issue in detail...'
-                    : 'Provide detailed information about your report...',
+                      ? 'Describe the issue in detail...'
+                      : 'Provide detailed information about your report...',
                   hintStyle: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -242,13 +253,17 @@ class _RecruiterContactUsScreenState extends ConsumerState<RecruiterContactUsScr
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _submitIssueReport,
+                  onPressed: () => _submitIssueReport(colorScheme),
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: height * 0.02),
                   ),
                   child: Text(
                     'Submit',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: colorScheme.surface),
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.surface,
+                    ),
                   ),
                 ),
               ),
@@ -269,7 +284,7 @@ class _RecruiterContactUsScreenState extends ConsumerState<RecruiterContactUsScr
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: colorScheme.onPrimaryContainer,
-                        fontSize: 15
+                        fontSize: 15,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -287,6 +302,37 @@ class _RecruiterContactUsScreenState extends ConsumerState<RecruiterContactUsScr
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showSnackBar({
+    required BuildContext context,
+    required String text,
+    Color backgroundColor = Colors.white,
+    Color textColor = Colors.green,
+    Duration duration = const Duration(seconds: 4),
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        backgroundColor: backgroundColor,
+        duration: duration,
+        behavior: behavior,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: textColor),
         ),
       ),
     );

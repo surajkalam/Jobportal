@@ -18,11 +18,6 @@ void main() async {
     // ignore: deprecated_member_use
     androidProvider: AndroidProvider.playIntegrity,
   );
-
-  // FirebaseAppCheck.instance.getToken(true).then((token) {
-  //   debugPrint("🔥 Debug Token => $token");
-  // });
-  // Initialize local storage service
   await LocalStorageService().init();
   log('message: Firebase Initialized');
   runApp(const ProviderScope(child: MainApp()));
@@ -30,7 +25,6 @@ void main() async {
 
 class MainApp extends ConsumerStatefulWidget {
   const MainApp({super.key});
-
   @override
   ConsumerState<MainApp> createState() => _MainAppState();
 }
