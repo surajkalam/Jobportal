@@ -1,6 +1,9 @@
 // Updated JobseekerProfileScreen.dart
 // import 'dart:developer';
 
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +13,8 @@ import 'package:jobapp/Feature/JobSeeker/modelclass/jobseeker_info.dart';
 import 'package:jobapp/Feature/JobSeeker/provider/jobseeker_provider.dart';
 import 'package:jobapp/core/providers/theme_provider.dart';
 import 'package:jobapp/Authentication/auth_state.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:android_intent_plus/android_intent.dart';
 
 import 'jobseekers_screens.dart';
 
@@ -541,6 +546,22 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                     ), // Changed from AppColors.grey
                     // Row 6: Logout - WITH ACTION
                     GestureDetector(
+                      onTap: () => openPrivacyPolicy(),
+                      child: _buildAccountRow(
+                        icon: Iconsax.document,
+                        title: 'Terms and Privacy Policy',
+                        subtitle: '',
+                        hasArrow: true,
+                        width: width,
+                        height: height,
+                        colorScheme: colorScheme,
+                      ),
+                    ),
+                    Divider(
+                      color: colorScheme.outline.withValues(alpha: 0.3),
+                    ), // Changed from AppColors.grey
+                    // Row 6: Logout - WITH ACTION
+                    GestureDetector(
                       onTap: () {
                         _showLogoutDialog(context);
                       },
@@ -563,6 +584,29 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> openPrivacyPolicy() async {
+    const urlString = 'https://www.aptitsolutions.com/privacy-policy';
+    final Uri url = Uri.parse(urlString);
+
+    try {
+      if (Platform.isAndroid) {
+        final AndroidIntent intent = AndroidIntent(
+          action: 'action_view',
+          data: urlString,
+          package: 'com.android.chrome',
+        );
+        await intent.launch();
+      } else {
+        // For iOS or other platforms, use url_launcher
+        if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+          throw Exception('Could not launch $url');
+        }
+      }
+    } catch (e) {
+      log('❌ Error opening Privacy Policy: $e');
+    }
   }
 
   void _showContactUsOptions(BuildContext context) {

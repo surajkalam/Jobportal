@@ -329,34 +329,34 @@ class _JobSeekerDashboardState extends ConsumerState<JobSeekerDashboard> {
               ),
               // Filter Button
               SizedBox(width: width * 0.01),
-              InkWell(
-                onTap: () {
-                  // _showFilterDialog(context, ref);//navigate to filter
-                  context.push('/admin-dashboard');
-                },
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  height: height * 0.052,
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: colorScheme.outline, width: 1),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.filter_list,
-                        size: 20,
-                        color: colorScheme.onSurface,
-                      ),
-                      SizedBox(width: width * 0.005),
-                    ],
-                  ),
-                ),
-              ),
+              // InkWell(
+              //   onTap: () {
+              //     // _showFilterDialog(context, ref);//navigate to filter
+              //     context.push('/admin-dashboard');
+              //   },
+              //   borderRadius: BorderRadius.circular(12),
+              //   child: Container(
+              //     height: height * 0.052,
+              //     padding: EdgeInsets.symmetric(horizontal: 10),
+              //     decoration: BoxDecoration(
+              //       color: colorScheme.surfaceContainerHighest,
+              //       borderRadius: BorderRadius.circular(12),
+              //       border: Border.all(color: colorScheme.outline, width: 1),
+              //     ),
+              //     child: Row(
+              //       mainAxisSize: MainAxisSize.min,
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: [
+              //         Icon(
+              //           Icons.filter_list,
+              //           size: 20,
+              //           color: colorScheme.onSurface,
+              //         ),
+              //         SizedBox(width: width * 0.005),
+              //       ],
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         );

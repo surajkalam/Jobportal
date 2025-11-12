@@ -9,7 +9,7 @@ class OnboardingScreen4 extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    
+
     // Safely access theme colors with fallbacks
     ColorScheme? colorScheme;
     try {

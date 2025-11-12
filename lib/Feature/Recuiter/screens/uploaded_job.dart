@@ -496,7 +496,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
               Row(
                 children: [
                   Icon(Iconsax.category, size: 10, color: Colors.grey[600]),
-                  SizedBox(width: width * 0.014),
+                  SizedBox(width: width * 0.01),
                   SizedBox(
                     width: width * 0.25,
                     child: Text(
@@ -512,6 +512,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
           trailing: SizedBox(
             width: 70,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 // Status chip: Active / Inactive
@@ -550,7 +551,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                   ),
                   loading: () => SizedBox(
                     width: 16,
-                    height: 16,
+                    height: 20,
                     child: CircularProgressIndicator(strokeWidth: 1),
                   ),
                   error: (error, stack) => GestureDetector(
@@ -573,11 +574,11 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
                   ),
                 ),
 
-                SizedBox(height: 2),
-                Text(
-                  _formatTimeAgo(job.createdAt),
-                  style: TextStyle(fontSize: 04, color: Colors.grey[600]),
-                ),
+                // SizedBox(height: 1),
+                // Text(
+                //   _formatTimeAgo(job.createdAt),
+                //   style: TextStyle(fontSize: 08, color: Colors.grey[600]),
+                // ),
               ],
             ),
           ),

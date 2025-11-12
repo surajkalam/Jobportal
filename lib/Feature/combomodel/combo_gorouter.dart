@@ -6,7 +6,6 @@ import 'package:jobapp/Authentication/Signupscreen.dart';
 import 'package:jobapp/Authentication/checkloginsignup.dart';
 import 'package:jobapp/Authentication/forgot_password_screen.dart';
 import 'package:jobapp/Authentication/loginscreen.dart';
-import 'package:jobapp/Feature/AdminSide/admindashboard_screen.dart';
 import 'package:jobapp/Feature/JobSeeker/widget/jobseeker_navbar.dart';
 import 'package:jobapp/Feature/Recuiter/Widget/recuiternavbar.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
@@ -80,10 +79,6 @@ class JobPortalAppRouter {
       GoRoute(
         path: '/see-all-jobs',
         builder: (context, state) => SeeAllJobsScreen(),
-      ),
-      GoRoute(
-        path: '/admin-dashboard',
-        builder: (context, state) => const AdminDashboardScreen(),
       ),
     ],
     errorBuilder: (context, state) =>
