@@ -23,9 +23,11 @@ class MaterialTheme {
       onSecondaryContainer: Color(
         0xFF334155,
       ), // Dark text on secondary containers
+      secondaryFixedDim: Color(0xFF000000), //black text color
       tertiary: Color(0xFFD39539), // Amber (accent-secondary)
       tertiaryFixed: const Color(0xFF59AC77), // green
       onTertiary: Color(0xFFFFFFFF), // White text on tertiary
+
       tertiaryContainer: Color(0xFFFFE0B2), // Light amber container
       onTertiaryContainer: Color(
         0xFF5D4037,
@@ -72,8 +74,10 @@ class MaterialTheme {
       onSecondaryContainer: Color(
         0xFFE2E8F0,
       ), // Light text on secondary containers
+      secondaryFixedDim: Color(0xFFFFFFFF), //black text color
       tertiary: Color(0xFFF5BF0F), // Bright amber (accent-secondary)
       onTertiary: Color(0xFF000000), // Black text on tertiary
+      tertiaryFixed: const Color(0xFF59AC77),
       tertiaryContainer: Color(0xFF5D4037), // Dark amber container
       onTertiaryContainer: Color(
         0xFFFFE0B2,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jobapp/core/services/local_storage_service.dart';
 
 class OnboardingScreen4 extends ConsumerWidget {
   const OnboardingScreen4({super.key});
@@ -105,8 +106,11 @@ class OnboardingScreen4 extends ConsumerWidget {
                 width: double.infinity,
                 height: height * 0.062,
                 child: ElevatedButton(
-                  onPressed: () {
-                    context.push('/check-login');
+                  onPressed: () async {
+                    await LocalStorageService().setOnboardingCompleted(true);
+                    if (context.mounted) {
+                      context.push('/check-login');
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary,

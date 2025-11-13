@@ -70,6 +70,62 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
     );
   }
 
+  void _showCloseAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Account'),
+          content: Text('Are you sure you want to delete your account? This action cannot be undone.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                // Perform account deletion
+                await _deleteAccount();
+              },
+              child: Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteAccount() async {
+    try {
+      final jobseekerState = ref.read(jobseekerProvider);
+      final jobseekerInfo = jobseekerState.jobseekerInfo;
+
+      if (jobseekerInfo != null) {
+        // Delete jobseeker data from Firestore
+        await ref.read(jobseekerProvider.notifier).deleteJobseekerAccount(jobseekerInfo.email);
+
+        // Sign out the user
+        await ref.read(authStateProvider.notifier).signOut();
+
+        // Navigate to login screen
+        if (mounted) {
+          context.go('/login');
+        }
+      }
+    } catch (e) {
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete account. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final jobseekerState = ref.watch(jobseekerProvider);
@@ -560,7 +616,26 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
                     Divider(
                       color: colorScheme.outline.withValues(alpha: 0.3),
                     ), // Changed from AppColors.grey
-                    // Row 6: Logout - WITH ACTION
+                    // Row 6: Close Account - WITH ACTION
+                    GestureDetector(
+                      onTap: () {
+                        _showCloseAccountDialog(context);
+                      },
+                      child: _buildAccountRow(
+                        icon: Iconsax.profile_delete,
+                        title: 'Close Account',
+                        subtitle: '',
+                        hasArrow: true,
+                        textColor: Colors.red,
+                        width: width,
+                        height: height,
+                        colorScheme: colorScheme,
+                      ),
+                    ),
+                    Divider(
+                      color: colorScheme.outline.withValues(alpha: 0.3),
+                    ), // Changed from AppColors.grey
+                    // Row 7: Logout - WITH ACTION
                     GestureDetector(
                       onTap: () {
                         _showLogoutDialog(context);
@@ -587,7 +662,7 @@ class _YourScreenState extends ConsumerState<JobseekerProfileScreen> {
   }
 
   Future<void> openPrivacyPolicy() async {
-    const urlString = 'https://www.aptitsolutions.com/privacy-policy';
+    const urlString = 'https://airigojobs.com/privacy-policy/';
     final Uri url = Uri.parse(urlString);
 
     try {

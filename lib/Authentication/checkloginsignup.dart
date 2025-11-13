@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobapp/Authentication/provider.dart';
-import 'package:jobapp/core/services/local_storage_service.dart';
 
 class CheckLoginSignupScreen extends ConsumerStatefulWidget {
   const CheckLoginSignupScreen({super.key});
@@ -20,24 +19,6 @@ class _CheckLoginSignupScreenState
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
-  }
-
-  Future<void> _checkLoginStatus() async {
-    final localStorage = LocalStorageService();
-    final isLoggedIn = localStorage.isLoggedIn;
-    final userType = localStorage.userType;
-
-    if (isLoggedIn && userType != null) {
-      // Delay navigation to ensure proper initialization
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (userType == 'jobseeker') {
-          context.go('/job-nav');
-        } else {
-          context.go('/recuiter-nav');
-        }
-      });
-    }
   }
 
   void _navigateToLogin() {

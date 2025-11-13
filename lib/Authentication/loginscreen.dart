@@ -257,6 +257,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     } else if (!value.contains("@")) {
                       return "Please enter a valid email";
                     }
+                    return null;
                     //   } else if (!RegExp(
                     //     r'^[^@]+@[^@]+\.[^@]+',
                     //   ).hasMatch(value)) {

@@ -171,6 +171,22 @@ class JobseekerNotifier extends StateNotifier<JobseekerState> {
     state = state.copyWith(error: null);
   }
 
+  Future<void> deleteJobseekerAccount(String email) async {
+    try {
+      state = state.copyWith(isLoading: true, error: null);
+
+      await _firebaseService.deleteJobseekerAccount(email);
+
+      state = state.copyWith(isLoading: false, success: true);
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to delete account: $e',
+      );
+      rethrow;
+    }
+  }
+
   void clearSuccess() {
     state = state.copyWith(success: false);
   }

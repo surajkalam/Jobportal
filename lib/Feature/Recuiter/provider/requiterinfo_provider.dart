@@ -60,6 +60,18 @@ class RecruiterNotifier extends StateNotifier<AsyncValue<RecruiterModel?>> {
     }
   }
 
+  // Delete recruiter account
+  Future<void> deleteRecruiterAccount(String email) async {
+    state = const AsyncValue.loading();
+    try {
+      await _recruiterService.deleteRecruiterAccount(email);
+      state = const AsyncValue.data(null);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
+    }
+  }
+
   // Clear recruiter data
   void clearRecruiter() {
     state = const AsyncValue.data(null);

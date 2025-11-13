@@ -145,6 +145,66 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  void _showCloseAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Account'),
+          content: Text('Are you sure you want to delete your account? This action cannot be undone and will remove all your job postings and data.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                // Perform account deletion
+                await _deleteAccount();
+              },
+              child: Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteAccount() async {
+    try {
+      final recruiterAsync = ref.read(recruiterDataProvider);
+      recruiterAsync.when(
+        data: (recruiter) async {
+          if (recruiter != null) {
+            // Delete recruiter data from database
+            await ref.read(recruiterDataProvider.notifier).deleteRecruiterAccount(recruiter.email);
+
+            // Sign out the user
+            await ref.read(authStateProvider.notifier).signOut();
+
+            // Navigate to login screen
+            if (mounted) {
+              context.go('/login');
+            }
+          }
+        },
+        loading: () {},
+        error: (error, stack) {},
+      );
+    } catch (e) {
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete account. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final recruiterAsync = ref.watch(recruiterDataProvider);
@@ -368,6 +428,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           backgroundColor: Colors.orange,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          _showCloseAccountDialog(context);
+                        },
+                        icon: const Icon(Iconsax.profile_delete, color: Colors.white),
+                        label: const Text('Close Account'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
                         ),
                       ),

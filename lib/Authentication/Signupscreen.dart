@@ -5,8 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobapp/Authentication/provider.dart';
 import 'package:jobapp/Authentication/auth_state.dart';
-import 'package:jobapp/Feature/JobSeeker/jobseekers_screens/jobseeker_info.dart';
-import 'package:jobapp/Feature/Recuiter/screens/screens.dart';
 import 'package:lottie/lottie.dart';
 import 'package:jobapp/core/services/local_storage_service.dart';
 
@@ -52,28 +50,23 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   void _navigateBasedOnUserType() {
     final userType = ref.read(selectionProvider);
+    final email = _emailOrMobileController.text.trim();
+    final phone = _phoneController.text;
+    final password = _passwordController.text.trim();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (userType == UserType.jobseeker) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => JobseekerInfo(
-              email: _emailOrMobileController.text.trim(),
-              phone: _phoneController.text,
-              password: _passwordController.text.trim(),
-            ),
-          ),
-        );
+        context.push('/jobseeker-info', extra: {
+          'email': email,
+          'phone': phone,
+          'password': password,
+        });
       } else {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => RecuiterInfo(
-              email: _emailOrMobileController.text.trim(),
-              phone: _phoneController.text,
-              password: _passwordController.text.trim(),
-            ),
-          ),
-        );
+        context.push('/recruiter-info', extra: {
+          'email': email,
+          'phone': phone,
+          'password': password,
+        });
       }
     });
   }

@@ -230,4 +230,43 @@ String _getImageMimeType(String extension) {
       return 'image/jpeg';
   }
 }
+
+  // Delete jobseeker account and all associated data
+  Future<void> deleteJobseekerAccount(String email) async {
+    try {
+      // Get jobseeker info first to access file URLs
+      final jobseekerInfo = await getJobseekerInfo(email);
+
+      if (jobseekerInfo != null) {
+        // Delete profile image from storage if exists
+        if (jobseekerInfo.profileImageUrl.isNotEmpty) {
+          try {
+            final imageRef = _storage.refFromURL(jobseekerInfo.profileImageUrl);
+            await imageRef.delete();
+          } catch (e) {
+            // Continue even if image deletion fails
+            log('Warning: Failed to delete profile image: $e');
+          }
+        }
+
+        // Delete resume from storage if exists
+        if (jobseekerInfo.resumeUrl.isNotEmpty) {
+          try {
+            final resumeRef = _storage.refFromURL(jobseekerInfo.resumeUrl);
+            await resumeRef.delete();
+          } catch (e) {
+            // Continue even if resume deletion fails
+            log('Warning: Failed to delete resume: $e');
+          }
+        }
+      }
+
+      // Delete jobseeker document from Firestore
+      await _firestore.collection('jobseekers').doc(email).delete();
+
+      log('Jobseeker account deleted successfully: $email');
+    } catch (e) {
+      throw Exception('Failed to delete jobseeker account: $e');
+    }
+  }
 }

@@ -6,12 +6,14 @@ import 'package:jobapp/Feature/Recuiter/provider/application_provider.dart';
 import 'package:jobapp/Feature/combomodel/application_model.dart';
 import 'package:jobapp/Feature/combomodel/jobupload_model.dart';
 import 'package:jobapp/core/util/appcolors.dart';
+
 class ApplicationsScreen extends ConsumerStatefulWidget {
   final JobModel? job; // Make it optional again
   const ApplicationsScreen({super.key, this.job});
   @override
   ConsumerState<ApplicationsScreen> createState() => _ApplicationsScreenState();
 }
+
 class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen> {
   @override
   void initState() {
@@ -23,11 +25,8 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen> {
 
   void _debugInitialState() {
     log('=== APPLICATIONS SCREEN DEBUG ===');
-    // log('Recruiter Email: $recruiterEmail');
-    // log('Job passed to screen: ${widget.job?.toMap()}');
-    // log('Job ID: ${widget.job?.id}');
-    // log('==============================');
   }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -40,91 +39,109 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: widget.job != null
-            ? Text('Applications',
-            style: TextStyle(
-              fontSize: 12,
-              color: AppColors.black,
-              fontWeight: FontWeight.w500
-            ),
-            )
+            ? Text(
+                'Applications',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              )
             : const Text('All Applications'),
         backgroundColor: AppColors.faintbackblue,
       ),
-      body: _buildBody(recruiterEmail, height,width),
+      body: _buildBody(recruiterEmail, height, width),
     );
   }
-Widget _buildDebugInfo(String recruiterEmail) {
-  return Consumer(
-    builder: (context, ref, child) {
-      final queryParams = _getQueryParams(recruiterEmail);
-      final applicationsAsync = ref.watch(applicationsProvider(queryParams));
-      return applicationsAsync.when(
-        loading: () => Card(
-          color: Colors.blue[50],
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('🔍 DEBUG INFO - LOADING', 
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                Text('Recruiter: $recruiterEmail'),
-                Text('Job ID: ${widget.job?.id ?? "All Jobs"}'),
-                Text('Query Path: recruiters/$recruiterEmail/jobs/${widget.job?.id}/applications'),
-              ],
-            ),
-          ),
-        ),
-        error: (error, stack) => Card(
-          color: Colors.red[50],
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('❌ DEBUG INFO - ERROR', 
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
-                Text('Recruiter: $recruiterEmail'),
-                Text('Job ID: ${widget.job?.id ?? "All Jobs"}'),
-                Text('Error: $error'),
-                Text('Stack: $stack'),
-                SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () => ref.refresh(applicationsProvider(queryParams)),
-                  child: Text('Retry'),
-                ),
-              ],
-            ),
-          ),
-        ),
-        data: (applications) => Card(
-          color: Colors.green[50],
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('✅ DEBUG INFO - SUCCESS', 
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-                Text('Recruiter: $recruiterEmail'),
-                Text('Job ID: ${widget.job?.id ?? "All Jobs"}'),
-                Text('Applications Found: ${applications.length}'),
-                if (applications.isNotEmpty) ...[
-                  SizedBox(height: 8),
-                  Text('Sample Application:'),
-                  Text('- Name: ${applications.first.jobseekerName}'),
-                  Text('- Status: ${applications.first.status}'),
-                  Text('- Job ID: ${applications.first.jobId}'),
+
+  Widget _buildDebugInfo(String recruiterEmail) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final queryParams = _getQueryParams(recruiterEmail);
+        final applicationsAsync = ref.watch(applicationsProvider(queryParams));
+        return applicationsAsync.when(
+          loading: () => Card(
+            color: Colors.blue[50],
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '🔍 DEBUG INFO - LOADING',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text('Recruiter: $recruiterEmail'),
+                  Text('Job ID: ${widget.job?.id ?? "All Jobs"}'),
+                  Text(
+                    'Query Path: recruiters/$recruiterEmail/jobs/${widget.job?.id}/applications',
+                  ),
                 ],
-              ],
+              ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
-  Widget _buildBody(String recruiterEmail, double height,double width) {
+          error: (error, stack) => Card(
+            color: Colors.red[50],
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '❌ DEBUG INFO - ERROR',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                  Text('Recruiter: $recruiterEmail'),
+                  Text('Job ID: ${widget.job?.id ?? "All Jobs"}'),
+                  Text('Error: $error'),
+                  Text('Stack: $stack'),
+                  SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () =>
+                        ref.refresh(applicationsProvider(queryParams)),
+                    child: Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          data: (applications) => Card(
+            color: Colors.green[50],
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '✅ DEBUG INFO - SUCCESS',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                  Text('Recruiter: $recruiterEmail'),
+                  Text('Job ID: ${widget.job?.id ?? "All Jobs"}'),
+                  Text('Applications Found: ${applications.length}'),
+                  if (applications.isNotEmpty) ...[
+                    SizedBox(height: 8),
+                    Text('Sample Application:'),
+                    Text('- Name: ${applications.first.jobseekerName}'),
+                    Text('- Status: ${applications.first.status}'),
+                    Text('- Job ID: ${applications.first.jobId}'),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(String recruiterEmail, double height, double width) {
     if (recruiterEmail.isEmpty) {
       return Center(
         child: Column(
@@ -137,19 +154,24 @@ Widget _buildDebugInfo(String recruiterEmail) {
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 16),
-          _buildDebugInfo(recruiterEmail),
+            _buildDebugInfo(recruiterEmail),
           ],
         ),
       );
     }
     // If no job is provided, show all applications
     if (widget.job == null) {
-      return _buildAllApplicationsView(recruiterEmail, height,width);
+      return _buildAllApplicationsView(recruiterEmail, height, width);
     }
     // If job is provided, show job-specific applications
-    return _buildJobSpecificApplicationsView(recruiterEmail, height,width);
+    return _buildJobSpecificApplicationsView(recruiterEmail, height, width);
   }
-  Widget _buildAllApplicationsView(String recruiterEmail, double height,double width) {
+
+  Widget _buildAllApplicationsView(
+    String recruiterEmail,
+    double height,
+    double width,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -161,27 +183,29 @@ Widget _buildDebugInfo(String recruiterEmail) {
           ),
           SizedBox(height: height * 0.01),
           Expanded(
-            child: _buildAllApplicationsList(recruiterEmail,height,width),),
+            child: _buildAllApplicationsList(recruiterEmail, height, width),
+          ),
         ],
       ),
     );
   }
+
   Widget _buildJobSpecificApplicationsView(
     String recruiterEmail,
     double height,
-    double width
+    double width,
   ) {
     return Padding(
-      padding:EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Job Details Section
-          _buildJobDetailsSection(widget.job!,height,width),
+          _buildJobDetailsSection(widget.job!, height, width),
           SizedBox(height: height * 0.02),
 
           // Application Statistics
-          _buildStatisticsSection(recruiterEmail,height,width),
+          _buildStatisticsSection(recruiterEmail, height, width),
           SizedBox(height: height * 0.02),
 
           Text(
@@ -191,25 +215,31 @@ Widget _buildDebugInfo(String recruiterEmail) {
           SizedBox(height: height * 0.01),
 
           // Applications List
-          Expanded(child: _buildJobSpecificApplicationsList(recruiterEmail,height,width)),
+          Expanded(
+            child: _buildJobSpecificApplicationsList(
+              recruiterEmail,
+              height,
+              width,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildJobDetailsSection(JobModel job,double height,double width) {
+  Widget _buildJobDetailsSection(JobModel job, double height, double width) {
     return Card(
       elevation: 3,
       child: Padding(
-        padding:EdgeInsets.all(12),
+        padding: EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  width: width*0.1,
-                  height: height*0.05,
+                  width: width * 0.1,
+                  height: height * 0.05,
                   decoration: BoxDecoration(
                     color: Colors.blue[100],
                     borderRadius: BorderRadius.circular(6),
@@ -231,7 +261,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
                         )
                       : Icon(Icons.business, color: Colors.blue[600], size: 20),
                 ),
-                SizedBox(width:width*0.03),
+                SizedBox(width: width * 0.03),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,7 +275,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: height*0.006),
+                      SizedBox(height: height * 0.006),
                       Text(
                         job.companyName,
                         style: TextStyle(fontSize: 11, color: Colors.grey[600]),
@@ -257,14 +287,24 @@ Widget _buildDebugInfo(String recruiterEmail) {
                 ),
               ],
             ),
-            SizedBox(height: height*0.01),
+            SizedBox(height: height * 0.01),
             Row(
               children: [
-                _buildJobDetailChip(Icons.location_on, job.location,height,width),
+                _buildJobDetailChip(
+                  Icons.location_on,
+                  job.location,
+                  height,
+                  width,
+                ),
                 SizedBox(width: 8),
-                _buildJobDetailChip(Icons.category, job.category,height,width),
+                _buildJobDetailChip(
+                  Icons.category,
+                  job.category,
+                  height,
+                  width,
+                ),
                 SizedBox(width: 8),
-                _buildJobDetailChip(Icons.work, job.experience,height,width),
+                _buildJobDetailChip(Icons.work, job.experience, height, width),
               ],
             ),
           ],
@@ -273,9 +313,17 @@ Widget _buildDebugInfo(String recruiterEmail) {
     );
   }
 
-  Widget _buildJobDetailChip(IconData icon, String text,double height,double width) {
+  Widget _buildJobDetailChip(
+    IconData icon,
+    String text,
+    double height,
+    double width,
+  ) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: width*0.01, vertical: height*0.005),
+      padding: EdgeInsets.symmetric(
+        horizontal: width * 0.01,
+        vertical: height * 0.005,
+      ),
       decoration: BoxDecoration(
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(12),
@@ -283,7 +331,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: Colors.red,),
+          Icon(icon, size: 12, color: Colors.red),
           SizedBox(width: 4),
           Text(text, style: TextStyle(fontSize: 10, color: Colors.grey[700])),
         ],
@@ -299,7 +347,11 @@ Widget _buildDebugInfo(String recruiterEmail) {
     );
   }
 
-  Widget _buildStatisticsSection(String recruiterEmail,double height,double width) {
+  Widget _buildStatisticsSection(
+    String recruiterEmail,
+    double height,
+    double width,
+  ) {
     final queryParams = _getQueryParams(recruiterEmail);
 
     return Row(
@@ -314,7 +366,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
               totalCount.toString(),
               Colors.blue,
               height,
-              width
+              width,
             );
           },
         ),
@@ -329,7 +381,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
               pendingCount.toString(),
               Colors.orange,
               height,
-              width
+              width,
             );
           },
         ),
@@ -344,7 +396,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
               shortlistedCount.toString(),
               Colors.green,
               height,
-              width
+              width,
             );
           },
         ),
@@ -359,7 +411,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
               rejectedCount.toString(),
               Colors.red,
               height,
-              width
+              width,
             );
           },
         ),
@@ -367,7 +419,11 @@ Widget _buildDebugInfo(String recruiterEmail) {
     );
   }
 
-  Widget _buildJobSpecificApplicationsList(String recruiterEmail,double height,double width) {
+  Widget _buildJobSpecificApplicationsList(
+    String recruiterEmail,
+    double height,
+    double width,
+  ) {
     final queryParams = _getQueryParams(recruiterEmail);
 
     return Consumer(
@@ -379,14 +435,22 @@ Widget _buildDebugInfo(String recruiterEmail) {
         return applicationsAsync.when(
           loading: () => Center(child: CircularProgressIndicator()),
           error: (error, stack) => _buildErrorState(error),
-          data: (applications) =>
-              _buildApplicationsListView(applications, recruiterEmail,height,width),
+          data: (applications) => _buildApplicationsListView(
+            applications,
+            recruiterEmail,
+            height,
+            width,
+          ),
         );
       },
     );
   }
 
-  Widget _buildAllApplicationsList(String recruiterEmail,double height,double width) {
+  Widget _buildAllApplicationsList(
+    String recruiterEmail,
+    double height,
+    double width,
+  ) {
     final queryParams = ApplicationsQueryParams(recruiterEmail: recruiterEmail);
 
     return Consumer(
@@ -398,8 +462,12 @@ Widget _buildDebugInfo(String recruiterEmail) {
         return applicationsAsync.when(
           loading: () => Center(child: CircularProgressIndicator()),
           error: (error, stack) => _buildErrorState(error),
-          data: (applications) =>
-              _buildApplicationsListView(applications, recruiterEmail,height,width),
+          data: (applications) => _buildApplicationsListView(
+            applications,
+            recruiterEmail,
+            height,
+            width,
+          ),
         );
       },
     );
@@ -409,7 +477,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
     List<ApplicationModel> applications,
     String recruiterEmail,
     height,
-    width
+    width,
   ) {
     if (applications.isEmpty) {
       return _buildEmptyState();
@@ -418,7 +486,13 @@ Widget _buildDebugInfo(String recruiterEmail) {
     return ListView.builder(
       itemCount: applications.length,
       itemBuilder: (context, index) {
-        return _buildApplicationCard(applications[index], ref, recruiterEmail,height,width);
+        return _buildApplicationCard(
+          applications[index],
+          ref,
+          recruiterEmail,
+          height,
+          width,
+        );
       },
     );
   }
@@ -428,7 +502,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
     WidgetRef ref,
     String recruiterEmail,
     double height,
-    double width
+    double width,
   ) {
     return Card(
       elevation: 2,
@@ -453,7 +527,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
                     ),
                   ),
                 ),
-                SizedBox(width: width*0.015),
+                SizedBox(width: width * 0.015),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -469,14 +543,14 @@ Widget _buildDebugInfo(String recruiterEmail) {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: height*0.002),
+                      SizedBox(height: height * 0.002),
                       Text(
                         application.jobseekerEmail,
                         style: TextStyle(fontSize: 10, color: AppColors.grey),
                         overflow: TextOverflow.ellipsis,
                       ),
                       if (widget.job == null) ...[
-                        SizedBox(height: height*0.02),
+                        SizedBox(height: height * 0.02),
                         Text(
                           'Job: ${application.jobTitle}',
                           style: TextStyle(fontSize: 11, color: AppColors.grey),
@@ -507,9 +581,19 @@ Widget _buildDebugInfo(String recruiterEmail) {
             ),
             SizedBox(height: 12),
             // Application Details
-            _buildDetailRow('Applied Date', _formatDate(application.appliedAt),height,width),
-            _buildDetailRow('Jobseeker ID', application.jobseekerEmail,height,width),
-            SizedBox(height: height*0.013),
+            _buildDetailRow(
+              'Applied Date',
+              _formatDate(application.appliedAt),
+              height,
+              width,
+            ),
+            _buildDetailRow(
+              'Jobseeker ID',
+              application.jobseekerEmail,
+              height,
+              width,
+            ),
+            SizedBox(height: height * 0.013),
             Row(
               children: [
                 Expanded(
@@ -522,14 +606,15 @@ Widget _buildDebugInfo(String recruiterEmail) {
                       ), // Optional: rounded corners
                     ),
                     child: InkWell(
-                      onTap: () => _viewResume(application.resumeUrl,height,width),
+                      onTap: () =>
+                          _viewResume(application.resumeUrl, height, width),
                       borderRadius: BorderRadius.circular(
                         8,
                       ), // Match container border radius
                       child: Padding(
                         padding: EdgeInsets.symmetric(
-                          vertical: height*0.008,
-                          horizontal: width*0.02,
+                          vertical: height * 0.008,
+                          horizontal: width * 0.02,
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -539,7 +624,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
                               size: 16,
                               color: Colors.white,
                             ), // White icon
-                            SizedBox(width: width*0.008),
+                            SizedBox(width: width * 0.008),
                             Text(
                               'View Resume',
                               style: TextStyle(
@@ -582,7 +667,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
                             ref,
                             recruiterEmail,
                             height,
-                            width
+                            width,
                           );
                         }
                       },
@@ -658,7 +743,13 @@ Widget _buildDebugInfo(String recruiterEmail) {
     );
   }
 
-  Widget _buildAppStatCard(String title, String value, Color color,double height,double width) {
+  Widget _buildAppStatCard(
+    String title,
+    String value,
+    Color color,
+    double height,
+    double width,
+  ) {
     return Expanded(
       child: Card(
         elevation: 2,
@@ -675,7 +766,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
                   color: color,
                 ),
               ),
-              SizedBox(height: height*0.003),
+              SizedBox(height: height * 0.003),
               Text(
                 title,
                 style: TextStyle(
@@ -684,8 +775,8 @@ Widget _buildDebugInfo(String recruiterEmail) {
                   // ignore: deprecated_member_use
                   color: color.withValues(alpha: 0.8),
                 ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -747,14 +838,19 @@ Widget _buildDebugInfo(String recruiterEmail) {
     );
   }
 
-  Widget _buildDetailRow(String label, String value,double heigth,double width) {
+  Widget _buildDetailRow(
+    String label,
+    String value,
+    double heigth,
+    double width,
+  ) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: heigth*0.005),
+      padding: EdgeInsets.symmetric(vertical: heigth * 0.005),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width:width*0.35,
+            width: width * 0.35,
             child: Text(
               '$label:',
               style: TextStyle(
@@ -765,15 +861,13 @@ Widget _buildDebugInfo(String recruiterEmail) {
             ),
           ),
           Expanded(
-            child:
-            Text(
+            child: Text(
               value,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 11),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,                ),
-                ),
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 11),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       ),
     );
@@ -822,7 +916,7 @@ Widget _buildDebugInfo(String recruiterEmail) {
     WidgetRef ref,
     String recruiterEmail,
     double height,
-    double width
+    double width,
   ) async {
     try {
       await ref
@@ -837,14 +931,15 @@ Widget _buildDebugInfo(String recruiterEmail) {
       _showSnackBar(
         // ignore: use_build_context_synchronously
         context: context,
-        text: 'Status updated to ${newStatus.toUpperCase()} for ${application.jobseekerName}',
-        textColor:newStatus == 'rejected'
-                    ? Colors.red
-                    :  newStatus == 'shortlisted'
-                      ? Colors.green
-                    :newStatus =='pending'
-                    ?Colors.orange
-                    :Colors.black
+        text:
+            'Status updated to ${newStatus.toUpperCase()} for ${application.jobseekerName}',
+        textColor: newStatus == 'rejected'
+            ? Colors.red
+            : newStatus == 'shortlisted'
+            ? Colors.green
+            : newStatus == 'pending'
+            ? Colors.orange
+            : Colors.black,
       );
     } catch (e) {
       _showSnackBar(
@@ -856,48 +951,40 @@ Widget _buildDebugInfo(String recruiterEmail) {
     }
   }
 
-  void _viewResume(String resumeUrl,double height,double  width) {
+  void _viewResume(String resumeUrl, double height, double width) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Resume',
-        style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 14
-                ),
+        title: Text(
+          'Resume',
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Resume URL:',
-            style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 12
-                ),
+            Text(
+              'Resume URL:',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
             ),
-            SizedBox(height: height*0.01),
+            SizedBox(height: height * 0.01),
             SelectableText(
               resumeUrl,
               style: TextStyle(fontSize: 10, color: Colors.blue),
             ),
-            SizedBox(height:height*0.02),
-            Text('Would you like to download the resume ? Please press 👇.',
-            style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 10),
+            SizedBox(height: height * 0.02),
+            Text(
+              'Would you like to download the resume ? Please press 👇.',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 10),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel',
-            style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 11
-                ),
-            
+            child: Text(
+              'Cancel',
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 11),
             ),
           ),
           ElevatedButton(
@@ -906,19 +993,19 @@ Widget _buildDebugInfo(String recruiterEmail) {
               _showSnackBar(
                 context: context,
                 text: 'Resume download started',
-                textColor: Colors.orange
+                textColor: Colors.orange,
               );
             },
-            child: Text('Download Resume',
-            style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 11),
+            child: Text(
+              'Download Resume',
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 11),
             ),
           ),
         ],
       ),
     );
   }
+
   void _showSnackBar({
     required BuildContext context,
     required String text,
@@ -929,12 +1016,14 @@ Widget _buildDebugInfo(String recruiterEmail) {
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(text, 
-        style: TextStyle(
-          color: textColor,
-          fontSize: 10,
-        fontWeight: FontWeight.w500),
-        textAlign: TextAlign.center,
+        content: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
         ),
         backgroundColor: backgroundColor,
         duration: duration,
@@ -947,5 +1036,4 @@ Widget _buildDebugInfo(String recruiterEmail) {
       ),
     );
   }
-
 }

@@ -9,7 +9,8 @@ class FirebaseRecruiterService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   // Collection reference
-  CollectionReference get _recruitersCollection => _firestore.collection('recruiters');
+  CollectionReference get _recruitersCollection =>
+      _firestore.collection('recruiters');
 
   // Upload image to Firebase Storage and return download URL
   Future<String> uploadImage(File imageFile, String email) async {
@@ -21,13 +22,15 @@ class FirebaseRecruiterService {
 
       // Check file size (optional)
       final fileLength = await imageFile.length();
-      if (fileLength > 10 * 1024 * 1024) { // 10MB limit
+      if (fileLength > 10 * 1024 * 1024) {
+        // 10MB limit
         throw Exception('Image file is too large. Maximum size is 10MB');
       }
 
-      String fileName = 'recruiter_photos/$email/${DateTime.now().millisecondsSinceEpoch}.jpg';
+      String fileName =
+          'recruiter_photos/$email/${DateTime.now().millisecondsSinceEpoch}.jpg';
       Reference storageReference = _storage.ref().child(fileName);
-      
+
       // Add metadata for better error handling
       final metadata = SettableMetadata(
         contentType: 'image/jpeg',
@@ -81,12 +84,92 @@ class FirebaseRecruiterService {
       throw Exception('Failed to update recruiter data: $e');
     }
   }
+
   Stream<List<RecruiterModel>> getAllRecruiters() {
-  return _firestore
-      .collection('recruiters')
-      .snapshots()
-      .map((snapshot) => snapshot.docs
-          .map((doc) => RecruiterModel.fromMap(doc.data()))
-          .toList());
-}
+    return _firestore
+        .collection('recruiters')
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => RecruiterModel.fromMap(doc.data()))
+              .toList(),
+        );
+  }
+
+  // Delete recruiter account and all associated data
+  Future<void> deleteRecruiterAccount(String email) async {
+    try {
+      // Get recruiter info first to access file URLs
+      final recruiterInfo = await getRecruiterByEmail(email);
+
+      if (recruiterInfo != null) {
+        // Delete profile image from storage if exists
+        if (recruiterInfo.photoUrl.isNotEmpty) {
+          try {
+            final imageRef = _storage.refFromURL(recruiterInfo.photoUrl);
+            await imageRef.delete();
+          } catch (e) {
+            // Continue even if image deletion fails
+            throw Exception('Warning: Failed to delete profile image: $e');
+          }
+        }
+      }
+
+      // Delete all jobs and their associated data
+      try {
+        final jobsSnapshot = await _firestore
+            .collection('recruiters')
+            .doc(email)
+            .collection('jobs')
+            .get();
+
+        for (final jobDoc in jobsSnapshot.docs) {
+          final jobData = jobDoc.data();
+          final jobId = jobDoc.id;
+
+          // Delete job image from storage if exists
+          final imageUrl = jobData['imageUrl'] as String?;
+          if (imageUrl != null && imageUrl.isNotEmpty) {
+            try {
+              final imageRef = _storage.refFromURL(imageUrl);
+              await imageRef.delete();
+            } catch (e) {
+              // Continue even if image deletion fails
+              throw Exception(
+                'Warning: Failed to delete job image for job $jobId: $e',
+              );
+            }
+          }
+
+          // Delete applications subcollection
+          final applicationsSnapshot = await _firestore
+              .collection('recruiters')
+              .doc(email)
+              .collection('jobs')
+              .doc(jobId)
+              .collection('applications')
+              .get();
+
+          for (final appDoc in applicationsSnapshot.docs) {
+            await appDoc.reference.delete();
+          }
+
+          // Delete job from recruiter's subcollection
+          await jobDoc.reference.delete();
+
+          // Delete job from main jobs collection
+          await _firestore.collection('jobs').doc(jobId).delete();
+        }
+      } catch (e) {
+        throw Exception('Warning: Failed to delete some jobs: $e');
+      }
+
+      // Delete recruiter document from Firestore
+      await _recruitersCollection.doc(email).delete();
+
+      throw Exception('Recruiter account deleted successfully: $email');
+    } catch (e) {
+      throw Exception('Failed to delete recruiter account: $e');
+    }
+  }
 }

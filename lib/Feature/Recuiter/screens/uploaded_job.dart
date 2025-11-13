@@ -416,7 +416,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     double width,
     ColorScheme colorscheme,
   ) {
-    final jobStatusAsync = ref.watch(jobStatusProvider(job.id));
+    // final jobStatusAsync = ref.watch(jobStatusProvider(job.id));
     final urgentHiringAsync = ref.watch(urgentHiringProvider(job.id));
     return InkWell(
       onLongPress: () {
@@ -598,6 +598,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
         .toggleUrgentHiring()
         .then((_) {
           _showSnackBar(
+            // ignore: use_build_context_synchronously
             context: context,
             text: 'Job marked as ${!currentStatus ? 'Urgent' : 'Normal'}',
             backgroundColor: colorscheme.tertiary,
@@ -605,6 +606,7 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
         })
         .catchError((error) {
           _showSnackBar(
+            // ignore: use_build_context_synchronously
             context: context,
             text: 'Failed to update urgent status',
             textColor: colorscheme.error,
@@ -649,12 +651,14 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
       final jobNotifier = ref.read(jobNotifierProvider.notifier);
       await jobNotifier.deleteJob(jobId);
       _showSnackBar(
+        // ignore: use_build_context_synchronously
         context: context,
         text: 'Job deleted successfully!',
         textColor: Colors.green,
       );
     } catch (e) {
       _showSnackBar(
+        // ignore: use_build_context_synchronously
         context: context,
         text: 'Failed to delete job',
         textColor: Colors.red,
@@ -663,12 +667,12 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
   }
 
   //refresh recent jobs
-  void _refreshJobStatus(String jobId) {
-    final recruiterEmail = ref.read(currentRecruiterUserEmailProvider);
-    if (recruiterEmail.isNotEmpty) {
-      ref.invalidate(jobStatusProvider(jobId));
-    }
-  }
+  // void _refreshJobStatus(String jobId) {
+  //   final recruiterEmail = ref.read(currentRecruiterUserEmailProvider);
+  //   if (recruiterEmail.isNotEmpty) {
+  //     ref.invalidate(jobStatusProvider(jobId));
+  //   }
+  // }
 
   Widget _buildEmptyState() {
     return Center(
@@ -699,21 +703,21 @@ class _UploadJobsScreenState extends ConsumerState<UploadJobsScreen> {
     );
   }
 
-  String _formatTimeAgo(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
+  // String _formatTimeAgo(DateTime date) {
+  //   final now = DateTime.now();
+  //   final difference = now.difference(date);
 
-    if (difference.inMinutes < 1) return 'Just now,';
-    if (difference.inMinutes < 60) return '${difference.inMinutes}m ago';
-    if (difference.inHours < 24) return '${difference.inHours}h ago';
-    if (difference.inDays < 7) return '${difference.inDays}d ago';
+  //   if (difference.inMinutes < 1) return 'Just now,';
+  //   if (difference.inMinutes < 60) return '${difference.inMinutes}m ago';
+  //   if (difference.inHours < 24) return '${difference.inHours}h ago';
+  //   if (difference.inDays < 7) return '${difference.inDays}d ago';
 
-    final weeks = (difference.inDays / 7).floor();
-    if (weeks < 4) return '${weeks}w ago';
+  //   final weeks = (difference.inDays / 7).floor();
+  //   if (weeks < 4) return '${weeks}w ago';
 
-    final months = (difference.inDays / 30).floor();
-    return '${months}m ago';
-  }
+  //   final months = (difference.inDays / 30).floor();
+  //   return '${months}m ago';
+  // }
 
   void _showSnackBar({
     required BuildContext context,

@@ -14,7 +14,12 @@ class JobseekerInfo extends ConsumerStatefulWidget {
   final String email;
   final String phone;
   final String password;
-  const JobseekerInfo({super.key, required this.email, required this.phone, required this.password});
+  const JobseekerInfo({
+    super.key,
+    required this.email,
+    required this.phone,
+    required this.password,
+  });
 
   @override
   ConsumerState<JobseekerInfo> createState() => _JobseekerInfoState();
@@ -62,7 +67,9 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           GoRouterState.of(context).extra as Map<String, dynamic>?;
       if (extraData != null) {
         _signupEmail = extraData['email']?.toString() ?? '';
-        _signupPassword = extraData['password']?.toString() ?? _signupPassword; // Use constructor password if extra data doesn't have it
+        _signupPassword =
+            extraData['password']?.toString() ??
+            _signupPassword; // Use constructor password if extra data doesn't have it
         _signupPhone = extraData['phone']?.toString() ?? '';
         debugPrint("🎯 Loaded signup data:");
         debugPrint("   Email: $_signupEmail");
@@ -318,27 +325,30 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
               ),
             ),
             child: _selectedResume == null
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.upload_file_outlined,
-                          color: colorScheme
-                              .onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
+                ? InkWell(
+                    onTap: _pickResume,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.upload_file_outlined,
+                            color: colorScheme
+                                .onSurfaceVariant, // Changed from AppColors.grey.withValues(alpha: 0.7)
+                          ),
+                          onPressed: () {},
                         ),
-                        onPressed: _pickResume,
-                      ),
-                      Text(
-                        'Upload Resume',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: colorScheme.onSurfaceVariant.withValues(
-                            alpha: 0.6,
-                          ), // Changed from AppColors.black.withValues(alpha: 0.6)
+                        Text(
+                          'Upload Resume',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: colorScheme.onSurfaceVariant.withValues(
+                              alpha: 0.6,
+                            ), // Changed from AppColors.black.withValues(alpha: 0.6)
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   )
                 : Row(
                     children: [
@@ -492,7 +502,9 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
               email,
             );
           } catch (e) {
-            print('Failed to upload profile image: ${e.toString()}'); // Log detailed error
+            print(
+              'Failed to upload profile image: ${e.toString()}',
+            ); // Log detailed error
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -548,7 +560,9 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
           });
         }
       } catch (e) {
-        print('Failed to submit profile: ${e.toString()}'); // Log detailed error
+        print(
+          'Failed to submit profile: ${e.toString()}',
+        ); // Log detailed error
         if (mounted) {
           _showSnackBar(
             context: context,
@@ -597,16 +611,16 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
         errorString.contains('access-denied')) {
       return 'Permission denied. Please check your file access permissions';
     } else if (errorString.contains('file-not-found') ||
-               errorString.contains('path-not-found')) {
+        errorString.contains('path-not-found')) {
       return 'File not found. Please select a valid file';
     } else if (errorString.contains('file-too-large') ||
-               errorString.contains('size-limit')) {
+        errorString.contains('size-limit')) {
       return 'File is too large. Please choose a smaller file';
     } else if (errorString.contains('network') ||
-               errorString.contains('connection')) {
+        errorString.contains('connection')) {
       return 'Network error. Please check your internet connection';
     } else if (errorString.contains('invalid-format') ||
-               errorString.contains('unsupported')) {
+        errorString.contains('unsupported')) {
       return 'Invalid file format. Please choose a supported file type';
     } else {
       return 'An unexpected error occurred. Please try again';

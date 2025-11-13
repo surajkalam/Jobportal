@@ -38,8 +38,6 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-
-    // Watch search query and decide which provider to use
     final searchQuery = ref.watch(searchQueryProvider);
     final jobsAsync = searchQuery.isEmpty
         ? ref.watch(jobsProvider)
@@ -54,7 +52,7 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
             color: colorScheme.onSurface,
           ),
         ),
-        backgroundColor: colorScheme.surface,
+        backgroundColor: colorScheme.primary.withValues(alpha: 0.7),
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
@@ -587,7 +585,7 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                         'URGENT',
                         style: TextStyle(
                           color: colorScheme.error,
-                          fontSize: 10,
+                          fontSize: 08,
                           fontWeight: FontWeight.w400,
                         ),
                       ),

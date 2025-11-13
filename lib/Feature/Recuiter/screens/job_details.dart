@@ -540,6 +540,7 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
         if (!fileExists) {
           // ignore: use_build_context_synchronously
           _showSnackBar(
+            // ignore: use_build_context_synchronously
             context: context,
             text: 'Selected image file is not accessible 👎',
             textColor: Colors.red,
@@ -551,6 +552,7 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
         if (fileLength > 10 * 1024 * 1024) {
           // ignore: use_build_context_synchronously
           _showSnackBar(
+            // ignore: use_build_context_synchronously
             context: context,
             text: 'Image file is too large. Please select a smaller image.',
             textColor: Colors.red,
@@ -565,6 +567,7 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
         // _showSnackBar('Image selected successfully');
         // ignore: use_build_context_synchronously
         _showSnackBar(
+          // ignore: use_build_context_synchronously
           context: context,
           text: 'Image selected successfully 👍',
           textColor: Colors.green,
@@ -573,6 +576,7 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
     } catch (e) {
       // ignore: use_build_context_synchronously
       _showSnackBar(
+        // ignore: use_build_context_synchronously
         context: context,
         text: 'Failed to pick image try again',
         textColor: Colors.red,
@@ -717,6 +721,7 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
         // _showSnackBar('$category Job posted successfully!');
         // ignore: use_build_context_synchronously
         _showSnackBar(
+          // ignore: use_build_context_synchronously
           context: context,
           text: '$category Job posted successfully!',
           textColor: Colors.green,
@@ -726,6 +731,7 @@ class _JobdetailScreenState extends ConsumerState<JobuploaddetailScreen> {
     } catch (e) {
       // ignore: use_build_context_synchronously
       _showSnackBar(
+        // ignore: use_build_context_synchronously
         context: context,
         textColor: Colors.red,
         text: 'check all fields and try again',

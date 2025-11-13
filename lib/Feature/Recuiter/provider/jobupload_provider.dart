@@ -49,7 +49,7 @@ class JobNotifier extends StateNotifier<JobState> {
   final FirebaseService _firebaseService;
   final Ref _ref;
 
-   JobNotifier(this._firebaseService, this._ref) : super(const JobState());
+  JobNotifier(this._firebaseService, this._ref) : super(const JobState());
 
   String get _recruiterEmail => _ref.read(currentRecruiterUserEmailProvider);
 
@@ -65,16 +65,17 @@ class JobNotifier extends StateNotifier<JobState> {
   Future<void> saveJob(JobModel jobData) async {
     state = state.copyWith(isLoading: true, error: null, success: false);
     try {
-    // Create a new job with recruiterEmail
-    final jobWithEmail = jobData.copyWith(recruiterEmail: _recruiterEmail);
-    await _firebaseService.saveJobData(jobWithEmail, _recruiterEmail);
-    state = state.copyWith(isLoading: false, success: true);
-  } catch (e) {
-    state = state.copyWith(isLoading: false, error: 'Failed to save job: $e');
-    rethrow;
+      // Create a new job with recruiterEmail
+      final jobWithEmail = jobData.copyWith(recruiterEmail: _recruiterEmail);
+      await _firebaseService.saveJobData(jobWithEmail, _recruiterEmail);
+      state = state.copyWith(isLoading: false, success: true);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: 'Failed to save job: $e');
+      rethrow;
+    }
   }
-  }
-    Future<void> updateJob(JobModel jobData) async {
+
+  Future<void> updateJob(JobModel jobData) async {
     state = state.copyWith(isLoading: true, error: null, success: false);
     try {
       // Update existing job with recruiterEmail
@@ -82,24 +83,35 @@ class JobNotifier extends StateNotifier<JobState> {
       await _firebaseService.updateJobData(jobWithEmail, _recruiterEmail);
       state = state.copyWith(isLoading: false, success: true);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: 'Failed to update job: $e');
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to update job: $e',
+      );
       rethrow;
     }
   }
-   Future<void> deleteJob(String jobId) async {
+
+  Future<void> deleteJob(String jobId) async {
     state = state.copyWith(isDeleting: true, error: null);
     try {
       await _firebaseService.deleteJob(jobId, _recruiterEmail);
       state = state.copyWith(isDeleting: false, success: true);
     } catch (e) {
-      state = state.copyWith(isDeleting: false, error: 'Failed to delete job: $e');
+      state = state.copyWith(
+        isDeleting: false,
+        error: 'Failed to delete job: $e',
+      );
       rethrow;
     }
   }
 
   Future<void> toggleJobStatus(String jobId, bool currentStatus) async {
     try {
-      await _firebaseService.updateJobStatus(jobId, !currentStatus, _recruiterEmail);
+      await _firebaseService.updateJobStatus(
+        jobId,
+        !currentStatus,
+        _recruiterEmail,
+      );
     } catch (e) {
       state = state.copyWith(error: 'Failed to update job status: $e');
       rethrow;
@@ -121,17 +133,23 @@ final jobNotifierProvider = StateNotifierProvider<JobNotifier, JobState>((ref) {
   return JobNotifier(firebaseService, ref);
 });
 // delete operations
-final jobDeleteProvider = FutureProvider.family<void, String>((ref, jobId) async {
+final jobDeleteProvider = FutureProvider.family<void, String>((
+  ref,
+  jobId,
+) async {
   final jobNotifier = ref.read(jobNotifierProvider.notifier);
   await jobNotifier.deleteJob(jobId);
 });
 
 //  getting individual job details
-final jobDetailProvider = StreamProvider.family<JobModel?, String>((ref, jobId) {
+final jobDetailProvider = StreamProvider.family<JobModel?, String>((
+  ref,
+  jobId,
+) {
   final firebaseService = ref.read(firebaseServiceProvider);
   final recruiterEmail = ref.watch(currentRecruiterUserEmailProvider);
   if (recruiterEmail.isEmpty) return Stream.value(null);
-   return Stream.fromFuture(firebaseService.getJobById(jobId, recruiterEmail));
+  return Stream.fromFuture(firebaseService.getJobById(jobId, recruiterEmail));
 });
 
 // Stream providers with recruiter email
@@ -193,17 +211,22 @@ final inactiveJobsCountProvider = StreamProvider<int>((ref) {
 });
 
 // Job status toggle provider
-final jobStatusProvider = StateNotifierProvider.family<JobStatusNotifier, AsyncValue<bool>, String>((ref, jobId) {
-  final firebaseService = ref.read(firebaseServiceProvider);
-  return JobStatusNotifier(firebaseService, jobId, ref);
-});
+final jobStatusProvider =
+    StateNotifierProvider.family<JobStatusNotifier, AsyncValue<bool>, String>((
+      ref,
+      jobId,
+    ) {
+      final firebaseService = ref.read(firebaseServiceProvider);
+      return JobStatusNotifier(firebaseService, jobId, ref);
+    });
 
 class JobStatusNotifier extends StateNotifier<AsyncValue<bool>> {
   final FirebaseService _firebaseService;
   final String jobId;
   final Ref _ref;
 
-  JobStatusNotifier(this._firebaseService, this.jobId, this._ref) : super(const AsyncValue.loading()) {
+  JobStatusNotifier(this._firebaseService, this.jobId, this._ref)
+    : super(const AsyncValue.loading()) {
     _loadInitialStatus();
   }
 
@@ -217,11 +240,16 @@ class JobStatusNotifier extends StateNotifier<AsyncValue<bool>> {
       state = AsyncValue.error(e, StackTrace.current);
     }
   }
+
   Future<void> toggleStatus() async {
     try {
       final currentStatus = state.value ?? false;
       state = const AsyncValue.loading();
-      await _firebaseService.updateJobStatus(jobId, !currentStatus, _recruiterEmail);
+      await _firebaseService.updateJobStatus(
+        jobId,
+        !currentStatus,
+        _recruiterEmail,
+      );
       state = AsyncValue.data(!currentStatus);
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
@@ -229,23 +257,26 @@ class JobStatusNotifier extends StateNotifier<AsyncValue<bool>> {
     }
   }
 }
+
 // Provider for recent jobs (last 3)
 final recentJobsProvider = StreamProvider<List<JobModel>>((ref) {
   final firebaseService = ref.read(firebaseServiceProvider);
   final recruiterEmail = ref.watch(currentRecruiterUserEmailProvider);
-  
+
   if (recruiterEmail.isEmpty) return Stream.value([]);
-  
+
   return firebaseService.getRecentJobs(recruiterEmail, limit: 3);
 });
 
 // Provider for recent jobs with time information
-final recentJobsWithTimeProvider = StreamProvider<List<Map<String, dynamic>>>((ref) {
+final recentJobsWithTimeProvider = StreamProvider<List<Map<String, dynamic>>>((
+  ref,
+) {
   final firebaseService = ref.read(firebaseServiceProvider);
   final recruiterEmail = ref.watch(currentRecruiterUserEmailProvider);
-  
+
   if (recruiterEmail.isEmpty) return Stream.value([]);
-  
+
   return firebaseService.getRecentJobsWithTime(recruiterEmail, limit: 3);
 });
 
@@ -258,14 +289,14 @@ final recentJobsCountProvider = StreamProvider<int>((ref) {
     error: (err, stack) => Stream.error(err, stack),
   );
 });
- 
+
 // StateNotifier for recent jobs management
 class RecentJobsNotifier extends StateNotifier<AsyncValue<List<JobModel>>> {
   final FirebaseService _firebaseService;
   final String _recruiterEmail;
 
-  RecentJobsNotifier(this._firebaseService, this._recruiterEmail) 
-      : super(const AsyncValue.loading()) {
+  RecentJobsNotifier(this._firebaseService, this._recruiterEmail)
+    : super(const AsyncValue.loading()) {
     _loadRecentJobs();
   }
 
@@ -287,12 +318,15 @@ class RecentJobsNotifier extends StateNotifier<AsyncValue<List<JobModel>>> {
 }
 
 // Recent jobs notifier provider
-final recentJobsNotifierProvider = StateNotifierProvider.family<RecentJobsNotifier, AsyncValue<List<JobModel>>, String>(
-  (ref, recruiterEmail) {
-    final firebaseService = ref.read(firebaseServiceProvider);
-    return RecentJobsNotifier(firebaseService, recruiterEmail);
-  },
-);
+final recentJobsNotifierProvider =
+    StateNotifierProvider.family<
+      RecentJobsNotifier,
+      AsyncValue<List<JobModel>>,
+      String
+    >((ref, recruiterEmail) {
+      final firebaseService = ref.read(firebaseServiceProvider);
+      return RecentJobsNotifier(firebaseService, recruiterEmail);
+    });
 
 // Simple provider to get recent jobs count as int
 final recentJobsCountIntProvider = Provider<int>((ref) {
@@ -320,17 +354,23 @@ final mostRecentJobProvider = Provider<JobModel?>((ref) {
 
 //urgent hiring status
 
-final urgentHiringProvider = StateNotifierProvider.family<UrgentHiringNotifier, AsyncValue<bool>, String>((ref, jobId) {
-  final firebaseService = ref.read(firebaseServiceProvider);
-  return UrgentHiringNotifier(firebaseService, jobId, ref);
-});
+final urgentHiringProvider =
+    StateNotifierProvider.family<
+      UrgentHiringNotifier,
+      AsyncValue<bool>,
+      String
+    >((ref, jobId) {
+      final firebaseService = ref.read(firebaseServiceProvider);
+      return UrgentHiringNotifier(firebaseService, jobId, ref);
+    });
 
 class UrgentHiringNotifier extends StateNotifier<AsyncValue<bool>> {
   final FirebaseService _firebaseService;
   final String jobId;
   final Ref _ref;
 
-  UrgentHiringNotifier(this._firebaseService, this.jobId, this._ref) : super(const AsyncValue.loading()) {
+  UrgentHiringNotifier(this._firebaseService, this.jobId, this._ref)
+    : super(const AsyncValue.loading()) {
     _loadInitialStatus();
   }
 
@@ -349,7 +389,11 @@ class UrgentHiringNotifier extends StateNotifier<AsyncValue<bool>> {
     try {
       final currentStatus = state.value ?? false;
       state = const AsyncValue.loading();
-      await _firebaseService.updateUrgentHiringStatus(jobId, !currentStatus, _recruiterEmail);
+      await _firebaseService.updateUrgentHiringStatus(
+        jobId,
+        !currentStatus,
+        _recruiterEmail,
+      );
       state = AsyncValue.data(!currentStatus);
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
@@ -357,4 +401,3 @@ class UrgentHiringNotifier extends StateNotifier<AsyncValue<bool>> {
     }
   }
 }
-

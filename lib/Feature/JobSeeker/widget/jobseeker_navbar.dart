@@ -51,7 +51,7 @@ class JobseekerNavbar extends ConsumerWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(30),
           child: Container(
-            height: 70,
+            height: 50,
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -105,16 +105,16 @@ class JobseekerNavbar extends ConsumerWidget {
       },
       child: AnimatedContainer(
         duration: Duration(milliseconds: 200),
-        width: 48,
-        height: 48,
+        width: 34,
+        height: 34,
         decoration: BoxDecoration(
           color: isActive ? Color(0xFF3B82F6) : Colors.transparent,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(17),
         ),
         child: Center(
           child: Icon(
             isActive ? activeIcon : inactiveIcon,
-            size: 24,
+            size: 18,
             color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.5), // Fixed: use withOpacity
           ),
         ),
