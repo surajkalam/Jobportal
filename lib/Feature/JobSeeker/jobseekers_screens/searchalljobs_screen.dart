@@ -86,68 +86,67 @@ class _SeeAllJobsScreenState extends ConsumerState<SeeAllJobsScreen> {
                       color: colorScheme.onSurface,
                     ),
                   ),
-                  Consumer(
-                    builder: (context, ref, child) {
-                      return jobsAsync.when(
-                        data: (jobs) => Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            '${jobs.length} jobs',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w400,
-                              color: colorScheme.primary,
-                            ),
-                          ),
-                        ),
-                        loading: () => Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorScheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            'Loading...',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                        error: (error, stack) => Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorScheme.errorContainer,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            'Error',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: colorScheme.onErrorContainer,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                  // Consumer(
+                  //   builder: (context, ref, child) {
+                  //     return jobsAsync.when(
+                  //       data: (jobs) => Container(
+                  //         padding: EdgeInsets.symmetric(
+                  //           horizontal: 12,
+                  //           vertical: 6,
+                  //         ),
+                  //         decoration: BoxDecoration(
+                  //           color: colorScheme.primary.withValues(alpha: 0.1),
+                  //           borderRadius: BorderRadius.circular(10),
+                  //         ),
+                  //         child: Text(
+                  //           '${jobs.length} jobs',
+                  //           style: TextStyle(
+                  //             fontSize: 11,
+                  //             fontWeight: FontWeight.w400,
+                  //             color: colorScheme.primary,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       loading: () => Container(
+                  //         padding: EdgeInsets.symmetric(
+                  //           horizontal: 12,
+                  //           vertical: 6,
+                  //         ),
+                  //         decoration: BoxDecoration(
+                  //           color: colorScheme.surfaceContainerHighest,
+                  //           borderRadius: BorderRadius.circular(16),
+                  //         ),
+                  //         child: Text(
+                  //           'Loading...',
+                  //           style: TextStyle(
+                  //             fontSize: 12,
+                  //             color: colorScheme.onSurfaceVariant,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       error: (error, stack) => Container(
+                  //         padding: EdgeInsets.symmetric(
+                  //           horizontal: 12,
+                  //           vertical: 6,
+                  //         ),
+                  //         decoration: BoxDecoration(
+                  //           color: colorScheme.errorContainer,
+                  //           borderRadius: BorderRadius.circular(16),
+                  //         ),
+                  //         child: Text(
+                  //           'Error',
+                  //           style: TextStyle(
+                  //             fontSize: 12,
+                  //             color: colorScheme.onErrorContainer,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                 ],
               ),
             ),
-
             // Search query display (only when searching)
             if (searchQuery.isNotEmpty)
               Padding(

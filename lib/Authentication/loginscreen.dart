@@ -58,6 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final user = await authNotifier.loginWithEmailAndPassword(
         email: email,
         password: password,
+        userType: userType,
       );
       if (user != null) {
         log("✅ Login successful for: ${user.email}");

@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:jobapp/Authentication/provider.dart';
 import 'package:jobapp/core/services/local_storage_service.dart';
 
 final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((
@@ -43,6 +45,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final LocalStorageService _localStorage = LocalStorageService();
 
   // Check current user on app start
@@ -117,6 +120,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   Future<User?> loginWithEmailAndPassword({
     required String email,
     required String password,
+    required UserType userType,
   }) async {
     try {
       state = state.copyWith(isLoading: true, error: null);
@@ -124,8 +128,21 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       final UserCredential userCredential = await _auth
           .signInWithEmailAndPassword(email: email.trim(), password: password);
 
+      // Validate user role by checking if they exist in the appropriate collection
+      final isValidRole = await _validateUserRole(email, userType);
+      if (!isValidRole) {
+        // Sign out the user since they don't have the correct role
+        await _auth.signOut();
+        state = state.copyWith(
+          error: 'This email is not registered as a ${userType.name}. Please check your account type.',
+          isLoading: false,
+        );
+        return null;
+      }
+
       // Save user data to local storage
       await _localStorage.setUserEmail(email);
+      await _localStorage.setUserType(userType.name);
       await _localStorage.setLoggedIn(true);
 
       state = state.copyWith(
@@ -216,6 +233,19 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         isLoading: false,
       );
       return false;
+    }
+  }
+
+  // Validate user role by checking if they exist in the appropriate collection
+  Future<bool> _validateUserRole(String email, UserType userType) async {
+    try {
+      final collectionName = userType == UserType.jobseeker ? 'jobseekers' : 'recruiters';
+      final doc = await _firestore.collection(collectionName).doc(email).get();
+      return doc.exists;
+    } catch (e) {
+      // If there's an error checking the collection, we'll allow login to avoid blocking users
+      // In a production app, you might want to handle this differently
+      return true;
     }
   }
 

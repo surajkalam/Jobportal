@@ -235,9 +235,35 @@ class _JobseekerInfoState extends ConsumerState<JobseekerInfo> {
                         ),
                       )
                     : _profileImageUrl.isNotEmpty
-                    ? CircleAvatar(
-                        backgroundImage: NetworkImage(_profileImageUrl),
-                        radius: width * 0.12,
+                    ? Container(
+                        width: width * 0.24,
+                        height: width * 0.24,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colorScheme.surfaceContainerHighest,
+                        ),
+                        child: ClipOval(
+                          child: Image.network(
+                            _profileImageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.person,
+                                size: width * 0.12,
+                                color: colorScheme.onSurfaceVariant,
+                              );
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: colorScheme.primary,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       )
                     : _selectedImage != null
                     ? CircleAvatar(

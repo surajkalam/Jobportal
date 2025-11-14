@@ -475,16 +475,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: Center(
         child: Column(
           children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundColor:
-                  colorScheme.surface, // Changed from Colors.orange[100]
-              backgroundImage: recruiter.photoUrl.isNotEmpty
-                  ? NetworkImage(recruiter.photoUrl) as ImageProvider
-                  : null,
-              child: recruiter.photoUrl.isEmpty
-                  ? const Icon(Iconsax.user, size: 40, color: Colors.orange)
-                  : null,
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colorScheme.surface, // Changed from Colors.orange[100]
+              ),
+              child: recruiter.photoUrl.isNotEmpty
+                  ? ClipOval(
+                      child: Image.network(
+                        recruiter.photoUrl,
+                        fit: BoxFit.cover,
+                        width: 80,
+                        height: 80,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Iconsax.user, size: 40, color: Colors.orange);
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.orange,
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : const Icon(Iconsax.user, size: 40, color: Colors.orange),
             ),
             SizedBox(height: height * 0.014),
             Text(
